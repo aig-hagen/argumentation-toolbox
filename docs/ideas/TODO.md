@@ -1,13 +1,17 @@
+## Features
+- Rework fonts to be consistent across browsers
+- Localization
+
+
 ## Bugs and Issues
 
 ### desktop/general
 - need a ranking tutorial for AF
-- impressum etc
 
 ### Mobile
 #### Home and document management
 
-- show reference on main view cards
+- show reference on main view cards somewhere
 
 #### Graph editor and interaction
 
