@@ -41,11 +41,14 @@ import {
   watch,
   watchEffect,
 } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import { type DocumentId, DOCUMENTS_DB_INJECTION_KEY } from '@/modules/common/documents/db'
 import { getUIStateValue, setUIStateValue } from '@/modules/common/documents/uiState'
 import { TUTORIAL_REF_REGISTRY_KEY } from '@/modules/common/graph-editor/graphEditor'
 import { POINTER_SHIELD_Z_INDEX, useZIndex } from '@/modules/common/window/useZIndex'
+
+const { t } = useI18n({ useScope: 'global' })
 
 const db = inject(DOCUMENTS_DB_INJECTION_KEY, undefined)
 
@@ -437,18 +440,18 @@ watchEffect(async () => {
       <span
         v-if="loading"
         class="loading loading-spinner loading-xs text-base-content/50 shrink-0"
-        title="Evaluating"
+        :title="t('window.evaluating')"
       ></span>
       <span
         v-else
         class="inline-block size-1.5 rounded-full shrink-0"
         :class="active ? 'bg-success' : 'bg-base-content/25'"
-        :title="active ? 'Currently highlighted on canvas' : undefined"
+        :title="active ? t('window.highlightedOnCanvas') : undefined"
       ></span>
       <button
         type="button"
         class="flex-1 min-w-0 flex items-center gap-1.5 text-left text-sm cursor-pointer"
-        :title="paramsOpen ? 'Hide parameters' : 'Edit parameters'"
+        :title="paramsOpen ? t('window.hideParameters') : t('window.editParameters')"
         @click="paramsOpen = !paramsOpen"
       >
         <span class="truncate font-medium">{{ title }}</span>
@@ -474,7 +477,7 @@ watchEffect(async () => {
         <span
           v-if="active"
           class="inline-block size-1.5 rounded-full bg-success shrink-0"
-          title="Currently highlighted on canvas"
+          :title="t('window.highlightedOnCanvas')"
         ></span>
         <span class="truncate">{{ title }}</span>
       </div>
@@ -484,7 +487,7 @@ watchEffect(async () => {
           @click="toggleCompact"
           class="btn btn-square btn-xs btn-ghost"
           :class="{ 'opacity-40': compact }"
-          :title="compact ? 'Show parameters' : 'Compact view'"
+          :title="compact ? t('window.showParameters') : t('window.compactView')"
         >
           <AdjustmentsHorizontalIcon class="size-4" />
         </button>
@@ -495,11 +498,11 @@ watchEffect(async () => {
           :title="
             !minimizable && compactable
               ? compact
-                ? 'Show parameters'
-                : 'Compact view'
+                ? t('window.showParameters')
+                : t('window.compactView')
               : minimized
-                ? 'Expand'
-                : 'Minimize'
+                ? t('window.expand')
+                : t('window.minimize')
           "
         >
           <ChevronUpIcon v-if="!minimizable && compactable ? compact : minimized" class="size-4" />

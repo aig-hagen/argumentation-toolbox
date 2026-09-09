@@ -16,27 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import common from '@/localization/locales/de/messages/common'
-import editor from '@/localization/locales/de/messages/editor'
-import exportMessages from '@/localization/locales/de/messages/export'
-import help from '@/localization/locales/de/messages/help'
-import home from '@/localization/locales/de/messages/home'
-import menu from '@/localization/locales/de/messages/menu'
-import settings from '@/localization/locales/de/messages/settings'
-import share from '@/localization/locales/de/messages/share'
-import windowMessages from '@/localization/locales/de/messages/window'
-import type { LocaleMessageSchema } from '@/localization/types'
-
-const messages: LocaleMessageSchema = {
-  common,
-  editor,
-  export: exportMessages,
-  help,
-  home,
-  menu,
-  settings,
-  share,
-  window: windowMessages,
+export default {
+  evaluating: 'Wird ausgewertet',
+  highlightedOnCanvas: 'Auf der Arbeitsfläche hervorgehoben',
+  editParameters: 'Parameter bearbeiten',
+  hideParameters: 'Parameter ausblenden',
+  showParameters: 'Parameter anzeigen',
+  compactView: 'Kompakte Ansicht',
+  expand: 'Ausklappen',
+  minimize: 'Minimieren',
 }
-
-export default messages
