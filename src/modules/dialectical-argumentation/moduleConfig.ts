@@ -86,7 +86,7 @@ export const dialecticalArgumentationModule: ModuleConfig<
   DialecticalArgumentation<AdfArgumentData>
 > = {
   newNamePrefix: 'ADF',
-  displayNameSingular: 'Dialectical Argumentation',
+  id: 'dialectical',
   is(model: unknown) {
     return model instanceof DialecticalArgumentation
   },
@@ -128,7 +128,6 @@ export const dialecticalArgumentationModule: ModuleConfig<
     return saveAsString(document, name)
   },
   generateHref: '/generate?type=adf',
-  description: 'Relations between arguments are modelled via propositional acceptance conditions.',
   publications: [BW10, BESWW13, BESWW18],
   tags: [TAG_ABSTRACT, TAG_ATTACK, TAG_SUPPORT, TAG_COLLECTIVE_RELATIONS, TAG_CONSTRAINTS],
 }

@@ -48,7 +48,7 @@ export const probabilisticArgumentationModule: ModuleConfig<
   ProbabilisticArgumentation<PafArgumentData>
 > = {
   newNamePrefix: 'PAF',
-  displayNameSingular: 'Probabilistic Argumentation',
+  id: 'probabilistic',
   is(model: unknown) {
     return model instanceof ProbabilisticArgumentation
   },
@@ -85,8 +85,6 @@ export const probabilisticArgumentationModule: ModuleConfig<
     return saveAsString(document, name)
   },
   generateHref: '/generate?type=probabilistic',
-  description:
-    'Arguments and attacks can be assigned a probability value between 0 and 1 to quantify uncertainty.',
   publications: [LON11, H12, HPPRT21],
   tags: [TAG_ABSTRACT, TAG_ATTACK, TAG_UNCERTAINTY, TAG_WEIGHTS],
 }

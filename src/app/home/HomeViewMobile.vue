@@ -35,6 +35,7 @@ import BlankDocumentCanvasMobile from '@/app/home/BlankDocumentCanvasMobile.vue'
 import type { ModuleConfig } from '@/app/home/moduleConfig'
 import type { HomeController } from '@/app/home/useHomeController'
 import { useHomeSurface } from '@/app/home/useHomeSurface'
+import { useModuleCards } from '@/app/home/useModuleCards'
 import { ACTIVE_MODULE_KEY } from '@/app/usage/moduleContext'
 import NotificationsDisplay from '@/modules/common/notifications/NotificationsDisplay.vue'
 import { QUICK_SHARE_KEY } from '@/modules/common/share/quickShareKey'
@@ -45,6 +46,8 @@ const { modules, controller } = defineProps<{
   modules: ModuleConfig<DocumentT>[]
   controller: HomeController<DocumentT>
 }>()
+
+const moduleCards = useModuleCards(modules)
 
 const {
   notifications,
@@ -345,7 +348,7 @@ function loadFile() {
         class="absolute inset-0 overflow-y-auto"
         style="scrollbar-gutter: stable"
       >
-        <BlankDocumentCanvasMobile :module-cards="modules" @open="createFromNew" />
+        <BlankDocumentCanvasMobile :module-cards="moduleCards" @open="createFromNew" />
       </div>
 
       <!-- Editor surface: mounted on first visit, then kept mounted across surface switches -->
@@ -360,7 +363,7 @@ function loadFile() {
             style="scrollbar-gutter: stable"
           >
             <BlankDocumentCanvasMobile
-              :module-cards="modules"
+              :module-cards="moduleCards"
               :source-document-id="selectedDocumentId"
               @open="overrideWithContent"
             />

@@ -56,7 +56,7 @@ initialBipolarArgumentation.addSupport(1, 2)
 
 export const bipoloarArgumentationModule: ModuleConfig<BipoloarArgumentation<ArgumentData>> = {
   newNamePrefix: 'BAF',
-  displayNameSingular: 'Bipolar Argumentation',
+  id: 'bipolar',
   is(model: unknown) {
     return model instanceof BipoloarArgumentation
   },
@@ -100,7 +100,6 @@ export const bipoloarArgumentationModule: ModuleConfig<BipoloarArgumentation<Arg
     return saveAsString(document, name)
   },
   generateHref: '/generate?type=bipolar',
-  description: 'Relations between arguments can be either attacking or supporting.',
   publications: [CL05, CL10, CCL21],
   tags: [TAG_ABSTRACT, TAG_ATTACK, TAG_SUPPORT],
 }

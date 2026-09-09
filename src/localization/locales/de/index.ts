@@ -22,6 +22,7 @@ import exportMessages from '@/localization/locales/de/messages/export'
 import help from '@/localization/locales/de/messages/help'
 import home from '@/localization/locales/de/messages/home'
 import menu from '@/localization/locales/de/messages/menu'
+import modules from '@/localization/locales/de/messages/modules'
 import settings from '@/localization/locales/de/messages/settings'
 import share from '@/localization/locales/de/messages/share'
 import thirdParty from '@/localization/locales/de/messages/thirdParty'
@@ -35,6 +36,7 @@ const messages: LocaleMessageSchema = {
   help,
   home,
   menu,
+  modules,
   settings,
   share,
   thirdParty,

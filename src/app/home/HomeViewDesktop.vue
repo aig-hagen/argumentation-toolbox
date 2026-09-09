@@ -26,6 +26,7 @@ import BlankDocumentCanvas from '@/app/home/BlankDocumentCanvas.vue'
 import LayoutTabs from '@/app/home/EditorTabs.vue'
 import type { ModuleConfig } from '@/app/home/moduleConfig'
 import type { HomeController } from '@/app/home/useHomeController'
+import { useModuleCards } from '@/app/home/useModuleCards'
 import { ACTIVE_MODULE_KEY } from '@/app/usage/moduleContext'
 import type { DocumentsDB } from '@/modules/common/documents/db'
 import NotificationsDisplay from '@/modules/common/notifications/NotificationsDisplay.vue'
@@ -36,6 +37,8 @@ const { db, modules, controller } = defineProps<{
   modules: ModuleConfig<DocumentT>[]
   controller: HomeController<DocumentT>
 }>()
+
+const moduleCards = useModuleCards(modules)
 
 const {
   notifications,
@@ -105,12 +108,12 @@ function loadFile() {
       <div class="relative h-full w-full">
         <BlankDocumentCanvas
           v-if="selectedDocumentId === undefined"
-          :module-cards="modules"
+          :module-cards="moduleCards"
           @open="createDocumentWithContent"
         ></BlankDocumentCanvas>
         <BlankDocumentCanvas
           v-if="!documentLoading && documentState === undefined"
-          :module-cards="modules"
+          :module-cards="moduleCards"
           :source-document-id="selectedDocumentId"
           @open="overrideWithContent"
         ></BlankDocumentCanvas>

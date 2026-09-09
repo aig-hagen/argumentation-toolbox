@@ -457,20 +457,27 @@ Phase 9.
 
 ### Phase 3 — Stable metadata contracts
 
-- [ ] Add stable IDs to `ModuleConfig`, `Tag`, `ExportConfig`, and `Example` where missing.
-- [ ] Replace module display fields with reactive localized module-card view models.
-- [ ] Migrate module card filtering/search to stable tag IDs and localized display text.
+- [~] Add stable IDs to `ModuleConfig`, `Tag`, `ExportConfig`, and `Example` where missing.
+  (`ModuleConfig.id` and `Tag`→`TagId` done; `ExportConfig`/`Example` pending in later batches.)
+- [x] Replace module display fields with reactive localized module-card view models.
+  (`useModuleCards` builds localized `ModuleCard`s from `markRaw`'d configs; `modules` namespace.)
+- [x] Migrate module card filtering/search to stable tag IDs and localized display text.
+  (Tags are stable `TagId`s; `modules.tags.<id>` catalog resolved in the card mapper. No live
+  filter UI exists yet, so this is the stable-ID + localized-label groundwork.)
 - [ ] Replace layout names with localized labels while retaining existing `Layout` enum values.
 - [ ] Replace graph link `displayName` constants with locale-aware computed configs.
 - [ ] Localize semantics and semantics-family labels while retaining backend keys.
 - [ ] Replace export-format name comparisons with stable export IDs before localizing display names.
 - [ ] Localize example picker names/descriptions without changing loaded graph data.
-- [ ] Remove deprecated English display fields after all consumers migrate.
-- [ ] Add tests showing that switching locale updates already-mounted module cards, menus, relation
-  selectors, semantics selectors, and export pickers.
+- [~] Remove deprecated English display fields after all consumers migrate.
+  (`displayNameSingular`/`description` removed from `ModuleConfig`; other contracts follow.)
+- [~] Add tests showing that switching locale updates already-mounted module cards, menus, relation
+  selectors, semantics selectors, and export pickers. (`useModuleCards.test.ts` covers module
+  cards; the rest follow with their batches.)
 
 Deliverable: application/domain configuration is presentation-neutral, and live switching works
-without remounting editors or rewriting documents.
+without remounting editors or rewriting documents. **Batch 1 (modules & tags) done.** Remaining:
+layouts, link relation names, semantics, export IDs, examples.
 
 ### Phase 4 — Route pages and module-specific UI
 

@@ -122,26 +122,22 @@ export function useGenerate(db: IDBPDatabase<DocumentsDB>, modules: ModuleConfig
 
   // --- Framework type from URL ---
   const frameworkTypeId = computed<string>(() => {
-    const t = route.query.type
+    const type = route.query.type
     if (
-      t === 'bipolar' ||
-      t === 'incomplete' ||
-      t === 'probabilistic' ||
-      t === 'adf' ||
-      t === 'setaf'
+      type === 'bipolar' ||
+      type === 'incomplete' ||
+      type === 'probabilistic' ||
+      type === 'adf' ||
+      type === 'setaf'
     )
-      return t
+      return type
     return 'abstract'
   })
 
-  // Resolve the matching module config via generateHref so names/abbreviations
-  // come from a single source of truth (ModuleConfig.displayNameSingular / newNamePrefix).
+  // Resolve the matching module config via generateHref so names/abbreviations come from a
+  // single source of truth (ModuleConfig.id / newNamePrefix).
   const activeModule = computed(
     () => modules.find((m) => m.generateHref === `/generate?type=${frameworkTypeId.value}`) ?? null,
-  )
-
-  const pageTitle = computed(
-    () => (activeModule.value?.displayNameSingular ?? 'Argumentation') + ' Framework',
   )
 
   // Short module name (e.g. "AF") for compact titles.
@@ -467,7 +463,6 @@ export function useGenerate(db: IDBPDatabase<DocumentsDB>, modules: ModuleConfig
   return {
     MAX_EDGES_FOR_EDITOR,
     frameworkTypeId,
-    pageTitle,
     shortName,
     algorithms,
     loadError,

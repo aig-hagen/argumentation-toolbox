@@ -22,6 +22,7 @@ import exportMessages from '@/localization/locales/en/messages/export'
 import help from '@/localization/locales/en/messages/help'
 import home from '@/localization/locales/en/messages/home'
 import menu from '@/localization/locales/en/messages/menu'
+import modules from '@/localization/locales/en/messages/modules'
 import settings from '@/localization/locales/en/messages/settings'
 import share from '@/localization/locales/en/messages/share'
 import thirdParty from '@/localization/locales/en/messages/thirdParty'
@@ -34,6 +35,7 @@ export default {
   help,
   home,
   menu,
+  modules,
   settings,
   share,
   thirdParty,
