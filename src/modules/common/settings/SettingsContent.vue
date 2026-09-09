@@ -17,6 +17,11 @@
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 -->
 <script setup lang="ts">
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+import type { SupportedLocale } from '@/localization'
+import { LOCALE_AUTONYMS, useLocale } from '@/localization'
 import type { GridVisibility, PhysicsMode } from '@/modules/common/main-menu/types'
 import SegmentedControl from '@/modules/common/settings/SegmentedControl.vue'
 import type { GridType } from '@/modules/common/settings/useSettings'
@@ -25,6 +30,8 @@ import type { ThemePreference } from '@/modules/common/theme/useTheme'
 import { useTheme } from '@/modules/common/theme/useTheme'
 import { useTutorial } from '@/modules/common/tutorial/useTutorial'
 
+const { t } = useI18n({ useScope: 'global' })
+const { locale, setLocale, supportedLocales } = useLocale()
 const { themePreference } = useTheme()
 const {
   graphStyle,
@@ -37,49 +44,79 @@ const {
 } = useSettings()
 const { resetAllTutorials } = useTutorial()
 
-const physicsOptions: { value: PhysicsMode; label: string }[] = [
-  { value: 'off', label: 'Off' },
-  { value: 'on', label: 'On' },
-]
-const booleanOptions: { value: boolean; label: string }[] = [
-  { value: false, label: 'Off' },
-  { value: true, label: 'On' },
-]
-const gridOptions: { value: GridVisibility; label: string }[] = [
-  { value: 'off', label: 'Off' },
-  { value: 'auto', label: 'On drag' },
-  { value: 'on', label: 'On' },
-]
-const gridTypeOptions: { value: GridType; label: string }[] = [
-  { value: 'square', label: 'Square' },
-  { value: 'rhombus', label: 'Rhombus' },
-]
-const themeOptions: { value: ThemePreference; label: string }[] = [
-  { value: 'light', label: 'Light' },
-  { value: 'system', label: 'System' },
-  { value: 'dark', label: 'Dark' },
-]
+function onLocaleChange(event: Event): void {
+  void setLocale((event.target as HTMLSelectElement).value as SupportedLocale)
+}
+
+const physicsOptions = computed<{ value: PhysicsMode; label: string }[]>(() => [
+  { value: 'off', label: t('common.states.off') },
+  { value: 'on', label: t('common.states.on') },
+])
+const booleanOptions = computed<{ value: boolean; label: string }[]>(() => [
+  { value: false, label: t('common.states.off') },
+  { value: true, label: t('common.states.on') },
+])
+const gridOptions = computed<{ value: GridVisibility; label: string }[]>(() => [
+  { value: 'off', label: t('common.states.off') },
+  { value: 'auto', label: t('settings.showGrid.onDrag') },
+  { value: 'on', label: t('common.states.on') },
+])
+const gridTypeOptions = computed<{ value: GridType; label: string }[]>(() => [
+  { value: 'square', label: t('settings.gridType.square') },
+  { value: 'rhombus', label: t('settings.gridType.rhombus') },
+])
+const themeOptions = computed<{ value: ThemePreference; label: string }[]>(() => [
+  { value: 'light', label: t('settings.theme.light') },
+  { value: 'system', label: t('settings.theme.system') },
+  { value: 'dark', label: t('settings.theme.dark') },
+])
 </script>
 
 <template>
   <div class="flex flex-col gap-6">
-    <!-- Appearance -->
+    <!-- Language -->
     <section class="flex flex-col gap-2">
       <h4 class="px-1 text-xs font-semibold uppercase tracking-wide text-base-content/50">
-        Appearance
+        {{ t('settings.sections.language') }}
       </h4>
       <div class="divide-y divide-base-200 overflow-hidden rounded-2xl border border-base-300">
         <div class="flex items-center justify-between gap-4 bg-base-100 px-3.5 py-3">
-          <span class="text-sm">Theme</span>
-          <SegmentedControl v-model="themePreference" :options="themeOptions" aria-label="Theme" />
+          <span class="text-sm">{{ t('settings.language.label') }}</span>
+          <select
+            class="select select-sm w-36"
+            :value="locale"
+            :aria-label="t('settings.language.label')"
+            @change="onLocaleChange"
+          >
+            <option v-for="code in supportedLocales" :key="code" :value="code">
+              {{ LOCALE_AUTONYMS[code] }}
+            </option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- Appearance -->
+    <section class="flex flex-col gap-2">
+      <h4 class="px-1 text-xs font-semibold uppercase tracking-wide text-base-content/50">
+        {{ t('settings.sections.appearance') }}
+      </h4>
+      <div class="divide-y divide-base-200 overflow-hidden rounded-2xl border border-base-300">
+        <div class="flex items-center justify-between gap-4 bg-base-100 px-3.5 py-3">
+          <span class="text-sm">{{ t('settings.theme.label') }}</span>
+          <SegmentedControl
+            v-model="themePreference"
+            :options="themeOptions"
+            :aria-label="t('settings.theme.label')"
+          />
         </div>
         <div class="flex items-center justify-between gap-4 bg-base-100 px-3.5 py-3">
-          <span class="text-sm">Graph style</span>
+          <span class="text-sm">{{ t('settings.graphStyle.label') }}</span>
           <select class="select select-sm w-36" v-model="graphStyle">
-            <option value="default">Default</option>
-            <option value="high-contrast">High contrast</option>
-            <option value="minimal">Minimal</option>
-            <option value="library">Library</option>
+            <option value="default">{{ t('settings.graphStyle.default') }}</option>
+            <option value="high-contrast">{{ t('settings.graphStyle.highContrast') }}</option>
+            <option value="minimal">{{ t('settings.graphStyle.minimal') }}</option>
+            <option value="library">{{ t('settings.graphStyle.library') }}</option>
           </select>
         </div>
       </div>
@@ -88,35 +125,35 @@ const themeOptions: { value: ThemePreference; label: string }[] = [
     <!-- Graph defaults -->
     <section class="flex flex-col gap-2">
       <h4 class="px-1 text-xs font-semibold uppercase tracking-wide text-base-content/50">
-        Graph defaults
+        {{ t('settings.sections.graphDefaults') }}
       </h4>
       <div class="divide-y divide-base-200 overflow-hidden rounded-2xl border border-base-300">
         <div class="flex items-center justify-between gap-4 bg-base-100 px-3.5 py-3">
-          <span class="text-sm">Physics mode</span>
+          <span class="text-sm">{{ t('settings.physicsMode.label') }}</span>
           <SegmentedControl
             v-model="defaultPhysicsMode"
             :options="physicsOptions"
-            aria-label="Physics mode"
+            :aria-label="t('settings.physicsMode.label')"
           />
         </div>
         <div class="flex items-center justify-between gap-4 bg-base-100 px-3.5 py-3">
-          <span class="text-sm">Show grid</span>
+          <span class="text-sm">{{ t('settings.showGrid.label') }}</span>
           <SegmentedControl
             v-model="defaultShowGrid"
             :options="gridOptions"
-            aria-label="Show grid"
+            :aria-label="t('settings.showGrid.label')"
           />
         </div>
         <div class="flex items-center justify-between gap-4 bg-base-100 px-3.5 py-3">
-          <span class="text-sm">Grid type</span>
+          <span class="text-sm">{{ t('settings.gridType.label') }}</span>
           <SegmentedControl
             v-model="defaultGridType"
             :options="gridTypeOptions"
-            aria-label="Grid type"
+            :aria-label="t('settings.gridType.label')"
           />
         </div>
         <div class="flex items-center justify-between gap-4 bg-base-100 px-3.5 py-3">
-          <span class="text-sm">Grid cell size</span>
+          <span class="text-sm">{{ t('settings.gridCellSize.label') }}</span>
           <div class="flex items-center gap-2">
             <input
               type="range"
@@ -130,11 +167,11 @@ const themeOptions: { value: ThemePreference; label: string }[] = [
           </div>
         </div>
         <div class="flex items-center justify-between gap-4 bg-base-100 px-3.5 py-3">
-          <span class="text-sm">Snap to grid</span>
+          <span class="text-sm">{{ t('settings.snapToGrid.label') }}</span>
           <SegmentedControl
             v-model="snapMode"
             :options="booleanOptions"
-            aria-label="Snap to grid"
+            :aria-label="t('settings.snapToGrid.label')"
           />
         </div>
       </div>
@@ -143,20 +180,22 @@ const themeOptions: { value: ThemePreference; label: string }[] = [
     <!-- Tutorials -->
     <section class="flex flex-col gap-2">
       <h4 class="px-1 text-xs font-semibold uppercase tracking-wide text-base-content/50">
-        Tutorials
+        {{ t('settings.sections.tutorials') }}
       </h4>
       <div class="divide-y divide-base-200 overflow-hidden rounded-2xl border border-base-300">
         <div class="flex items-center justify-between gap-4 bg-base-100 px-3.5 py-3">
-          <span class="text-sm">Show tutorials</span>
+          <span class="text-sm">{{ t('settings.showTutorials.label') }}</span>
           <SegmentedControl
             v-model="showHints"
             :options="booleanOptions"
-            aria-label="Show tutorials"
+            :aria-label="t('settings.showTutorials.label')"
           />
         </div>
         <div class="flex items-center justify-between gap-4 bg-base-100 px-3.5 py-3">
-          <span class="text-sm">Tutorial progress</span>
-          <button class="btn btn-ghost btn-xs" @click="resetAllTutorials">Reset</button>
+          <span class="text-sm">{{ t('settings.tutorialProgress.label') }}</span>
+          <button class="btn btn-ghost btn-xs" @click="resetAllTutorials">
+            {{ t('common.actions.reset') }}
+          </button>
         </div>
       </div>
     </section>

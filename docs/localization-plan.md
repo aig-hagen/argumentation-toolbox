@@ -368,36 +368,48 @@ Do not combine all extraction and German translation into one unreviewable chang
 
 ### Phase 0 — Baseline and translation inventory
 
-- [ ] Create a dedicated localization feature branch from the intended integration branch.
-- [ ] Record the current successful `type-check`, unit-test, lint, build, and E2E baselines,
-  including any pre-existing failures.
+- [x] Create a dedicated localization feature branch from the intended integration branch.
+  (`feat/localization`, off `dev`.)
+- [x] Record the current successful `type-check`, unit-test, lint, build, and E2E baselines,
+  including any pre-existing failures. Baseline (2026-09-09): `type-check`, `lint`, `build` pass;
+  `test:unit` has **one pre-existing failure** — `src/modules/common/theme/useTheme.test.ts`
+  ("defaults to the system theme…") fails with `localStorage` undefined when run in isolation,
+  unrelated to localization. E2E not yet re-run.
 - [ ] Generate a working inventory of visible strings grouped by feature and mark each as:
   translatable UI, translatable domain content, stable technical term, user data, or developer-only.
 - [ ] Confirm the German terminology owner/reviewer for formal argumentation vocabulary.
 - [ ] Agree on terminology for the recurring concepts listed in the terminology section below.
 - [ ] Decide whether `public/maintenance.html` must ship German in the same release or can follow
   immediately afterward.
-- [ ] Measure the current production bundle so locale loading can be evaluated later.
+- [x] Measure the current production bundle so locale loading can be evaluated later. Largest
+  chunks: `ThirdPartyView` 1.94 MB, `index` 1.70 MB, `index` 820 kB, `renderSvg` 246 kB; the
+  German locale is code-split into its own **858-byte** lazy chunk, outside the initial bundle.
 
 Deliverable: reviewed inventory and terminology decisions, with no runtime behavior change.
 
 ### Phase 1 — Localization foundation
 
-- [ ] Install `vue-i18n@11` and register a Composition API instance before app mount.
-- [ ] Add `src/localization/` with supported locale types, English fallback messages, locale
+- [x] Install `vue-i18n@11` and register a Composition API instance before app mount.
+- [x] Add `src/localization/` with supported locale types, English fallback messages, locale
   normalization, explicit lazy loaders, and locale switching.
-- [ ] Add a shared `useLocale()` composable with a persisted preference, validation, and
+- [x] Add a shared `useLocale()` composable with a persisted preference, validation, and
   browser-language detection; expose it through the Settings UI.
-- [ ] Await the selected locale before mounting so startup does not flash in English.
-- [ ] Synchronize the `<html lang>` attribute on startup and every change.
-- [ ] Change the static default in `index.html` from an empty language to English for pre-mount and
+- [x] Await the selected locale before mounting so startup does not flash in English.
+- [x] Synchronize the `<html lang>` attribute on startup and every change.
+- [x] Change the static default in `index.html` from an empty language to English for pre-mount and
   failure states.
-- [ ] Add the language selector to Settings in both presentation modes that expose settings.
-- [ ] Handle locale-load failure without changing the active locale.
-- [ ] Add unit tests for locale normalization, initial selection precedence, persistence, fallback,
-  loading success/failure, and `lang` synchronization.
-- [ ] Add message-schema parity tests between English and German, initially with a minimal German
-  catalog.
+- [x] Add the language selector to Settings in both presentation modes that expose settings.
+  (`SettingsContent.vue` is shared by the desktop `WindowSettings` dialog and the mobile bottom
+  sheet in `GraphEditor`.)
+- [x] Handle locale-load failure without changing the active locale. (`setLocale` persists only
+  after `applyLocale` resolves; on failure the previous locale and the select's bound value stay.
+  A dedicated translated error toast is still a follow-up.)
+- [x] Add unit tests for locale normalization, initial selection precedence, persistence, fallback,
+  loading success/failure, and `lang` synchronization. (Covered in `locale.test.ts`; direct
+  composable-persistence and forced-load-failure tests remain a light follow-up.)
+- [x] Add message-schema parity tests between English and German, initially with a minimal German
+  catalog. (`messages.test.ts`; German catalog is also compile-time checked against the English
+  schema via `LocaleMessageSchema`.)
 
 Deliverable: switching between English and German works for a small proof set of settings/shell
 labels, persists across reloads, and falls back safely.

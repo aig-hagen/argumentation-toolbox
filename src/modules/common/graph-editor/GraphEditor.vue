@@ -73,6 +73,7 @@ import {
   useTemplateRef,
   watch,
 } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import { ARGUMENT_RADIUS_IN_PX } from '@/modules/common/argumentation/model'
 import { DOCUMENTS_DB_INJECTION_KEY } from '@/modules/common/documents/db'
@@ -362,6 +363,7 @@ if (db === undefined) {
   throw new Error('Documents database not provided.')
 }
 
+const { t } = useI18n({ useScope: 'global' })
 const { isDark } = useTheme()
 const {
   graphStyle: graphStyleSetting,
@@ -2173,7 +2175,7 @@ defineExpose({
         </div>
       </BottomSheet>
 
-      <BottomSheet v-model:open="isSettingsOpen" title="Settings">
+      <BottomSheet v-model:open="isSettingsOpen" :title="t('settings.title')">
         <div class="pb-4">
           <SettingsContent />
         </div>

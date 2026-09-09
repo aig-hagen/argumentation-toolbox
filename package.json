@@ -43,6 +43,7 @@
     "katex": "^0.16.45",
     "opentype.js": "^2.0.0",
     "vue": "^3.5.28",
+    "vue-i18n": "^11.4.10",
     "vue-router": "^5.0.2",
     "wawoff2": "^2.0.1",
     "xml-formatter": "^3.7.0",

@@ -25,6 +25,7 @@ import { createApp, markRaw } from 'vue'
 
 import App from '@/app/App.vue'
 import router from '@/app/router'
+import { installI18n, useLocale } from '@/localization'
 import { abstractArgumentationModule } from '@/modules/abstract-argumentation/moduleConfig'
 import { bipoloarArgumentationModule } from '@/modules/bipolar-argumentation/moduleConfig'
 import { collectiveAttacksArgumentationModule } from '@/modules/collective-attacks-argumentation/moduleConfig'
@@ -36,6 +37,9 @@ import { probabilisticArgumentationModule } from '@/modules/probabilistic-argume
 
 const PRODUCTION_DATABASE_DOCUMENTS_NAME = 'documents'
 const db = await openDocumentsDB(PRODUCTION_DATABASE_DOCUMENTS_NAME)
+
+// Resolve and load the locale before mounting so startup doesn't flash in English.
+await useLocale().initLocale()
 
 const modules = [
   abstractArgumentationModule,
@@ -61,6 +65,7 @@ const queryClient = new QueryClient({
 
 app.use(VueQueryPlugin, { queryClient })
 app.use(router)
+installI18n(app)
 
 applyPalette()
 
