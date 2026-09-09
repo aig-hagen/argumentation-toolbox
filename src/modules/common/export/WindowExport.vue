@@ -39,6 +39,7 @@ import { useSettings } from '@/modules/common/settings/useSettings'
 import WindowShell from '@/modules/common/window/WindowShell.vue'
 
 import type { ExportConfig, ExportFileData } from '.'
+import { ExportFormatId } from '.'
 
 const { t } = useI18n({ useScope: 'global' })
 
@@ -64,12 +65,12 @@ const { layoutMode } = useLayoutMode()
 const WYSIWYG_SVG_KEY = '__wysiwyg_svg__'
 const graphSvgRenderer = inject(GRAPH_SVG_RENDERER_KEY, undefined)
 
-const selectedFormatKey = shallowRef<string>(exportConfigs[0]?.name ?? WYSIWYG_SVG_KEY)
+const selectedFormatKey = shallowRef<string>(exportConfigs[0]?.id ?? WYSIWYG_SVG_KEY)
 const isWysiwygSvg = computed(() => selectedFormatKey.value === WYSIWYG_SVG_KEY)
 const selectedExportConfig = computed<ExportConfig<DocumentT> | undefined>(() =>
   isWysiwygSvg.value
     ? undefined
-    : exportConfigs.find((config) => config.name === selectedFormatKey.value),
+    : exportConfigs.find((config) => config.id === selectedFormatKey.value),
 )
 const selectedArgumentStyle = shallowRef<string>('standard')
 const selectedNameStyle = shallowRef<string>('math')
@@ -83,7 +84,7 @@ const isBipolarDocument = computed(() => {
 })
 
 const usePackageLine = computed(() => {
-  if (selectedExportConfig.value?.name !== 'LaTeX (argumentation)') return undefined
+  if (selectedExportConfig.value?.id !== ExportFormatId.Latex) return undefined
   const opts = [
     ...(selectedArgumentStyle.value !== 'standard'
       ? [`argumentstyle=${selectedArgumentStyle.value}`]
@@ -258,8 +259,8 @@ watchEffect(() => {
             <select v-model="selectedFormatKey">
               <option
                 v-for="exportConfig in exportConfigs"
-                :key="exportConfig.name"
-                :value="exportConfig.name"
+                :key="exportConfig.id"
+                :value="exportConfig.id"
               >
                 {{ exportConfig.name }}
               </option>
@@ -280,7 +281,7 @@ watchEffect(() => {
           </a>
         </div>
       </fieldset>
-      <fieldset v-if="selectedExportConfig?.name === 'LaTeX (argumentation)'" class="fieldset">
+      <fieldset v-if="selectedExportConfig?.id === ExportFormatId.Latex" class="fieldset">
         <details class="collapse collapse-arrow">
           <summary class="collapse-title fieldset-legend ps-0 max-w-max">
             {{ t('export.style.parameters') }}

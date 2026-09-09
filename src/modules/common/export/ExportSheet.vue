@@ -38,6 +38,7 @@ import { supportsNativeShare } from '@/modules/common/share/nativeShare'
 import { QUICK_SHARE_KEY } from '@/modules/common/share/quickShareKey'
 
 import type { ExportConfig, ExportFileData, ExportStyleOptions } from '.'
+import { ExportFormatId } from '.'
 
 const { input, exportConfigs } = defineProps<{
   input: DocumentT
@@ -92,7 +93,7 @@ const codeResult = computed(() =>
 )
 
 const packageLine = computed(() => {
-  if (codeConfig.value?.name !== 'LaTeX (argumentation)') return undefined
+  if (codeConfig.value?.id !== ExportFormatId.Latex) return undefined
   const opts = [
     ...(argumentStyle.value !== 'standard' ? [`argumentstyle=${argumentStyle.value}`] : []),
     `namestyle=${nameStyle.value}`,
@@ -192,7 +193,7 @@ function download(config: ExportConfig<DocumentT>) {
         </button>
         <button
           v-for="config in dataConfigs"
-          :key="config.name"
+          :key="config.id"
           class="w-full flex items-center gap-3 min-h-14 px-3.5 py-2 rounded-2xl border border-base-300 bg-base-100 text-left"
           @click="download(config)"
         >

@@ -23,7 +23,7 @@ import {
   latexExportCommonConfig,
 } from '@/modules/common/argumentation/export'
 import type { ArgumentData, ArgumentId } from '@/modules/common/argumentation/model'
-import type { ExportConfig, ExportStyleOptions } from '@/modules/common/export'
+import { type ExportConfig, ExportFormatId, type ExportStyleOptions } from '@/modules/common/export'
 import { IdMapping } from '@/modules/common/ids'
 
 const exportLatexBipolarArgumentation: ExportConfig<BipoloarArgumentation<ArgumentData>> = {
@@ -37,6 +37,7 @@ const exportLatexBipolarArgumentation: ExportConfig<BipoloarArgumentation<Argume
 }
 
 const exportICCMA: ExportConfig<BipoloarArgumentation<ArgumentData>> = {
+  id: ExportFormatId.Iccma,
   name: 'ICCMA',
   references: [
     {
@@ -66,6 +67,7 @@ const exportICCMA: ExportConfig<BipoloarArgumentation<ArgumentData>> = {
 }
 
 const exportTGFBipolarArgumentation: ExportConfig<BipoloarArgumentation<ArgumentData>> = {
+  id: ExportFormatId.Tgf,
   name: 'Trivial Graph Format (TGF)',
   references: [{ label: 'TGF Format', url: 'https://en.wikipedia.org/wiki/Trivial_Graph_Format' }],
   extension: 'tgf',

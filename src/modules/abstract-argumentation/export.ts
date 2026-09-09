@@ -22,10 +22,11 @@ import {
   latexExportCommonConfig,
 } from '@/modules/common/argumentation/export'
 import type { ArgumentData, ArgumentId } from '@/modules/common/argumentation/model'
-import type { ExportConfig, ExportStyleOptions } from '@/modules/common/export'
+import { type ExportConfig, ExportFormatId, type ExportStyleOptions } from '@/modules/common/export'
 import { IdMapping } from '@/modules/common/ids'
 
 const exportICCMA: ExportConfig<AbstractArgumentation<ArgumentData>> = {
+  id: ExportFormatId.Iccma,
   name: 'ICCMA',
   references: [
     { label: 'ICCMA 2025 Rules', url: 'https://argumentationcompetition.org/2025/rules.html' },
@@ -53,6 +54,7 @@ const exportICCMA: ExportConfig<AbstractArgumentation<ArgumentData>> = {
 }
 
 const exportTGF: ExportConfig<AbstractArgumentation<ArgumentData>> = {
+  id: ExportFormatId.Tgf,
   name: 'Trivial Graph Format (TGF)',
   references: [{ label: 'TGF Format', url: 'https://en.wikipedia.org/wiki/Trivial_Graph_Format' }],
   extension: 'tgf',

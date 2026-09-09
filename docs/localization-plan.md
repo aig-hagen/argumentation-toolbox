@@ -458,16 +458,24 @@ Phase 9.
 ### Phase 3 — Stable metadata contracts
 
 - [~] Add stable IDs to `ModuleConfig`, `Tag`, `ExportConfig`, and `Example` where missing.
-  (`ModuleConfig.id` and `Tag`→`TagId` done; `ExportConfig`/`Example` pending in later batches.)
+  (`ModuleConfig.id`, `Tag`→`TagId`, and `ExportConfig.id`→`ExportFormatId` done; `Example`
+  pending in a later batch.)
 - [x] Replace module display fields with reactive localized module-card view models.
   (`useModuleCards` builds localized `ModuleCard`s from `markRaw`'d configs; `modules` namespace.)
 - [x] Migrate module card filtering/search to stable tag IDs and localized display text.
   (Tags are stable `TagId`s; `modules.tags.<id>` catalog resolved in the card mapper. No live
   filter UI exists yet, so this is the stable-ID + localized-label groundwork.)
-- [ ] Replace layout names with localized labels while retaining existing `Layout` enum values.
-- [ ] Replace graph link `displayName` constants with locale-aware computed configs.
+- [x] Replace layout names with localized labels while retaining existing `Layout` enum values.
+  (Stable `Layout` keys → `editor.layouts.*`; commit `d7d8200`.)
+- [x] Replace graph link `displayName` constants with locale-aware computed configs.
+  (Relation names resolved via message keys; commit `d86cba0`.)
 - [ ] Localize semantics and semantics-family labels while retaining backend keys.
-- [ ] Replace export-format name comparisons with stable export IDs before localizing display names.
+  (**Deferred** — `displayName` also feeds `formatNotation`/`.toLowerCase()` notation, so
+  localizing it needs a notation-vs-label split first. Skipped for now.)
+- [x] Replace export-format name comparisons with stable export IDs before localizing display names.
+  (`ExportFormatId` (`iccma`/`tgf`/`latex`) added to `ExportConfig`; all format-selection state,
+  lookups, and the `=== 'LaTeX (argumentation)'` checks now use `id`. Display names are technical
+  format names and stay untranslated by decision — no message keys added.)
 - [ ] Localize example picker names/descriptions without changing loaded graph data.
 - [~] Remove deprecated English display fields after all consumers migrate.
   (`displayNameSingular`/`description` removed from `ModuleConfig`; other contracts follow.)

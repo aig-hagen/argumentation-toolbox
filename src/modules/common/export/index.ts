@@ -34,7 +34,23 @@ export interface ExportReference {
   url: string
 }
 
+/**
+ * Stable, language-independent export-format identifier. Used for format selection state,
+ * lookups, and format-specific behavior (e.g. the LaTeX style options) so those never depend
+ * on the human-readable {@link ExportConfig.name}, which stays a technical/untranslated label.
+ */
+export const ExportFormatId = {
+  Iccma: 'iccma',
+  Tgf: 'tgf',
+  Latex: 'latex',
+} as const
+
+export type ExportFormatId = (typeof ExportFormatId)[keyof typeof ExportFormatId]
+
 export interface ExportConfig<DocumentT> {
+  /** Stable format identifier; see {@link ExportFormatId}. */
+  id: ExportFormatId
+  /** Human-readable, technical format label (not localized). */
   name: string
   /** Short one-line subtitle shown under the name in the compact export picker. */
   description?: string
