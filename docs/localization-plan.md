@@ -372,9 +372,11 @@ Do not combine all extraction and German translation into one unreviewable chang
   (`feat/localization`, off `dev`.)
 - [x] Record the current successful `type-check`, unit-test, lint, build, and E2E baselines,
   including any pre-existing failures. Baseline (2026-09-09): `type-check`, `lint`, `build` pass;
-  `test:unit` has **one pre-existing failure** — `src/modules/common/theme/useTheme.test.ts`
-  ("defaults to the system theme…") fails with `localStorage` undefined when run in isolation,
-  unrelated to localization. E2E not yet re-run.
+  `test:unit` had **one pre-existing failure** — `src/modules/common/theme/useTheme.test.ts`
+  ("defaults to the system theme…") failed with `localStorage` undefined: on current Node + jsdom
+  neither provides a working Web Storage in tests. Fixed by a shared in-memory storage shim
+  (`src/app/setup-storage.ts`, wired via Vitest `setupFiles`); `test:unit` is now 82/82. E2E not
+  yet re-run.
 - [ ] Generate a working inventory of visible strings grouped by feature and mark each as:
   translatable UI, translatable domain content, stable technical term, user data, or developer-only.
 - [ ] Confirm the German terminology owner/reviewer for formal argumentation vocabulary.
