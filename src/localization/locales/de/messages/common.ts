@@ -22,6 +22,10 @@ export default {
     close: 'Schließen',
     cancel: 'Abbrechen',
     reset: 'Zurücksetzen',
+    delete: 'Löschen',
+    dismiss: 'Verwerfen',
+    create: 'Erstellen',
+    rename: 'Umbenennen',
   },
   states: {
     on: 'An',

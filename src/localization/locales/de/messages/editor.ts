@@ -20,9 +20,9 @@ export default {
   toolbar: {
     fitToView: 'An Ansicht anpassen',
     evaluate: 'Auswerten',
-    backToFrameworks: 'Zurück zu den Frameworks',
-    extensionSemantics: 'Extensionssemantik',
-    rankingSemantics: 'Ranking-Semantik',
-    serialisationSequences: 'Serialisierungssequenzen',
+    backToFrameworks: 'Zurück zu den Argumentationsgraphen',
+    extensionSemantics: 'Extensionsbasierte Semantiken',
+    rankingSemantics: 'Rangsemantiken',
+    serialisationSequences: 'Serialisierung',
   },
 }

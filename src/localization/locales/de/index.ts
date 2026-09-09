@@ -18,15 +18,19 @@
  */
 import common from '@/localization/locales/de/messages/common'
 import editor from '@/localization/locales/de/messages/editor'
+import home from '@/localization/locales/de/messages/home'
 import menu from '@/localization/locales/de/messages/menu'
 import settings from '@/localization/locales/de/messages/settings'
+import share from '@/localization/locales/de/messages/share'
 import type { LocaleMessageSchema } from '@/localization/types'
 
 const messages: LocaleMessageSchema = {
   common,
   editor,
+  home,
   menu,
   settings,
+  share,
 }
 
 export default messages

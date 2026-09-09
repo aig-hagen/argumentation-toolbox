@@ -21,6 +21,7 @@ import { CheckIcon, LinkIcon, PlusIcon, TrashIcon, XMarkIcon } from '@heroicons/
 import type { IDBPDatabase } from 'idb'
 import type { Objectish } from 'immer'
 import { nextTick, useAttrs, useTemplateRef } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import EditorTab from '@/app/home/EditorTab.vue'
 import type { ModuleConfig } from '@/app/home/moduleConfig'
@@ -28,6 +29,7 @@ import type { DocumentsDB } from '@/modules/common/documents/db'
 
 defineOptions({ inheritAttrs: false })
 const attrs = useAttrs()
+const { t } = useI18n({ useScope: 'global' })
 
 defineProps<{
   data: readonly { readonly name: string; readonly id: number }[]
@@ -76,7 +78,11 @@ function openClearAllModal() {
         @save="emit('save', datum.id)"
       />
       <div v-if="showCreate" role="tab" class="tab">
-        <button class="btn btn-square btn-xs btn-ghost" @click="emit('create')" title="Create">
+        <button
+          class="btn btn-square btn-xs btn-ghost"
+          @click="emit('create')"
+          :title="t('home.tabs.create')"
+        >
           <PlusIcon class="size-4" />
         </button>
       </div>
@@ -89,7 +95,7 @@ function openClearAllModal() {
         class="btn btn-square btn-xs btn-ghost"
         :disabled="sharing"
         @click="emit('quickShare')"
-        title="Copy share link"
+        :title="t('home.tabs.copyShareLink')"
       >
         <span v-if="sharing" class="loading loading-spinner loading-xs" />
         <CheckIcon v-else-if="shareCopied" class="size-4 text-success" />
@@ -98,7 +104,7 @@ function openClearAllModal() {
       <button
         class="btn btn-square btn-xs btn-ghost text-error"
         @click="openClearAllModal"
-        title="Delete all"
+        :title="t('home.documents.deleteAll')"
       >
         <TrashIcon class="size-4" />
       </button>
@@ -107,15 +113,22 @@ function openClearAllModal() {
   <dialog class="modal" ref="clearAllModal">
     <div class="modal-box">
       <form method="dialog">
-        <button class="btn btn-sm btn-square btn-ghost absolute right-2 top-2" aria-label="Close">
+        <button
+          class="btn btn-sm btn-square btn-ghost absolute right-2 top-2"
+          :aria-label="t('common.actions.close')"
+        >
           <XMarkIcon class="size-4" />
         </button>
       </form>
-      <h3 class="text-lg font-bold">Delete all frameworks</h3>
+      <h3 class="text-lg font-bold">{{ t('home.documents.deleteAllFrameworks') }}</h3>
       <p class="py-4">
-        All unsaved data will be <span class="font-bold">permanently deleted</span>.
+        <i18n-t keypath="home.deleteDialog.warning" tag="span">
+          <template #highlight>
+            <span class="font-bold">{{ t('home.deleteDialog.warningHighlight') }}</span>
+          </template>
+        </i18n-t>
         <br />
-        Save your data before closing if you want to keep it.
+        {{ t('home.deleteDialog.warningHint') }}
       </p>
       <div class="modal-action">
         <button
@@ -128,12 +141,12 @@ function openClearAllModal() {
             }
           "
         >
-          <TrashIcon class="size-4" />Delete all
+          <TrashIcon class="size-4" />{{ t('home.documents.deleteAll') }}
         </button>
       </div>
     </div>
     <form method="dialog" class="modal-backdrop">
-      <button>Dismiss</button>
+      <button>{{ t('common.actions.dismiss') }}</button>
     </form>
   </dialog>
 </template>

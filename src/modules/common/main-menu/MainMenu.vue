@@ -116,10 +116,14 @@ const hasDirectedLayouts = computed(() => Object.keys(directedLayoutDatasToShow.
     </div>
     <ul tabindex="-1" class="dropdown-content w-max menu bg-base-100 rounded-box z-1 shadow-md/30">
       <li>
-        <a @click="emit('new')"><DocumentPlusIcon class="size-5 menu-icon" />{{ t('menu.new') }}</a>
+        <a @click="emit('new')"
+          ><DocumentPlusIcon class="size-5 menu-icon" />{{ t('menu.newFramework') }}</a
+        >
       </li>
       <li>
-        <a @click="emit('load')"><FolderOpenIcon class="size-5 menu-icon" />{{ t('menu.open') }}</a>
+        <a @click="emit('load')"
+          ><FolderOpenIcon class="size-5 menu-icon" />{{ t('menu.openFile') }}</a
+        >
       </li>
       <li v-if="showSave !== EntryState.HIDE">
         <a
@@ -127,12 +131,12 @@ const hasDirectedLayouts = computed(() => Object.keys(directedLayoutDatasToShow.
             'opacity-50 pointer-events-none': showSave === EntryState.DISABLE,
           }"
           @click="emit('save')"
-          ><ArrowDownTrayIcon class="size-5 menu-icon" />{{ t('menu.save') }}</a
+          ><ArrowDownTrayIcon class="size-5 menu-icon" />{{ t('menu.saveToDevice') }}</a
         >
       </li>
       <li>
         <a @click="emit('generate')"
-          ><Squares2X2Icon class="size-5 menu-icon" />{{ t('menu.generate') }}</a
+          ><Squares2X2Icon class="size-5 menu-icon" />{{ t('menu.generateRandom') }}</a
         >
       </li>
       <template v-if="showUndo !== EntryState.HIDE || showRedo !== EntryState.HIDE">

@@ -16,18 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import common from '@/localization/locales/en/messages/common'
-import editor from '@/localization/locales/en/messages/editor'
-import home from '@/localization/locales/en/messages/home'
-import menu from '@/localization/locales/en/messages/menu'
-import settings from '@/localization/locales/en/messages/settings'
-import share from '@/localization/locales/en/messages/share'
-
 export default {
-  common,
-  editor,
-  home,
-  menu,
-  settings,
-  share,
+  title: 'Share Link',
+  description: 'Anyone with this link can import a copy of this framework into their browser.',
+  copyLink: 'Copy link',
+  copied: 'Copied!',
 }
