@@ -20,6 +20,7 @@
 import type { AnnotationPosition } from '@aig-hagen/graph-component/lib'
 import { VariableIcon } from '@heroicons/vue/24/outline'
 import { computed, inject, provide, ref, shallowRef, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import { DOCUMENTS_DB_INJECTION_KEY } from '@/modules/common/documents/db'
 import { useDocumentUIState } from '@/modules/common/documents/uiState'
@@ -121,11 +122,13 @@ function transformToEditorState(
   return { stateId: state.stateId, nodes, links, redraw }
 }
 
-const linkConfig = {
+const { t } = useI18n({ useScope: 'global' })
+
+const linkConfig = computed(() => ({
   SINGLE: {
-    displayName: 'Link',
+    displayName: t('editor.links.link'),
   },
-}
+}))
 
 function createNewState(
   recipe: (draft: DialecticalArgumentation<AdfArgumentData>) => void,

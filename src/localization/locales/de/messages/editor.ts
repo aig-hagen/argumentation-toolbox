@@ -31,6 +31,14 @@ export default {
     switchTo: 'Zu {type} wechseln',
     linkFallback: 'Typ',
   },
+  links: {
+    attack: 'Angriff',
+    support: 'Unterstützung',
+    definiteAttack: 'Bedingt sicherer Angriff',
+    uncertainAttack: 'Unsicherer Angriff',
+    collectiveAttack: 'Mengenangriff',
+    link: 'Kante',
+  },
   relayout: {
     other: 'Andere',
     // Layout names are kept in English in German too (established graph-drawing terms).

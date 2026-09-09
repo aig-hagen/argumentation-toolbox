@@ -18,6 +18,7 @@
 -->
 <script setup lang="ts">
 import { computed, inject, provide, ref, shallowRef, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import { abstractArgumentationGlossary } from '@/modules/abstract-argumentation/glossary'
 import {
@@ -112,9 +113,11 @@ function transformToEditorState(state: DocumentState<SetAF<SetAfArgumentData>>, 
   return { stateId: state.stateId, nodes, links, hyperLinks, redraw }
 }
 
-const linkConfig = {
-  SINGLE: { displayName: 'Collective Attack' },
-}
+const { t } = useI18n({ useScope: 'global' })
+
+const linkConfig = computed(() => ({
+  SINGLE: { displayName: t('editor.links.collectiveAttack') },
+}))
 
 function createNewState(recipe: (draft: SetAF<SetAfArgumentData>) => void) {
   const nextState = modifyDocument(renderedState.value, recipe)

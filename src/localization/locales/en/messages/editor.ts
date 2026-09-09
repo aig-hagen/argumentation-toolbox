@@ -31,6 +31,14 @@ export default {
     switchTo: 'Switch to {type}',
     linkFallback: 'type',
   },
+  links: {
+    attack: 'Attack',
+    support: 'Support',
+    definiteAttack: 'Definite Attack',
+    uncertainAttack: 'Uncertain Attack',
+    collectiveAttack: 'Collective Attack',
+    link: 'Link',
+  },
   relayout: {
     other: 'Other',
     layouts: {

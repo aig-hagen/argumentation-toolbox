@@ -18,6 +18,7 @@
 -->
 <script setup lang="ts">
 import { computed, inject, provide, ref, shallowRef, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import { abstractArgumentationGlossary } from '@/modules/abstract-argumentation/glossary'
 import {
@@ -128,14 +129,16 @@ function transformToEditorState(
   }
 }
 
-const linkConfig = {
+const { t } = useI18n({ useScope: 'global' })
+
+const linkConfig = computed(() => ({
   SINGLE: {
-    displayName: 'Attack',
+    displayName: t('editor.links.attack'),
   },
   DOUBLE: {
-    displayName: 'Support',
+    displayName: t('editor.links.support'),
   },
-}
+}))
 
 function createNewState(recipe: (draft: BipoloarArgumentation<ArgumentData>) => void) {
   if (renderedState.value === undefined) {
