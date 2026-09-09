@@ -18,6 +18,7 @@
  */
 import common from '@/localization/locales/de/messages/common'
 import editor from '@/localization/locales/de/messages/editor'
+import help from '@/localization/locales/de/messages/help'
 import home from '@/localization/locales/de/messages/home'
 import menu from '@/localization/locales/de/messages/menu'
 import settings from '@/localization/locales/de/messages/settings'
@@ -27,6 +28,7 @@ import type { LocaleMessageSchema } from '@/localization/types'
 const messages: LocaleMessageSchema = {
   common,
   editor,
+  help,
   home,
   menu,
   settings,

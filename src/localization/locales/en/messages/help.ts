@@ -16,20 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import common from '@/localization/locales/en/messages/common'
-import editor from '@/localization/locales/en/messages/editor'
-import help from '@/localization/locales/en/messages/help'
-import home from '@/localization/locales/en/messages/home'
-import menu from '@/localization/locales/en/messages/menu'
-import settings from '@/localization/locales/en/messages/settings'
-import share from '@/localization/locales/en/messages/share'
-
 export default {
-  common,
-  editor,
-  help,
-  home,
-  menu,
-  settings,
-  share,
+  howToEdit: 'How to edit',
+  links: {
+    source: 'Source {tree}',
+    thirdParty: 'Third-Party',
+    privacy: 'Privacy Policy and Imprint',
+  },
 }

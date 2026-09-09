@@ -19,8 +19,11 @@
 <script setup lang="ts">
 import { ArrowUpRightIcon, ShieldCheckIcon, UserGroupIcon } from '@heroicons/vue/24/outline'
 import { type Component, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import GithubMarkIcon from '@/modules/common/help/GithubMarkIcon.vue'
+
+const { t } = useI18n({ useScope: 'global' })
 
 const { legalOnly = false } = defineProps<{ legalOnly?: boolean }>()
 
@@ -29,15 +32,15 @@ const sourceLink = `https://github.com/aig-hagen/AgonProject/tree/${sourceTree}`
 
 type Link = { label: string; href: string; img?: string; icon?: Component; legal?: boolean }
 
-const links: Link[] = [
+const links = computed<Link[]>(() => [
   { label: 'AIG Hagen', href: 'https://www.fernuni-hagen.de/aig/en/', img: '/favicon-32x32.png' },
   { label: 'TweetyProject', href: 'https://tweetyproject.org', img: '/tweety-logo.png' },
-  { label: `Source ${sourceTree}`, href: sourceLink, icon: GithubMarkIcon },
-  { label: 'Third-Party', href: '/third-party', icon: UserGroupIcon, legal: true },
-  { label: 'Privacy Policy and Imprint', href: '/privacy', icon: ShieldCheckIcon, legal: true },
-]
+  { label: t('help.links.source', { tree: sourceTree }), href: sourceLink, icon: GithubMarkIcon },
+  { label: t('help.links.thirdParty'), href: '/third-party', icon: UserGroupIcon, legal: true },
+  { label: t('help.links.privacy'), href: '/privacy', icon: ShieldCheckIcon, legal: true },
+])
 
-const shownLinks = computed(() => (legalOnly ? links.filter((l) => l.legal) : links))
+const shownLinks = computed(() => (legalOnly ? links.value.filter((l) => l.legal) : links.value))
 </script>
 <template>
   <div class="my-4">

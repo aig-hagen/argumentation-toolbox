@@ -17,11 +17,15 @@
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 -->
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+
 import HelpControls from '@/modules/common/help/HelpControls.vue'
 import HelpGestures from '@/modules/common/help/HelpGestures.vue'
 import HelpLinks from '@/modules/common/help/HelpLinks.vue'
 import { useLayoutMode } from '@/modules/common/layout/useLayoutMode'
 import WindowShell from '@/modules/common/window/WindowShell.vue'
+
+const { t } = useI18n({ useScope: 'global' })
 
 const props = defineProps<{
   linkNames: string[]
@@ -37,7 +41,7 @@ const { layoutMode } = useLayoutMode()
 <template>
   <WindowShell
     v-model:open="open"
-    :title="layoutMode === 'compact' ? 'How to edit' : 'Help'"
+    :title="layoutMode === 'compact' ? t('help.howToEdit') : t('menu.help')"
     :initial-position="{ x: 256, y: 256 }"
     :intitalSize="{ width: 576, height: 448 }"
   >
