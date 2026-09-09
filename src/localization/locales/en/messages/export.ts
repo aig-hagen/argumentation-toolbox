@@ -16,22 +16,45 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import common from '@/localization/locales/en/messages/common'
-import editor from '@/localization/locales/en/messages/editor'
-import exportMessages from '@/localization/locales/en/messages/export'
-import help from '@/localization/locales/en/messages/help'
-import home from '@/localization/locales/en/messages/home'
-import menu from '@/localization/locales/en/messages/menu'
-import settings from '@/localization/locales/en/messages/settings'
-import share from '@/localization/locales/en/messages/share'
-
 export default {
-  common,
-  editor,
-  export: exportMessages,
-  help,
-  home,
-  menu,
-  settings,
-  share,
+  format: 'Format',
+  svgImage: 'SVG (image)',
+  sections: {
+    image: 'Image',
+    text: 'Text',
+  },
+  svg: {
+    title: 'SVG image',
+    description: 'Snapshot of the current graph',
+  },
+  latexFallbackDescription: 'Copy code & \\usepackage line',
+  fileFallbackDescription: '.{ext} file',
+  formats: 'Formats',
+  noGraph: 'No graph to export.',
+  renderingSvg: 'Rendering SVG',
+  style: {
+    parameters: 'Style Parameters',
+    options: 'Style options',
+    argumentStyle: 'Argument Style',
+    nameStyle: 'Name Style',
+    attackStyle: 'Attack Style',
+    supportStyle: 'Support Style',
+    argument: 'Argument',
+    name: 'Name',
+    attack: 'Attack',
+    support: 'Support',
+    nodeDistance: 'Node Distance',
+  },
+  formatLabels: {
+    text: 'text',
+    code: 'code',
+  },
+  button: {
+    save: 'Save {label}',
+    saveBare: 'Save',
+    saved: 'Saved',
+    copy: 'Copy {label}',
+    copyBare: 'Copy',
+    copied: 'Copied',
+  },
 }

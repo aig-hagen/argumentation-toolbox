@@ -18,9 +18,14 @@
 -->
 <script setup lang="ts">
 import { ArrowDownTrayIcon } from '@heroicons/vue/24/outline'
-import { ref } from 'vue'
+import { computed, ref, useSlots } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import type { ExportFileData } from '.'
+
+const { t } = useI18n({ useScope: 'global' })
+const slots = useSlots()
+const hasLabel = computed(() => slots.default !== undefined)
 
 const { filedata } = defineProps<{
   filedata?: ExportFileData
@@ -51,10 +56,14 @@ async function saveFile() {
 <template>
   <button @click="saveFile" :disabled="filedata === undefined">
     <template v-if="showSaved">
-      <ArrowDownTrayIcon class="size-4"></ArrowDownTrayIcon>Saved
+      <ArrowDownTrayIcon class="size-4"></ArrowDownTrayIcon>{{ t('export.button.saved') }}
     </template>
     <template v-else>
-      <ArrowDownTrayIcon class="size-4"></ArrowDownTrayIcon>Save <slot></slot>
+      <ArrowDownTrayIcon class="size-4"></ArrowDownTrayIcon>
+      <i18n-t v-if="hasLabel" keypath="export.button.save" tag="span" scope="global">
+        <template #label><slot></slot></template>
+      </i18n-t>
+      <span v-else>{{ t('export.button.saveBare') }}</span>
     </template>
   </button>
 </template>

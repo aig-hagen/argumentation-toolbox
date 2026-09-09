@@ -28,6 +28,7 @@ import { computedAsync } from '@vueuse/core'
 import { basicSetup } from 'codemirror'
 import copy from 'copy-to-clipboard'
 import { computed, inject, ref, shallowRef, useTemplateRef, watch, watchEffect } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import ButtonCopy from '@/modules/common/export/ButtonCopy.vue'
 import ButtonSave from '@/modules/common/export/ButtonSave.vue'
@@ -38,6 +39,8 @@ import { useSettings } from '@/modules/common/settings/useSettings'
 import WindowShell from '@/modules/common/window/WindowShell.vue'
 
 import type { ExportConfig, ExportFileData } from '.'
+
+const { t } = useI18n({ useScope: 'global' })
 
 const open = defineModel<boolean>('open', { required: true })
 const { input, exportConfigs } = defineProps<{
@@ -236,7 +239,7 @@ watchEffect(() => {
 <template>
   <WindowShell
     v-model:open="open"
-    title="Export"
+    :title="t('menu.export')"
     :initial-position="{ x: 64, y: 128 }"
     :intitalSize="{ width: 700, height: 480 }"
   >
@@ -251,7 +254,7 @@ watchEffect(() => {
       <fieldset class="fieldset">
         <div class="flex gap-2 flex-wrap">
           <label class="select select-sm w-66">
-            <span class="label">Format</span>
+            <span class="label">{{ t('export.format') }}</span>
             <select v-model="selectedFormatKey">
               <option
                 v-for="exportConfig in exportConfigs"
@@ -260,7 +263,9 @@ watchEffect(() => {
               >
                 {{ exportConfig.name }}
               </option>
-              <option v-if="graphSvgRenderer" :value="WYSIWYG_SVG_KEY">SVG (image)</option>
+              <option v-if="graphSvgRenderer" :value="WYSIWYG_SVG_KEY">
+                {{ t('export.svgImage') }}
+              </option>
             </select>
           </label>
           <a
@@ -277,11 +282,13 @@ watchEffect(() => {
       </fieldset>
       <fieldset v-if="selectedExportConfig?.name === 'LaTeX (argumentation)'" class="fieldset">
         <details class="collapse collapse-arrow">
-          <summary class="collapse-title fieldset-legend ps-0 max-w-max">Style Parameters</summary>
+          <summary class="collapse-title fieldset-legend ps-0 max-w-max">
+            {{ t('export.style.parameters') }}
+          </summary>
           <div class="collapse-content px-4 pb-4 pt-2">
             <div class="flex gap-2 flex-wrap">
               <label class="select select-sm w-66">
-                <span class="label">Argument Style</span>
+                <span class="label">{{ t('export.style.argumentStyle') }}</span>
                 <select v-model="selectedArgumentStyle">
                   <option value="standard">standard</option>
                   <option value="large">large</option>
@@ -291,7 +298,7 @@ watchEffect(() => {
                 </select>
               </label>
               <label class="select select-sm w-66">
-                <span class="label">Name Style</span>
+                <span class="label">{{ t('export.style.nameStyle') }}</span>
                 <select v-model="selectedNameStyle">
                   <option value="math">math</option>
                   <option value="bold">bold</option>
@@ -301,7 +308,7 @@ watchEffect(() => {
                 </select>
               </label>
               <label class="select select-sm w-66">
-                <span class="label">Attack Style</span>
+                <span class="label">{{ t('export.style.attackStyle') }}</span>
                 <select v-model="selectedAttackStyle">
                   <option value="standard">standard</option>
                   <option value="large">large</option>
@@ -309,7 +316,7 @@ watchEffect(() => {
                 </select>
               </label>
               <label v-if="isBipolarDocument" class="select select-sm w-66">
-                <span class="label">Support Style</span>
+                <span class="label">{{ t('export.style.supportStyle') }}</span>
                 <select v-model="selectedSupportStyle">
                   <option value="standard">standard</option>
                   <option value="dashed">dashed</option>
@@ -319,7 +326,7 @@ watchEffect(() => {
             </div>
             <div class="mt-4 flex flex-wrap gap-4 items-center">
               <label class="label gap-2">
-                <span>Node Distance</span>
+                <span>{{ t('export.style.nodeDistance') }}</span>
                 <input
                   type="range"
                   class="range range-sm w-28"
@@ -369,7 +376,7 @@ watchEffect(() => {
           class="wysiwyg-svg-preview w-fit max-w-full overflow-auto rounded border border-base-300 p-1"
         ></div>
         <div v-else role="alert" class="alert alert-warning alert-soft">
-          <span>No graph to export.</span>
+          <span>{{ t('export.noGraph') }}</span>
         </div>
       </div>
       <div v-else class="flex gap-2 flex-wrap">
@@ -381,10 +388,10 @@ watchEffect(() => {
                 :filedata="saveFiledataText"
                 @export="emit('export', $event)"
               >
-                text
+                {{ t('export.formatLabels.text') }}
               </ButtonSave>
               <ButtonCopy class="btn btn-sm btn-soft w-28 justify-start" :text="exportResult?.text">
-                text
+                {{ t('export.formatLabels.text') }}
               </ButtonCopy>
             </div>
             <div class="min-w-58 bg-base-100 rounded" ref="soureView"></div>
@@ -406,7 +413,7 @@ watchEffect(() => {
             </div>
             <div>
               <div v-if="svgText === undefined" role="alert" class="alert alert-info alert-soft">
-                <span>Rendering SVG</span>
+                <span>{{ t('export.renderingSvg') }}</span>
               </div>
               <div v-else v-html="svgText" class="w-fit bg-base-100 rounded p-1"></div>
             </div>

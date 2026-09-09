@@ -19,9 +19,14 @@
 <script setup lang="ts">
 import { ClipboardDocumentCheckIcon, ClipboardDocumentIcon } from '@heroicons/vue/24/outline'
 import copy from 'copy-to-clipboard'
-import { ref } from 'vue'
+import { computed, ref, useSlots } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import TexIcon from '@/modules/common/export/TexIcon.vue'
+
+const { t } = useI18n({ useScope: 'global' })
+const slots = useSlots()
+const hasLabel = computed(() => slots.default !== undefined)
 
 const {
   text,
@@ -64,12 +69,17 @@ async function copyToClipboard() {
   <button @click="copyToClipboard" :disabled="text === undefined" :title="title">
     <template v-if="showCopied">
       <ClipboardDocumentCheckIcon class="size-4"></ClipboardDocumentCheckIcon>
-      <template v-if="!iconOnly">Copied</template>
+      <template v-if="!iconOnly">{{ t('export.button.copied') }}</template>
     </template>
     <template v-else>
       <TexIcon v-if="tex" class="size-4"></TexIcon>
       <ClipboardDocumentIcon v-else class="size-4"></ClipboardDocumentIcon>
-      <template v-if="!iconOnly">Copy <slot></slot></template>
+      <template v-if="!iconOnly">
+        <i18n-t v-if="hasLabel" keypath="export.button.copy" tag="span" scope="global">
+          <template #label><slot></slot></template>
+        </i18n-t>
+        <span v-else>{{ t('export.button.copyBare') }}</span>
+      </template>
     </template>
   </button>
 </template>
