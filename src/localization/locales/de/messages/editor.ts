@@ -33,5 +33,16 @@ export default {
   },
   relayout: {
     other: 'Andere',
+    // Layout names are kept in English in German too (established graph-drawing terms).
+    layouts: {
+      TopToBottom: 'Top to bottom',
+      BottomToTop: 'Bottom to top',
+      LeftToRight: 'Left to right',
+      RightToLeft: 'Right to left',
+      ForceDirected: 'Force-directed',
+      Neato: 'Spring model',
+      Circular: 'Circular',
+      Radial: 'Radial',
+    },
   },
 }

@@ -122,7 +122,7 @@ import HelpControls from '@/modules/common/help/HelpControls.vue'
 import WindowHelp from '@/modules/common/help/WindowHelp.vue'
 import { IdGenerator, IdMapping } from '@/modules/common/ids'
 import { useLayoutMode } from '@/modules/common/layout/useLayoutMode'
-import { Layout, layoutDatas } from '@/modules/common/main-menu/layouting'
+import { Layout, layoutDatas, layoutLabelKey } from '@/modules/common/main-menu/layouting'
 import MainMenu from '@/modules/common/main-menu/MainMenu.vue'
 import { EntryState, type GridVisibility } from '@/modules/common/main-menu/types'
 import { getNextName } from '@/modules/common/nextName'
@@ -1741,14 +1741,16 @@ const relayoutGroups = computed(() => [
     label: t('menu.directed'),
     options: GRAPH_EDITOR_LAYOUTS.slice(0, 4).map((layout) => ({
       layout,
-      ...layoutDatas[layout],
+      label: t(layoutLabelKey(layout)),
+      icon: layoutDatas[layout].icon,
     })),
   },
   {
     label: t('editor.relayout.other'),
     options: GRAPH_EDITOR_LAYOUTS.slice(4).map((layout) => ({
       layout,
-      ...layoutDatas[layout],
+      label: t(layoutLabelKey(layout)),
+      icon: layoutDatas[layout].icon,
     })),
   },
 ])
@@ -2179,7 +2181,7 @@ defineExpose({
                 >
                   <component :is="option.icon" class="size-5" />
                 </span>
-                {{ option.name }}
+                {{ option.label }}
               </button>
             </div>
           </section>

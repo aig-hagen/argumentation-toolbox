@@ -33,5 +33,15 @@ export default {
   },
   relayout: {
     other: 'Other',
+    layouts: {
+      TopToBottom: 'Top to bottom',
+      BottomToTop: 'Bottom to top',
+      LeftToRight: 'Left to right',
+      RightToLeft: 'Right to left',
+      ForceDirected: 'Force-directed',
+      Neato: 'Spring model',
+      Circular: 'Circular',
+      Radial: 'Radial',
+    },
   },
 }

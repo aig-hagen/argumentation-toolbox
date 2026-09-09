@@ -39,7 +39,12 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { RouterLink } from 'vue-router'
 
-import { Layout, type LayoutData, layoutDatas } from '@/modules/common/main-menu/layouting'
+import {
+  Layout,
+  type LayoutData,
+  layoutDatas,
+  layoutLabelKey,
+} from '@/modules/common/main-menu/layouting'
 import { EntryState } from '@/modules/common/main-menu/types'
 import { REDO_SHORTCUT, UNDO_SHORTCUT } from '@/modules/common/shortcuts'
 
@@ -219,7 +224,7 @@ const hasDirectedLayouts = computed(() => Object.keys(directedLayoutDatasToShow.
                         >
                           <a @click="onClickLayout(layoutType)"
                             ><component :is="layoutData.icon" class="size-5 menu-icon" />{{
-                              layoutData.name
+                              t(layoutLabelKey(layoutType))
                             }}</a
                           >
                         </li>
@@ -230,7 +235,7 @@ const hasDirectedLayouts = computed(() => Object.keys(directedLayoutDatasToShow.
                 <li v-for="(layoutData, layoutType) in otherLayoutDatasToShow" :key="layoutType">
                   <a @click="onClickLayout(layoutType)"
                     ><component :is="layoutData.icon" class="size-5 menu-icon" />{{
-                      layoutData.name
+                      t(layoutLabelKey(layoutType))
                     }}</a
                   >
                 </li>
