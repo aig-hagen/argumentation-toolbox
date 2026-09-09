@@ -457,9 +457,10 @@ Phase 9.
 
 ### Phase 3 — Stable metadata contracts
 
-- [~] Add stable IDs to `ModuleConfig`, `Tag`, `ExportConfig`, and `Example` where missing.
-  (`ModuleConfig.id`, `Tag`→`TagId`, and `ExportConfig.id`→`ExportFormatId` done; `Example`
-  pending in a later batch.)
+- [x] Add stable IDs to `ModuleConfig`, `Tag`, `ExportConfig`, and `Example` where missing.
+  (`ModuleConfig.id`, `Tag`→`TagId`, and `ExportConfig.id`→`ExportFormatId` done. `Example`
+  needs no stable ID: by decision the example names/descriptions stay untranslated, so nothing
+  localizes them.)
 - [x] Replace module display fields with reactive localized module-card view models.
   (`useModuleCards` builds localized `ModuleCard`s from `markRaw`'d configs; `modules` namespace.)
 - [x] Migrate module card filtering/search to stable tag IDs and localized display text.
@@ -476,7 +477,9 @@ Phase 9.
   (`ExportFormatId` (`iccma`/`tgf`/`latex`) added to `ExportConfig`; all format-selection state,
   lookups, and the `=== 'LaTeX (argumentation)'` checks now use `id`. Display names are technical
   format names and stay untranslated by decision — no message keys added.)
-- [ ] Localize example picker names/descriptions without changing loaded graph data.
+- [x] Localize example picker names/descriptions without changing loaded graph data.
+  (**By decision, not localized** — example names, descriptions, and the resulting document
+  names stay canonical/untranslated, same rationale as the technical export-format names.)
 - [~] Remove deprecated English display fields after all consumers migrate.
   (`displayNameSingular`/`description` removed from `ModuleConfig`; other contracts follow.)
 - [~] Add tests showing that switching locale updates already-mounted module cards, menus, relation
@@ -484,8 +487,10 @@ Phase 9.
   cards; the rest follow with their batches.)
 
 Deliverable: application/domain configuration is presentation-neutral, and live switching works
-without remounting editors or rewriting documents. **Batch 1 (modules & tags) done.** Remaining:
-layouts, link relation names, semantics, export IDs, examples.
+without remounting editors or rewriting documents. **Done** (modules & tags, layouts, link
+relation names, export IDs). Semantics labels are **deferred** (notation/label split needed
+first); example names/descriptions and export-format names stay **untranslated by decision** —
+these are technical/canonical and never localized.
 
 ### Phase 4 — Route pages and module-specific UI
 
