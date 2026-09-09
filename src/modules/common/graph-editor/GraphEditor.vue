@@ -251,12 +251,17 @@ const selectionActions = computed<SelectionAction[]>(() => {
       const inSet = hyperLinkSources.value.includes(sel.id as number)
       actions.push({
         key: 'attack-source',
-        label: inSet ? 'Remove from attack' : 'Add to attack',
+        label: inSet ? t('editor.selection.removeFromAttack') : t('editor.selection.addToAttack'),
         icon: inSet ? MinusCircleIcon : PlusCircleIcon,
         run: () => graphComponentRef.value?.toggleHyperLinkSource(sel.id as number),
       })
     }
-    actions.push({ key: 'rename', label: 'Rename', icon: PencilSquareIcon, run: onSelectionRename })
+    actions.push({
+      key: 'rename',
+      label: t('common.actions.rename'),
+      icon: PencilSquareIcon,
+      run: onSelectionRename,
+    })
     if (nodeSelectionActions && idMapping.has(sel.id as number)) {
       actions.push(...nodeSelectionActions(idMapping.getOrFail(sel.id as number)))
     }
@@ -266,10 +271,10 @@ const selectionActions = computed<SelectionAction[]>(() => {
     if (enableLinkSwitching && keys.length > 0) {
       const current = currentLinkType(internalId)
       const next = keys[((current ? keys.indexOf(current) : -1) + 1) % keys.length]!
-      const nextName = linkConfigs[next]?.displayName ?? 'type'
+      const nextName = linkConfigs[next]?.displayName ?? t('editor.selection.linkFallback')
       actions.push({
         key: 'switch-type',
-        label: `Switch to ${nextName}`,
+        label: t('editor.selection.switchTo', { type: nextName }),
         icon: ArrowsRightLeftIcon,
         // In-place switcher: stay open so the user can cycle types across taps.
         keepOpen: true,
@@ -284,7 +289,7 @@ const selectionActions = computed<SelectionAction[]>(() => {
   }
   actions.push({
     key: 'delete',
-    label: 'Delete',
+    label: t('common.actions.delete'),
     icon: TrashIcon,
     danger: true,
     run: onSelectionDelete,
@@ -1731,22 +1736,22 @@ const mobileTutorialRefs = computed<Record<string, HTMLElement | null>>(() => ({
 }))
 // Split the layouts into the two mockup groups: directed (edge-following) vs. the
 // force/geometric engines. The first four entries are the directed ones.
-const relayoutGroups = [
+const relayoutGroups = computed(() => [
   {
-    label: 'Directed',
+    label: t('menu.directed'),
     options: GRAPH_EDITOR_LAYOUTS.slice(0, 4).map((layout) => ({
       layout,
       ...layoutDatas[layout],
     })),
   },
   {
-    label: 'Other',
+    label: t('editor.relayout.other'),
     options: GRAPH_EDITOR_LAYOUTS.slice(4).map((layout) => ({
       layout,
       ...layoutDatas[layout],
     })),
   },
-]
+])
 
 function relayoutTo(layout: Layout) {
   doLayout(layout)

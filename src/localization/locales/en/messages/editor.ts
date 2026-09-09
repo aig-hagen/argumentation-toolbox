@@ -25,4 +25,13 @@ export default {
     rankingSemantics: 'Ranking Semantics',
     serialisationSequences: 'Serialisation Sequences',
   },
+  selection: {
+    addToAttack: 'Add to attack',
+    removeFromAttack: 'Remove from attack',
+    switchTo: 'Switch to {type}',
+    linkFallback: 'type',
+  },
+  relayout: {
+    other: 'Other',
+  },
 }
