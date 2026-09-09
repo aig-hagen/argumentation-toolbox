@@ -18,6 +18,7 @@
 -->
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import {
   REDO_SHORTCUT,
@@ -25,6 +26,8 @@ import {
   TOGGLE_PHYSICS_SHORTCUT,
   UNDO_SHORTCUT,
 } from '@/modules/common/shortcuts'
+
+const { t } = useI18n({ useScope: 'global' })
 
 const props = defineProps<{
   linkNames: string[]
@@ -34,84 +37,146 @@ const props = defineProps<{
 const linkNamesSlashSeperated = computed(() => props.linkNames.join('/'))
 const linkNamesEnumeration = computed(
   () =>
-    props.linkNames.slice(0, -1).join(', ') + ' and ' + props.linkNames[props.linkNames.length - 1],
+    props.linkNames.slice(0, -1).join(', ') +
+    ` ${t('help.controls.listAnd')} ` +
+    props.linkNames[props.linkNames.length - 1],
 )
 </script>
 <template>
   <table class="table">
     <thead>
       <tr>
-        <th>Action</th>
-        <th>Control</th>
+        <th>{{ t('help.controls.action') }}</th>
+        <th>{{ t('help.controls.control') }}</th>
       </tr>
     </thead>
     <tbody>
       <tr>
         <td colspan="2" class="font-semibold pt-3 pb-1 opacity-60 text-xs uppercase tracking-wide">
-          Arguments &amp; Attacks
+          {{ t('help.controls.sections.argumentsAttacks') }}
         </td>
       </tr>
       <tr>
-        <td>Create argument</td>
-        <td><kbd class="kbd">Left double-click</kbd> on canvas</td>
+        <td>{{ t('help.controls.createArgument') }}</td>
+        <td>
+          <i18n-t keypath="help.controls.createArgumentControl" tag="span">
+            <template #key
+              ><kbd class="kbd">{{ t('help.keys.leftDoubleClick') }}</kbd></template
+            >
+          </i18n-t>
+        </td>
       </tr>
 
       <tr>
-        <td>Move argument</td>
-        <td><kbd class="kbd">Left-click</kbd> on argument, hold and drag</td>
+        <td>{{ t('help.controls.moveArgument') }}</td>
+        <td>
+          <i18n-t keypath="help.controls.moveArgumentControl" tag="span">
+            <template #key
+              ><kbd class="kbd">{{ t('help.keys.leftClick') }}</kbd></template
+            >
+          </i18n-t>
+        </td>
       </tr>
       <tr>
-        <td>Delete argument</td>
-        <td><kbd class="kbd">Right-click</kbd> on argument and hold</td>
+        <td>{{ t('help.controls.deleteArgument') }}</td>
+        <td>
+          <i18n-t keypath="help.controls.deleteArgumentControl" tag="span">
+            <template #key
+              ><kbd class="kbd">{{ t('help.keys.rightClick') }}</kbd></template
+            >
+          </i18n-t>
+        </td>
       </tr>
       <tr>
-        <td>Create {{ linkNamesSlashSeperated }}</td>
-        <td><kbd class="kbd">Right-click</kbd> on argument, hold and drag towards argument</td>
+        <td>{{ t('help.controls.createLink', { links: linkNamesSlashSeperated }) }}</td>
+        <td>
+          <i18n-t keypath="help.controls.createLinkControl" tag="span">
+            <template #key
+              ><kbd class="kbd">{{ t('help.keys.rightClick') }}</kbd></template
+            >
+          </i18n-t>
+        </td>
       </tr>
       <tr v-if="props.allowHyperLinkCreation">
-        <td>Create collective attack</td>
+        <td>{{ t('help.controls.createCollectiveAttack') }}</td>
         <td>
-          <kbd class="kbd">Shift</kbd>+<kbd class="kbd">Left-click</kbd> on 2 or more arguments to
-          select sources, then <kbd class="kbd">Right-click</kbd> on a selected source, hold and
-          drag towards the target argument
+          <i18n-t keypath="help.controls.createCollectiveAttackControl" tag="span">
+            <template #shift><kbd class="kbd">Shift</kbd></template>
+            <template #leftClick
+              ><kbd class="kbd">{{ t('help.keys.leftClick') }}</kbd></template
+            >
+            <template #rightClick
+              ><kbd class="kbd">{{ t('help.keys.rightClick') }}</kbd></template
+            >
+          </i18n-t>
         </td>
       </tr>
       <tr v-if="props.linkNames.length > 1">
-        <td>Switch between {{ linkNamesEnumeration }}</td>
+        <td>{{ t('help.controls.switchLink', { links: linkNamesEnumeration }) }}</td>
         <td>
-          <kbd class="kbd">Left-click</kbd> on {{ linkNamesSlashSeperated }} and select new type
+          <i18n-t keypath="help.controls.switchLinkControl" tag="span">
+            <template #key
+              ><kbd class="kbd">{{ t('help.keys.leftClick') }}</kbd></template
+            >
+            <template #links>{{ linkNamesSlashSeperated }}</template>
+          </i18n-t>
         </td>
       </tr>
       <tr>
-        <td>Delete {{ linkNamesSlashSeperated }}</td>
-        <td><kbd class="kbd">Right-click</kbd> on {{ linkNamesSlashSeperated }} and hold</td>
+        <td>{{ t('help.controls.deleteLink', { links: linkNamesSlashSeperated }) }}</td>
+        <td>
+          <i18n-t keypath="help.controls.deleteLinkControl" tag="span">
+            <template #key
+              ><kbd class="kbd">{{ t('help.keys.rightClick') }}</kbd></template
+            >
+            <template #links>{{ linkNamesSlashSeperated }}</template>
+          </i18n-t>
+        </td>
       </tr>
 
       <tr>
         <td colspan="2" class="font-semibold pt-3 pb-1 opacity-60 text-xs uppercase tracking-wide">
-          Navigation
+          {{ t('help.controls.sections.navigation') }}
         </td>
       </tr>
       <tr>
-        <td>Pan</td>
-        <td><kbd class="kbd">Left-click</kbd> on canvas, hold and drag</td>
+        <td>{{ t('help.controls.pan') }}</td>
+        <td>
+          <i18n-t keypath="help.controls.panControl" tag="span">
+            <template #key
+              ><kbd class="kbd">{{ t('help.keys.leftClick') }}</kbd></template
+            >
+          </i18n-t>
+        </td>
       </tr>
       <tr>
-        <td>Zoom in/out</td>
-        <td><kbd class="kbd">Scroll wheel</kbd> on canvas</td>
+        <td>{{ t('help.controls.zoom') }}</td>
+        <td>
+          <i18n-t keypath="help.controls.zoomControl" tag="span">
+            <template #key
+              ><kbd class="kbd">{{ t('help.keys.scrollWheel') }}</kbd></template
+            >
+          </i18n-t>
+        </td>
       </tr>
       <tr>
-        <td>Center view</td>
-        <td><kbd class="kbd">Middle-click</kbd> on canvas</td>
+        <td>{{ t('help.controls.centerView') }}</td>
+        <td>
+          <i18n-t keypath="help.controls.centerViewControl" tag="span">
+            <template #key
+              ><kbd class="kbd">{{ t('help.keys.middleClick') }}</kbd></template
+            >
+          </i18n-t>
+        </td>
       </tr>
 
       <tr>
         <td colspan="2" class="font-semibold pt-3 pb-1 opacity-60 text-xs uppercase tracking-wide">
-          General
+          {{ t('help.controls.sections.general') }}
         </td>
       </tr>
       <tr>
-        <td>Undo</td>
+        <td>{{ t('menu.undo') }}</td>
         <td>
           <div class="flex gap-1">
             <kbd class="kbd" v-if="UNDO_SHORTCUT.modifiers.ctrl">Ctrl</kbd>
@@ -122,7 +187,7 @@ const linkNamesEnumeration = computed(
         </td>
       </tr>
       <tr>
-        <td>Redo</td>
+        <td>{{ t('menu.redo') }}</td>
         <td>
           <div class="flex gap-1">
             <kbd class="kbd" v-if="REDO_SHORTCUT.modifiers.ctrl">Ctrl</kbd>
@@ -133,13 +198,13 @@ const linkNamesEnumeration = computed(
         </td>
       </tr>
       <tr>
-        <td>Toggle grid</td>
+        <td>{{ t('help.controls.toggleGrid') }}</td>
         <td>
           <kbd class="kbd">{{ TOGGLE_GRID_SHORTCUT.key.toUpperCase() }}</kbd>
         </td>
       </tr>
       <tr>
-        <td>Toggle physics</td>
+        <td>{{ t('help.controls.togglePhysics') }}</td>
         <td>
           <kbd class="kbd">{{ TOGGLE_PHYSICS_SHORTCUT.key.toUpperCase() }}</kbd>
         </td>

@@ -23,4 +23,87 @@ export default {
     thirdParty: 'Third-Party',
     privacy: 'Privacy Policy and Imprint',
   },
+  keys: {
+    leftClick: 'Left-click',
+    leftDoubleClick: 'Left double-click',
+    rightClick: 'Right-click',
+    middleClick: 'Middle-click',
+    scrollWheel: 'Scroll wheel',
+  },
+  controls: {
+    action: 'Action',
+    control: 'Control',
+    sections: {
+      argumentsAttacks: 'Arguments & Attacks',
+      navigation: 'Navigation',
+      general: 'General',
+    },
+    listAnd: 'and',
+    createArgument: 'Create argument',
+    moveArgument: 'Move argument',
+    deleteArgument: 'Delete argument',
+    createLink: 'Create {links}',
+    createCollectiveAttack: 'Create collective attack',
+    switchLink: 'Switch between {links}',
+    deleteLink: 'Delete {links}',
+    pan: 'Pan',
+    zoom: 'Zoom in/out',
+    centerView: 'Center view',
+    toggleGrid: 'Toggle grid',
+    togglePhysics: 'Toggle physics',
+    createArgumentControl: '{key} on canvas',
+    moveArgumentControl: '{key} on argument, hold and drag',
+    deleteArgumentControl: '{key} on argument and hold',
+    createLinkControl: '{key} on argument, hold and drag towards argument',
+    createCollectiveAttackControl:
+      '{shift}+{leftClick} on 2 or more arguments to select sources, then {rightClick} on a selected source, hold and drag towards the target argument',
+    switchLinkControl: '{key} on {links} and select new type',
+    deleteLinkControl: '{key} on {links} and hold',
+    panControl: '{key} on canvas, hold and drag',
+    zoomControl: '{key} on canvas',
+    centerViewControl: '{key} on canvas',
+  },
+  gestures: {
+    defaultTapAction: 'Rename it',
+    doubleTapCanvas: {
+      title: 'Double-tap the canvas',
+      desc: 'Add a new argument',
+    },
+    tapArgument: {
+      title: 'Tap an argument',
+      desc: 'Open its action bar — {action}, delete and more',
+    },
+    holdDrag: {
+      title: 'Hold + drag to another argument',
+      desc: 'Create a {links} between them',
+    },
+    addToAttack: {
+      title: 'Add to attack',
+      desc: 'Tap an argument and choose "Add to attack" — or long-press it — to build a source set, then hold + drag from a highlighted source to the target',
+    },
+    selector: {
+      title: 'Bottom-left selector',
+      desc: 'Pick which {links} you create next',
+    },
+    tapLink: {
+      title: 'Tap a {links}',
+      desc: 'Open its action bar to switch type or delete it — or long-press to delete',
+    },
+    longPressLink: {
+      title: 'Long-press a {links}',
+      desc: 'Delete it — or tap it and use the action bar',
+    },
+    drag: {
+      title: 'Drag with one finger',
+      desc: 'Pan the canvas — pinch to zoom',
+    },
+    fitView: {
+      title: 'Fit-view button',
+      desc: 'Recenter the view',
+    },
+    relayout: {
+      title: 'Relayout button',
+      desc: 'Auto-arrange the graph',
+    },
+  },
 }
