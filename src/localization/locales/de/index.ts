@@ -24,6 +24,7 @@ import home from '@/localization/locales/de/messages/home'
 import menu from '@/localization/locales/de/messages/menu'
 import settings from '@/localization/locales/de/messages/settings'
 import share from '@/localization/locales/de/messages/share'
+import thirdParty from '@/localization/locales/de/messages/thirdParty'
 import windowMessages from '@/localization/locales/de/messages/window'
 import type { LocaleMessageSchema } from '@/localization/types'
 
@@ -36,6 +37,7 @@ const messages: LocaleMessageSchema = {
   menu,
   settings,
   share,
+  thirdParty,
   window: windowMessages,
 }
 

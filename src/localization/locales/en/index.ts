@@ -24,6 +24,7 @@ import home from '@/localization/locales/en/messages/home'
 import menu from '@/localization/locales/en/messages/menu'
 import settings from '@/localization/locales/en/messages/settings'
 import share from '@/localization/locales/en/messages/share'
+import thirdParty from '@/localization/locales/en/messages/thirdParty'
 import windowMessages from '@/localization/locales/en/messages/window'
 
 export default {
@@ -35,5 +36,6 @@ export default {
   menu,
   settings,
   share,
+  thirdParty,
   window: windowMessages,
 }

@@ -18,10 +18,12 @@
 -->
 <script setup lang="ts">
 import { ChevronLeftIcon } from '@heroicons/vue/24/outline'
+import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 
 import { attributions, ctanAttributions, getAttributionId } from '@/app/third-party/attributions'
 
+const { t } = useI18n({ useScope: 'global' })
 const router = useRouter()
 </script>
 
@@ -34,12 +36,14 @@ const router = useRouter()
     >
       <button
         class="btn btn-square btn-ghost btn-sm"
-        aria-label="Back to editor"
+        :aria-label="t('home.backToEditor')"
         @click="router.push('/')"
       >
         <ChevronLeftIcon class="size-6 opacity-70" />
       </button>
-      <span class="flex-1 text-lg font-bold py-2.5 leading-tight">Third-Party Libraries</span>
+      <span class="flex-1 text-lg font-bold py-2.5 leading-tight">{{
+        t('thirdParty.titleShort')
+      }}</span>
     </header>
 
     <!-- Single-column disclosure list -->
@@ -47,17 +51,14 @@ const router = useRouter()
       class="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-4"
       style="padding-bottom: max(env(safe-area-inset-bottom), 1.25rem)"
     >
-      <p class="text-sm text-base-content/70 leading-relaxed">
-        This application makes use of open-source software components. We gratefully acknowledge the
-        developers and contributors of these projects. The following attributions are provided to
-        comply with applicable open-source licenses.
-      </p>
+      <p class="text-sm text-base-content/70 leading-relaxed">{{ t('thirdParty.intro') }}</p>
 
       <!-- TeX packages -->
-      <div class="text-xs font-bold text-base-content/40 tracking-wide">TEX PACKAGES</div>
+      <div class="text-xs font-bold text-base-content/40 tracking-wide uppercase">
+        {{ t('thirdParty.texPackages') }}
+      </div>
       <p class="text-xs text-base-content/60 leading-relaxed -mt-2">
-        Bundled and served to render TeX client-side. For some packages, only the parts required by
-        this application are included.
+        {{ t('thirdParty.texIntroShort') }}
       </p>
       <details
         v-for="attribution of ctanAttributions"
@@ -75,14 +76,33 @@ const router = useRouter()
         </summary>
         <div class="mt-2.5 flex flex-col gap-2">
           <p class="text-xs text-base-content/70 leading-relaxed">
-            Published<template v-if="attribution.publisher">
-              by <em>{{ attribution.publisher }}</em></template
+            <i18n-t
+              v-if="attribution.publisher"
+              keypath="thirdParty.publishedWithPublisher"
+              tag="span"
             >
-            under <em>{{ attribution.license }}</em> at
-            <a class="link link-primary break-all" :href="attribution.repository">{{
-              attribution.repository
-            }}</a
-            >.
+              <template #publisher
+                ><em>{{ attribution.publisher }}</em></template
+              >
+              <template #license
+                ><em>{{ attribution.license }}</em></template
+              >
+              <template #repository
+                ><a class="link link-primary break-all" :href="attribution.repository">{{
+                  attribution.repository
+                }}</a></template
+              >
+            </i18n-t>
+            <i18n-t v-else keypath="thirdParty.publishedNoPublisher" tag="span">
+              <template #license
+                ><em>{{ attribution.license }}</em></template
+              >
+              <template #repository
+                ><a class="link link-primary break-all" :href="attribution.repository">{{
+                  attribution.repository
+                }}</a></template
+              >
+            </i18n-t>
           </p>
           <pre
             v-if="attribution.licenseText"
@@ -90,14 +110,14 @@ const router = useRouter()
             >{{ attribution.licenseText }}</pre
           >
           <p v-else class="text-xs text-base-content/50">
-            This software component provides no license text.
+            {{ t('thirdParty.noLicenseText') }}
           </p>
         </div>
       </details>
 
       <!-- Libraries & projects -->
-      <div class="text-xs font-bold text-base-content/40 tracking-wide mt-1">
-        LIBRARIES &amp; PROJECTS
+      <div class="text-xs font-bold text-base-content/40 tracking-wide mt-1 uppercase">
+        {{ t('thirdParty.librariesProjects') }}
       </div>
       <details
         v-for="attribution of attributions"
@@ -115,14 +135,33 @@ const router = useRouter()
         </summary>
         <div class="mt-2.5 flex flex-col gap-2">
           <p class="text-xs text-base-content/70 leading-relaxed">
-            Published<template v-if="attribution.publisher">
-              by <em>{{ attribution.publisher }}</em></template
+            <i18n-t
+              v-if="attribution.publisher"
+              keypath="thirdParty.publishedWithPublisher"
+              tag="span"
             >
-            under <em>{{ attribution.license }}</em> at
-            <a class="link link-primary break-all" :href="attribution.repository">{{
-              attribution.repository
-            }}</a
-            >.
+              <template #publisher
+                ><em>{{ attribution.publisher }}</em></template
+              >
+              <template #license
+                ><em>{{ attribution.license }}</em></template
+              >
+              <template #repository
+                ><a class="link link-primary break-all" :href="attribution.repository">{{
+                  attribution.repository
+                }}</a></template
+              >
+            </i18n-t>
+            <i18n-t v-else keypath="thirdParty.publishedNoPublisher" tag="span">
+              <template #license
+                ><em>{{ attribution.license }}</em></template
+              >
+              <template #repository
+                ><a class="link link-primary break-all" :href="attribution.repository">{{
+                  attribution.repository
+                }}</a></template
+              >
+            </i18n-t>
           </p>
           <pre
             v-if="attribution.licenseText"
@@ -130,7 +169,7 @@ const router = useRouter()
             >{{ attribution.licenseText }}</pre
           >
           <p v-else class="text-xs text-base-content/50">
-            This software component provides no license text.
+            {{ t('thirdParty.noLicenseText') }}
           </p>
         </div>
       </details>
