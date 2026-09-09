@@ -16,17 +16,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import common from '@/localization/locales/de/messages/common'
-import editor from '@/localization/locales/de/messages/editor'
-import menu from '@/localization/locales/de/messages/menu'
-import settings from '@/localization/locales/de/messages/settings'
-import type { LocaleMessageSchema } from '@/localization/types'
-
-const messages: LocaleMessageSchema = {
-  common,
-  editor,
-  menu,
-  settings,
+export default {
+  label: 'Menü',
+  sections: {
+    framework: 'Framework',
+    edit: 'Bearbeiten',
+    app: 'App',
+  },
+  new: 'Neu',
+  newFramework: 'Neues Framework',
+  open: 'Öffnen',
+  openFile: 'Datei öffnen',
+  save: 'Speichern',
+  saveToDevice: 'Auf Gerät speichern',
+  generate: 'Generieren',
+  generateRandom: 'Zufällig generieren',
+  undo: 'Rückgängig',
+  redo: 'Wiederholen',
+  relayout: 'Neu anordnen',
+  directed: 'Gerichtet',
+  export: 'Exportieren',
+  shareLink: 'Link teilen',
+  settings: 'Einstellungen',
+  tutorials: 'Tutorials',
+  glossary: 'Glossar',
+  help: 'Hilfe',
 }
-
-export default messages

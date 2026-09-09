@@ -17,9 +17,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import common from '@/localization/locales/en/messages/common'
+import editor from '@/localization/locales/en/messages/editor'
+import menu from '@/localization/locales/en/messages/menu'
 import settings from '@/localization/locales/en/messages/settings'
 
 export default {
   common,
+  editor,
+  menu,
   settings,
 }

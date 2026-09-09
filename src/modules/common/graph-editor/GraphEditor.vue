@@ -1907,7 +1907,7 @@ defineExpose({
               ref="extensionEvalButton"
               class="btn btn-square btn-sm"
               @click="emit('open-extension-window')"
-              title="Extension Semantics"
+              :title="t('editor.toolbar.extensionSemantics')"
             >
               <SigmaIcon class="size-6 opacity-70" />
             </button>
@@ -1915,7 +1915,7 @@ defineExpose({
               v-if="hasRankingSlot"
               class="btn btn-square btn-sm"
               @click="emit('open-ranking-window')"
-              title="Ranking Semantics"
+              :title="t('editor.toolbar.rankingSemantics')"
             >
               <SucceqIcon class="size-6 opacity-70" />
             </button>
@@ -1923,7 +1923,7 @@ defineExpose({
               v-if="hasSerialisationSlot"
               class="btn btn-square btn-sm"
               @click="emit('open-serialisation-window')"
-              title="Serialisation Sequences"
+              :title="t('editor.toolbar.serialisationSequences')"
             >
               <SerialisationIcon class="size-6 opacity-70" />
             </button>
@@ -1932,7 +1932,7 @@ defineExpose({
             ref="exportButton"
             class="btn btn-square btn-sm"
             @click="isExportOpened = !isExportOpened"
-            title="Export"
+            :title="t('menu.export')"
           >
             <PhotoIcon class="size-6 opacity-70" />
           </button>
@@ -1951,7 +1951,7 @@ defineExpose({
         <!-- Switcher chip: back to home / document picker -->
         <button
           class="flex items-center gap-2 h-11 min-w-0 pl-1.5 pr-2.5 rounded-xl bg-base-100 border border-base-300 shadow-sm"
-          aria-label="Back to frameworks"
+          :aria-label="t('editor.toolbar.backToFrameworks')"
           @click="openDocumentSwitcher"
         >
           <span
@@ -1985,7 +1985,7 @@ defineExpose({
         <button
           ref="mobileMenuButton"
           class="btn btn-square size-11 btn-ghost"
-          aria-label="Menu"
+          :aria-label="t('menu.label')"
           @click="isMenuOpen = true"
         >
           <Bars3Icon class="size-6 opacity-70" />
@@ -2002,8 +2002,8 @@ defineExpose({
           <button
             ref="mobileFitToViewButton"
             class="btn btn-square size-11 shrink-0 rounded-xl bg-base-100 border-base-300 shadow-sm"
-            aria-label="Fit to view"
-            title="Fit to view"
+            :aria-label="t('editor.toolbar.fitToView')"
+            :title="t('editor.toolbar.fitToView')"
             @click="(tutorialCenterCount++, fitToView())"
           >
             <ArrowsPointingInIcon class="size-6 opacity-70" />
@@ -2011,8 +2011,8 @@ defineExpose({
           <button
             ref="mobileRelayoutButton"
             class="btn btn-square size-11 shrink-0 rounded-xl bg-base-100 border-base-300 shadow-sm"
-            aria-label="Relayout"
-            title="Relayout"
+            :aria-label="t('menu.relayout')"
+            :title="t('menu.relayout')"
             @click="isRelayoutOpen = true"
           >
             <SparklesIcon class="size-6 opacity-70" />
@@ -2025,15 +2025,15 @@ defineExpose({
           @click="evaluationOpen = true"
         >
           <PlayIcon class="size-6 shrink-0" />
-          <span class="truncate">Evaluate</span>
+          <span class="truncate">{{ t('editor.toolbar.evaluate') }}</span>
         </button>
 
         <div class="contents">
           <button
             ref="mobileExportButton"
             class="btn btn-square size-11 shrink-0 rounded-xl bg-base-100 border-base-300 shadow-sm"
-            aria-label="Export"
-            title="Export"
+            :aria-label="t('menu.export')"
+            :title="t('menu.export')"
             @click="isExportOpened = true"
           >
             <ShareIcon class="size-6 opacity-70" />
@@ -2042,8 +2042,8 @@ defineExpose({
             ref="mobileUndoButton"
             class="btn btn-square size-11 shrink-0 rounded-xl bg-base-100 border-base-300 shadow-sm"
             :disabled="!historyState.canUndo"
-            aria-label="Undo"
-            title="Undo"
+            :aria-label="t('menu.undo')"
+            :title="t('menu.undo')"
             @click="emit('undo')"
           >
             <ArrowUturnLeftIcon class="size-6 opacity-70" />
@@ -2078,79 +2078,85 @@ defineExpose({
         </div>
       </div>
 
-      <BottomSheet v-model:open="isMenuOpen" title="Menu">
+      <BottomSheet v-model:open="isMenuOpen" :title="t('menu.label')">
         <div class="flex flex-col gap-4 pb-4">
           <section class="flex flex-col gap-1">
-            <h3 class="text-xs font-semibold uppercase tracking-wide opacity-60 px-1">Framework</h3>
+            <h3 class="text-xs font-semibold uppercase tracking-wide opacity-60 px-1">
+              {{ t('menu.sections.framework') }}
+            </h3>
             <button
               class="btn btn-ghost justify-start gap-3"
               @click="runFromMenu(() => emit('new'))"
             >
-              <DocumentPlusIcon class="size-5 menu-icon" /> New framework
+              <DocumentPlusIcon class="size-5 menu-icon" /> {{ t('menu.newFramework') }}
             </button>
             <button
               class="btn btn-ghost justify-start gap-3"
               @click="runFromMenu(() => emit('load'))"
             >
-              <FolderOpenIcon class="size-5 menu-icon" /> Open file
+              <FolderOpenIcon class="size-5 menu-icon" /> {{ t('menu.openFile') }}
             </button>
             <button
               class="btn btn-ghost justify-start gap-3"
               @click="runFromMenu(() => emit('save'))"
             >
-              <ArrowDownTrayIcon class="size-5 menu-icon" /> Save to device
+              <ArrowDownTrayIcon class="size-5 menu-icon" /> {{ t('menu.saveToDevice') }}
             </button>
             <button
               class="btn btn-ghost justify-start gap-3"
               @click="runFromMenu(() => emit('generate'))"
             >
-              <Squares2X2Icon class="size-5 menu-icon" /> Generate random
+              <Squares2X2Icon class="size-5 menu-icon" /> {{ t('menu.generateRandom') }}
             </button>
           </section>
           <section class="flex flex-col gap-1">
-            <h3 class="text-xs font-semibold uppercase tracking-wide opacity-60 px-1">Edit</h3>
+            <h3 class="text-xs font-semibold uppercase tracking-wide opacity-60 px-1">
+              {{ t('menu.sections.edit') }}
+            </h3>
             <button
               class="btn btn-ghost justify-start gap-3"
               :disabled="!historyState.canUndo"
               @click="runFromMenu(() => emit('undo'))"
             >
-              <ArrowUturnLeftIcon class="size-5 menu-icon" /> Undo
+              <ArrowUturnLeftIcon class="size-5 menu-icon" /> {{ t('menu.undo') }}
             </button>
             <button
               class="btn btn-ghost justify-start gap-3"
               :disabled="!historyState.canRedo"
               @click="runFromMenu(() => emit('redo'))"
             >
-              <ArrowUturnRightIcon class="size-5 menu-icon" /> Redo
+              <ArrowUturnRightIcon class="size-5 menu-icon" /> {{ t('menu.redo') }}
             </button>
           </section>
           <section class="flex flex-col gap-1">
-            <h3 class="text-xs font-semibold uppercase tracking-wide opacity-60 px-1">App</h3>
+            <h3 class="text-xs font-semibold uppercase tracking-wide opacity-60 px-1">
+              {{ t('menu.sections.app') }}
+            </h3>
             <button class="btn btn-ghost justify-start gap-3" @click="runFromMenu(openSettings)">
-              <Cog6ToothIcon class="size-5 menu-icon" /> Settings
+              <Cog6ToothIcon class="size-5 menu-icon" /> {{ t('menu.settings') }}
             </button>
             <button
               v-if="tutorials"
               class="btn btn-ghost justify-start gap-3"
               @click="runFromMenu(openTutorials)"
             >
-              <AcademicCapIcon class="size-5 menu-icon" /> Tutorials
+              <AcademicCapIcon class="size-5 menu-icon" /> {{ t('menu.tutorials') }}
             </button>
             <RouterLink
               to="/glossary"
               class="btn btn-ghost justify-start gap-3"
               @click="isMenuOpen = false"
             >
-              <BookOpenIcon class="size-5 menu-icon" /> Glossary
+              <BookOpenIcon class="size-5 menu-icon" /> {{ t('menu.glossary') }}
             </RouterLink>
             <button class="btn btn-ghost justify-start gap-3" @click="runFromMenu(openHelp)">
-              <QuestionMarkCircleIcon class="size-5 menu-icon" /> Help
+              <QuestionMarkCircleIcon class="size-5 menu-icon" /> {{ t('menu.help') }}
             </button>
           </section>
         </div>
       </BottomSheet>
 
-      <BottomSheet v-model:open="isRelayoutOpen" title="Relayout">
+      <BottomSheet v-model:open="isRelayoutOpen" :title="t('menu.relayout')">
         <div class="flex flex-col gap-5 pb-4">
           <section v-for="group in relayoutGroups" :key="group.label" class="flex flex-col gap-2">
             <h3 class="text-xs font-semibold uppercase tracking-wide opacity-60 px-1">
