@@ -48,7 +48,7 @@ const { layoutMode } = useLayoutMode()
           :allow-hyper-link-creation="props.allowHyperLinkCreation"
           :node-tap-action="props.nodeTapAction"
         />
-        <HelpLinks legal-only />
+        <HelpLinks />
       </template>
       <template v-else>
         <HelpLinks legal-only />
