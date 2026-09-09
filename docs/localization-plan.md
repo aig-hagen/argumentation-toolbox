@@ -420,24 +420,40 @@ labels, persists across reloads, and falls back safely.
 
 Extract and translate the shared application vocabulary before module-specific content:
 
-- [ ] Main menu and compact editor menu.
-- [ ] Settings, theme, graph defaults, tutorial settings, and all control accessibility labels.
-- [ ] Home/document navigation: document actions, new-document picker headings, empty states,
-  rename/delete confirmation text, tab placeholders, and share states.
-- [ ] Shared graph editor toolbar, mobile top/bottom bars, relayout controls, link-switch labels,
-  undo/redo hints, physics/grid states, and contextual actions.
-- [ ] Shared window and bottom-sheet titles, close buttons, drag/control labels, and empty states.
-- [ ] Export picker, format screens, style options, save/copy feedback, and accessible labels.
-- [ ] Help controls, gestures, links, settings/help/tutorial window shells.
-- [ ] Share modal and quick-share feedback.
-- [ ] Notification display accessibility copy.
-- [ ] Generic form labels and grouped-select empty/default states.
-- [ ] Third-party attribution page chrome; do not translate library names, licenses, or attribution
-  text supplied by third parties.
-- [ ] Ensure separate desktop and mobile shells use the same message keys for equivalent actions.
+- [x] Main menu and compact editor menu. (`MainMenu.vue` + GraphEditor mobile menu; `menu`
+  namespace.)
+- [x] Settings, theme, graph defaults, tutorial settings, and all control accessibility labels.
+  (`SettingsContent.vue`, `WindowSettings.vue`; `settings` namespace.)
+- [x] Home/document navigation: document actions, new-document picker headings, empty states,
+  rename/delete confirmation text, tab placeholders, and share states. (`home`/`share` namespaces;
+  desktop + mobile home shells, EditorTab(s), BlankDocumentCanvas(Mobile), ShareModal.)
+- [x] Shared graph editor toolbar, mobile top/bottom bars, relayout controls, undo/redo hints, and
+  contextual actions. (Toolbar tooltips, command bar, relayout sheet + group headers, selection
+  action bar via `editor` namespace.) Link-switch **display names** and physics/grid **state
+  labels** are stable metadata → deferred to Phase 3.
+- [x] Shared window and bottom-sheet titles, close buttons, drag/control labels, and empty states.
+  (`BottomSheet.vue`, `FloatingWindow.vue`; `window` namespace. Titles are passed in by callers.)
+- [x] Export picker, format screens, style options, save/copy feedback, and accessible labels.
+  (`WindowExport.vue`, `ExportSheet.vue`, `ButtonSave/ButtonCopy` via `<i18n-t>`; `export`
+  namespace. LaTeX style *values* and format *names* stay technical / Phase 3.)
+- [x] Help controls, gestures, links, settings/help/tutorial window shells. (`help` namespace;
+  HelpLinks, HelpControls, HelpGestures, WindowHelp.)
+- [x] Share modal and quick-share feedback. (`ShareModal.vue`; `share` namespace, reused in
+  ExportSheet.)
+- [x] Notification display accessibility copy. (`NotificationsDisplay.vue` dismiss labels; the
+  notification *content* itself is Phase 5.)
+- [x] Generic form labels and grouped-select empty/default states. (No literals of their own —
+  `GroupedSelect`/`PickerSelect`/`ParameterField` take all copy from callers.)
+- [x] Third-party attribution page chrome; do not translate library names, licenses, or attribution
+  text supplied by third parties. (`thirdParty` namespace; desktop + mobile.)
+- [x] Ensure separate desktop and mobile shells use the same message keys for equivalent actions.
+  (Shared components, or shared keys where wording matches.)
 
 Deliverable: all shared chrome can be used in German, with English fallback and no translated
-values leaking into persisted state.
+values leaking into persisted state. **Done.** Namespaces added: `common`, `menu`, `editor`,
+`settings`, `home`, `share`, `help`, `export`, `window`, `thirdParty`. Route-page bodies
+(Generate, Privacy) and the evaluation host/windows are Phase 3/4; `public/maintenance.html` is
+Phase 9.
 
 ### Phase 3 — Stable metadata contracts
 
