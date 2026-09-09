@@ -1,16 +1,12 @@
 ## Changes
 
-- Added anonymous, cookieless usage analytics with a /privacy notice, opt-out (DNT / Global
-  Privacy Control), and a token-guarded stats dashboard.
-- Cut initial JavaScript by ~70% by lazy-loading Graphviz, the export window, and per-route code.
-- Added dwell-to-stick term tooltips with a charge-bar header rule (desktop).
-- Aligned desktop and mobile main menus with consistent ordering, unified icons, and
-  theme-aware menu icons.
-- Added Sigma, Succeq, and Serialisation icons.
-- Improved button layout and spacing in the evaluation host.
-- Fixed relayout to recenter instantly and fixed the WYSIWYG SVG export preview (fit large
-  graphs, re-render on edits).
-- Unified save and example schemas across all modules; added new examples for collective
-  attacks, incomplete, and probabilistic argumentation.
-- Added an imprint section to the privacy view.
-- Added save/load round-trip and analytics endpoint tests; various maintenance cleanups.
+- Reworked the theme palette into a single source of truth: all UI colors now route through
+  centralized palette tokens (feedback, accents, and effect tokens included), for consistent
+  branding across light and dark themes.
+- Polished the share flow: primary-colored share CTAs and error-recovery action, a top-right
+  X to close (matching the settings modal), labeled modal close buttons, and a more compact
+  share modal.
+- Improved the tutorial overlay spotlight effect and reworked the ADF condition editor layout.
+- Fixed the node label input focus ring so it no longer clips.
+- Fixed the mobile help sheet to show all help links (AIG Hagen, TweetyProject, Source) again,
+  not just the legal links.
