@@ -31,4 +31,11 @@ export default {
     on: 'An',
     off: 'Aus',
   },
+  time: {
+    justNow: 'gerade eben',
+    minutesAgo: 'vor {count} Min.',
+    hoursAgo: 'vor {count} Std.',
+    daysAgo: 'vor {count} T.',
+    weeksAgo: 'vor {count} Wo.',
+  },
 }

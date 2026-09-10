@@ -39,7 +39,7 @@ import { useModuleCards } from '@/app/home/useModuleCards'
 import { ACTIVE_MODULE_KEY } from '@/app/usage/moduleContext'
 import NotificationsDisplay from '@/modules/common/notifications/NotificationsDisplay.vue'
 import { QUICK_SHARE_KEY } from '@/modules/common/share/quickShareKey'
-import { formatRelativeTime } from '@/modules/common/util'
+import { relativeTime } from '@/modules/common/util'
 import BottomSheet from '@/modules/common/window/BottomSheet.vue'
 
 const { modules, controller } = defineProps<{
@@ -73,7 +73,16 @@ const {
   exportAsFile,
 } = controller
 
-const { t } = useI18n({ useScope: 'global' })
+const { t, locale } = useI18n({ useScope: 'global' })
+
+function formatEdited(timestamp: number): string {
+  const rel = relativeTime(timestamp)
+  const time =
+    rel.unit === 'absolute'
+      ? new Date(rel.timestamp).toLocaleDateString(locale.value)
+      : t(`common.time.${rel.unit}`, rel.unit === 'justNow' ? {} : { count: rel.count })
+  return t('home.documents.edited', { time })
+}
 
 // Let deep editor surfaces (e.g. the export sheet) trigger a quick share.
 provide(QUICK_SHARE_KEY, quickShareDocument)
@@ -309,9 +318,7 @@ function loadFile() {
                   <span
                     v-else-if="document.lastEdited !== undefined"
                     class="text-xs text-base-content/60"
-                    >{{
-                      t('home.documents.edited', { time: formatRelativeTime(document.lastEdited) })
-                    }}</span
+                    >{{ formatEdited(document.lastEdited) }}</span
                   >
                 </span>
               </button>
