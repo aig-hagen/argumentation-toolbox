@@ -596,13 +596,17 @@ consolidated visual-polish pass.
 - [x] Keep programmer errors, invariant violations, and console diagnostics outside translation
   catalogs. (Unchanged — e.g. reader-callback invariant in `useHomeController`, `console.error` in
   `storageFailure` stay English.)
-- [ ] Test interpolation with file names and other user data, ensuring values are escaped safely.
-- [ ] Test that unknown backend errors use a localized generic heading and do not expose unsafe
-  markup.
+- [x] Test interpolation with file names and other user data, ensuring values are escaped safely.
+  (`messages.test.ts`: placeholder-parity per key across locales + a verbatim-interpolation test that
+  markup in a filename/detail survives untouched as text. Error strings are rendered via `{{ }}` text
+  bindings — no `v-html` on any generate/share/notification error path.)
+- [x] Test that unknown backend errors use a localized generic heading and do not expose unsafe
+  markup. (`useShare.test.ts`: an unknown 500 with a hostile `body.error` maps to code `uploadFailed`,
+  keeps the raw server text in optional `detail`, and the presented heading via
+  `share.load.errors.uploadFailed` contains neither the server markup — only the status.)
 
 Deliverable: every expected user-facing failure has an English and German presentation while
-diagnostic information remains useful. **Nearly done** — all failure paths localized; the two
-dedicated interpolation-safety / unknown-error tests remain.
+diagnostic information remains useful. **Done.**
 
 ### Phase 6 — Generator metadata
 

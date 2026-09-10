@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import { expect, test } from 'vitest'
+import { createI18n } from 'vue-i18n'
 
 import de from '@/localization/locales/de'
 import en from '@/localization/locales/en'
@@ -28,6 +29,17 @@ function keyPaths(tree: Tree, prefix = ''): string[] {
     const path = prefix ? `${prefix}.${key}` : key
     return typeof value === 'string' ? [path] : keyPaths(value, path)
   })
+}
+
+function leafAt(tree: Tree, path: string): string {
+  return path.split('.').reduce<unknown>((node, key) => {
+    return (node as Record<string, unknown>)[key]
+  }, tree) as string
+}
+
+/** Named interpolation tokens (`{fileName}`, `{count}`, …) in a message string. */
+function placeholders(value: string): string[] {
+  return [...value.matchAll(/\{(\w+)\}/g)].map((match) => match[1]!).sort()
 }
 
 test('German catalog has the same message keys as English', () => {
@@ -45,5 +57,33 @@ test('every leaf value is a non-empty string in both locales', () => {
       return typeof value !== 'string' || value.length === 0
     })
     expect(blanks).toEqual([])
+  }
+})
+
+test('German and English use the same interpolation placeholders per key', () => {
+  const mismatches = keyPaths(en as Tree)
+    .map((path) => ({
+      path,
+      en: placeholders(leafAt(en as Tree, path)),
+      de: placeholders(leafAt(de as Tree, path)),
+    }))
+    .filter(({ en, de }) => en.join(',') !== de.join(','))
+  expect(mismatches).toEqual([])
+})
+
+test('user data interpolated into error messages is inserted verbatim as text', () => {
+  const i18n = createI18n({ legacy: false, locale: 'en', messages: { en, de } })
+  const t = i18n.global.t
+
+  // A filename containing markup must survive interpolation untouched (rendered as text,
+  // never markup) — no escaping artefacts, no execution, no dropped characters.
+  const fileName = '<img src=x onerror=alert(1)>.json'
+  const detail = 'unexpected token "<"'
+
+  for (const locale of ['en', 'de'] as const) {
+    i18n.global.locale.value = locale
+    const message = t('errors.import.validation', { fileName, detail })
+    expect(message).toContain(fileName)
+    expect(message).toContain(detail)
   }
 })
