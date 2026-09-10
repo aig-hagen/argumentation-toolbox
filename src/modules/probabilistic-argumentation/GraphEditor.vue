@@ -20,6 +20,7 @@
 import type { AnnotationPosition } from '@aig-hagen/graph-component/lib'
 import { AdjustmentsHorizontalIcon } from '@heroicons/vue/24/outline'
 import { computed, inject, provide, ref, shallowRef, useTemplateRef, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import { abstractArgumentationGlossary } from '@/modules/abstract-argumentation/glossary'
 import type { ArgumentId } from '@/modules/common/argumentation/model'
@@ -125,9 +126,11 @@ function transformToEditorState(
   return { stateId: state.stateId, nodes, links, redraw }
 }
 
-const linkConfig = {
-  SINGLE: { displayName: 'Attack' },
-}
+const { t } = useI18n({ useScope: 'global' })
+
+const linkConfig = computed(() => ({
+  SINGLE: { displayName: t('editor.links.attack') },
+}))
 
 function createNewState(recipe: (draft: ProbabilisticArgumentation<PafArgumentData>) => void) {
   const nextState = modifyDocument(renderedState.value, recipe)
@@ -304,7 +307,7 @@ function openProbabilitySheet(focusKey: string) {
 
 const probabilityAction = (focusKey: string): SelectionAction => ({
   key: 'probability',
-  label: 'Edit probability',
+  label: t('editor.probabilities.editProbability'),
   icon: AdjustmentsHorizontalIcon,
   run: () => openProbabilitySheet(focusKey),
 })
@@ -523,7 +526,7 @@ function onPopupKeydown(event: KeyboardEvent) {
           ref="probabilityButton"
           class="btn btn-square btn-sm"
           :class="{ 'btn-active': isProbabilitiesOpen }"
-          title="Probabilities"
+          :title="t('editor.probabilities.title')"
           @click="isProbabilitiesOpen = !isProbabilitiesOpen"
         >
           <AdjustmentsHorizontalIcon class="size-6 opacity-70" />

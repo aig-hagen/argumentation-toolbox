@@ -28,6 +28,7 @@ import {
   ShareIcon,
 } from '@heroicons/vue/24/outline'
 import { computed, inject, ref, shallowRef, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import ButtonCopy from '@/modules/common/export/ButtonCopy.vue'
 import ButtonSave from '@/modules/common/export/ButtonSave.vue'
@@ -37,6 +38,7 @@ import { supportsNativeShare } from '@/modules/common/share/nativeShare'
 import { QUICK_SHARE_KEY } from '@/modules/common/share/quickShareKey'
 
 import type { ExportConfig, ExportFileData, ExportStyleOptions } from '.'
+import { ExportFormatId } from '.'
 
 const { input, exportConfigs } = defineProps<{
   input: DocumentT
@@ -44,6 +46,8 @@ const { input, exportConfigs } = defineProps<{
 }>()
 
 const emit = defineEmits<{ export: [filedata: ExportFileData]; close: [] }>()
+
+const { t } = useI18n({ useScope: 'global' })
 
 function shareAndClose() {
   quickShare?.()
@@ -89,7 +93,7 @@ const codeResult = computed(() =>
 )
 
 const packageLine = computed(() => {
-  if (codeConfig.value?.name !== 'LaTeX (argumentation)') return undefined
+  if (codeConfig.value?.id !== ExportFormatId.Latex) return undefined
   const opts = [
     ...(argumentStyle.value !== 'standard' ? [`argumentstyle=${argumentStyle.value}`] : []),
     `namestyle=${nameStyle.value}`,
@@ -142,13 +146,13 @@ function download(config: ExportConfig<DocumentT>) {
       >
         <ShareIcon class="size-5" />
         <span class="flex-1 text-left font-semibold">{{
-          canShareNatively ? 'Share link' : 'Copy share link'
+          canShareNatively ? t('menu.shareLink') : t('home.tabs.copyShareLink')
         }}</span>
       </button>
 
       <section v-if="graphSvgRenderer" class="flex flex-col gap-2">
         <h3 class="text-[0.7rem] font-semibold uppercase tracking-wide text-base-content/50 px-1">
-          Image
+          {{ t('export.sections.image') }}
         </h3>
         <button
           class="w-full flex items-center gap-3 min-h-14 px-3.5 py-2 rounded-2xl border border-base-300 bg-base-100 text-left"
@@ -158,8 +162,10 @@ function download(config: ExportConfig<DocumentT>) {
             <PhotoIcon class="size-5 text-primary" />
           </span>
           <span class="flex-1 min-w-0 flex flex-col leading-tight">
-            <b class="text-sm font-semibold">SVG image</b>
-            <span class="text-xs text-base-content/60 truncate">Snapshot of the current graph</span>
+            <b class="text-sm font-semibold">{{ t('export.svg.title') }}</b>
+            <span class="text-xs text-base-content/60 truncate">{{
+              t('export.svg.description')
+            }}</span>
           </span>
           <ChevronRightIcon class="size-4 shrink-0 opacity-30" />
         </button>
@@ -167,7 +173,7 @@ function download(config: ExportConfig<DocumentT>) {
 
       <section class="flex flex-col gap-2">
         <h3 class="text-[0.7rem] font-semibold uppercase tracking-wide text-base-content/50 px-1">
-          Text
+          {{ t('export.sections.text') }}
         </h3>
         <button
           v-if="codeConfig"
@@ -180,14 +186,14 @@ function download(config: ExportConfig<DocumentT>) {
           <span class="flex-1 min-w-0 flex flex-col leading-tight">
             <b class="text-sm font-semibold">{{ codeConfig.name }}</b>
             <span class="text-xs text-base-content/60 truncate">{{
-              codeConfig.description ?? 'Copy code & \\usepackage line'
+              codeConfig.description ?? t('export.latexFallbackDescription')
             }}</span>
           </span>
           <ChevronRightIcon class="size-4 shrink-0 opacity-30" />
         </button>
         <button
           v-for="config in dataConfigs"
-          :key="config.name"
+          :key="config.id"
           class="w-full flex items-center gap-3 min-h-14 px-3.5 py-2 rounded-2xl border border-base-300 bg-base-100 text-left"
           @click="download(config)"
         >
@@ -197,7 +203,7 @@ function download(config: ExportConfig<DocumentT>) {
           <span class="flex-1 min-w-0 flex flex-col leading-tight">
             <b class="text-sm font-semibold">{{ config.name }}</b>
             <span class="text-xs text-base-content/60 truncate">{{
-              config.description ?? `.${config.extension} file`
+              config.description ?? t('export.fileFallbackDescription', { ext: config.extension })
             }}</span>
           </span>
           <ArrowDownTrayIcon class="size-5 shrink-0 opacity-40" />
@@ -208,13 +214,13 @@ function download(config: ExportConfig<DocumentT>) {
     <!-- SVG preview -->
     <div v-else-if="screen === 'svg'" class="flex flex-col gap-3">
       <button class="btn btn-sm btn-ghost self-start gap-1 -ml-1" @click="screen = 'picker'">
-        <ChevronLeftIcon class="size-4" /> Formats
+        <ChevronLeftIcon class="size-4" /> {{ t('export.formats') }}
       </button>
 
       <div class="overflow-auto rounded border border-base-300 p-2">
         <div v-if="svgText" v-html="svgText" class="wysiwyg-svg-preview w-fit"></div>
         <div v-else role="alert" class="alert alert-warning alert-soft">
-          <span>No graph to export.</span>
+          <span>{{ t('export.noGraph') }}</span>
         </div>
       </div>
 
@@ -231,7 +237,7 @@ function download(config: ExportConfig<DocumentT>) {
     <!-- LaTeX code -->
     <div v-else class="flex flex-col gap-3">
       <button class="btn btn-sm btn-ghost self-start gap-1 -ml-1" @click="screen = 'picker'">
-        <ChevronLeftIcon class="size-4" /> Formats
+        <ChevronLeftIcon class="size-4" /> {{ t('export.formats') }}
       </button>
 
       <div class="flex items-center gap-2">
@@ -250,7 +256,9 @@ function download(config: ExportConfig<DocumentT>) {
           :filedata="codeFiledata"
           @export="emit('export', $event)"
         />
-        <ButtonCopy class="btn btn-sm btn-soft flex-1" :text="codeResult?.text">code</ButtonCopy>
+        <ButtonCopy class="btn btn-sm btn-soft flex-1" :text="codeResult?.text">{{
+          t('export.formatLabels.code')
+        }}</ButtonCopy>
       </div>
 
       <div v-if="packageLine" class="flex items-center gap-2">
@@ -265,11 +273,13 @@ function download(config: ExportConfig<DocumentT>) {
       ><code>{{ codeResult?.text }}</code></pre>
 
       <details v-if="packageLine" class="collapse collapse-arrow bg-base-200/60 rounded-field">
-        <summary class="collapse-title text-sm font-medium">Style options</summary>
+        <summary class="collapse-title text-sm font-medium">
+          {{ t('export.style.options') }}
+        </summary>
         <div class="collapse-content flex flex-col gap-3">
           <div class="grid grid-cols-2 gap-2">
             <label class="select select-sm">
-              <span class="label">Argument</span>
+              <span class="label">{{ t('export.style.argument') }}</span>
               <select v-model="argumentStyle">
                 <option>standard</option>
                 <option>large</option>
@@ -279,7 +289,7 @@ function download(config: ExportConfig<DocumentT>) {
               </select>
             </label>
             <label class="select select-sm">
-              <span class="label">Name</span>
+              <span class="label">{{ t('export.style.name') }}</span>
               <select v-model="nameStyle">
                 <option>math</option>
                 <option>bold</option>
@@ -289,7 +299,7 @@ function download(config: ExportConfig<DocumentT>) {
               </select>
             </label>
             <label class="select select-sm">
-              <span class="label">Attack</span>
+              <span class="label">{{ t('export.style.attack') }}</span>
               <select v-model="attackStyle">
                 <option>standard</option>
                 <option>large</option>
@@ -297,7 +307,7 @@ function download(config: ExportConfig<DocumentT>) {
               </select>
             </label>
             <label v-if="isBipolarDocument" class="select select-sm">
-              <span class="label">Support</span>
+              <span class="label">{{ t('export.style.support') }}</span>
               <select v-model="supportStyle">
                 <option>standard</option>
                 <option>dashed</option>
@@ -306,7 +316,7 @@ function download(config: ExportConfig<DocumentT>) {
             </label>
           </div>
           <label class="label gap-2">
-            <span>Node distance</span>
+            <span>{{ t('export.style.nodeDistance') }}</span>
             <input
               type="range"
               class="range range-sm flex-1"

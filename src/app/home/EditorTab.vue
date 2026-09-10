@@ -21,13 +21,15 @@ import { ArrowDownTrayIcon, TrashIcon, XMarkIcon } from '@heroicons/vue/24/outli
 import { useDebounceFn } from '@vueuse/core'
 import type { IDBPDatabase } from 'idb'
 import type { Objectish } from 'immer'
-import { nextTick, useTemplateRef } from 'vue'
+import { computed, nextTick, useTemplateRef } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import type { ModuleConfig } from '@/app/home/moduleConfig'
 import type { DocumentsDB } from '@/modules/common/documents/db'
 import { loadDocumentState } from '@/modules/common/documents/useDocuments'
 
-const PLACEHOLDER = 'new'
+const { t } = useI18n({ useScope: 'global' })
+const PLACEHOLDER = computed(() => t('home.tab.placeholder'))
 
 const { active, documentId, value, db, modules } = defineProps<{
   active: boolean
@@ -52,7 +54,7 @@ function getInputSizerValue(value: string) {
   if (value !== '') {
     return value
   }
-  return PLACEHOLDER
+  return PLACEHOLDER.value
 }
 
 function handleInput(e: InputEvent) {
@@ -98,7 +100,7 @@ const deleteButtonRef = useTemplateRef('deleteButton')
     <button
       class="btn btn-square btn-xs ml-2 btn-ghost"
       @click.stop="doRequestClose()"
-      title="Close"
+      :title="t('common.actions.close')"
     >
       <XMarkIcon class="size-4"></XMarkIcon>
     </button>
@@ -106,30 +108,41 @@ const deleteButtonRef = useTemplateRef('deleteButton')
   <dialog class="modal" ref="closeModal">
     <div class="modal-box">
       <form method="dialog">
-        <button class="btn btn-sm btn-square btn-ghost absolute right-2 top-2" aria-label="Close">
+        <button
+          class="btn btn-sm btn-square btn-ghost absolute right-2 top-2"
+          :aria-label="t('common.actions.close')"
+        >
           <XMarkIcon class="size-4"></XMarkIcon>
         </button>
       </form>
       <h3 class="text-lg font-bold">
-        Delete <span v-if="value" class="underline">{{ value }}</span
-        ><template v-else>unnamed framework</template>
+        <i18n-t v-if="value" keypath="home.deleteDialog.deleteNamed" tag="span" scope="global">
+          <template #name
+            ><span class="underline">{{ value }}</span></template
+          >
+        </i18n-t>
+        <template v-else>{{ t('home.deleteDialog.deleteUnnamed') }}</template>
       </h3>
       <p class="py-4">
-        All unsaved data will be <span class="font-bold">permanently deleted</span>.
+        <i18n-t keypath="home.deleteDialog.warning" tag="span" scope="global">
+          <template #highlight>
+            <span class="font-bold">{{ t('home.deleteDialog.warningHighlight') }}</span>
+          </template>
+        </i18n-t>
         <br />
-        Save your data before closing if you want to keep it.
+        {{ t('home.deleteDialog.warningHint') }}
       </p>
       <div class="modal-action">
         <button class="btn btn-sm" @click="emit('save')">
-          <ArrowDownTrayIcon class="size-4"></ArrowDownTrayIcon>Save
+          <ArrowDownTrayIcon class="size-4"></ArrowDownTrayIcon>{{ t('common.actions.save') }}
         </button>
         <button ref="deleteButton" class="btn btn-error btn-sm" @click="emit('delete')">
-          <TrashIcon class="size-4"></TrashIcon>Delete
+          <TrashIcon class="size-4"></TrashIcon>{{ t('common.actions.delete') }}
         </button>
       </div>
     </div>
     <form method="dialog" class="modal-backdrop">
-      <button>Dismiss</button>
+      <button>{{ t('common.actions.dismiss') }}</button>
     </form>
   </dialog>
 </template>

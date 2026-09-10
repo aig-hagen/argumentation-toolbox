@@ -19,9 +19,12 @@
 <script setup lang="ts">
 import { AdjustmentsHorizontalIcon } from '@heroicons/vue/24/outline'
 import { computed, onUnmounted, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import type { EvaluationWindowQuery } from '@/modules/common/evaluation/BaseEvaluationWindow.vue'
 import { TWEETY_TIMEOUT_IN_MS } from '@/modules/common/evaluation/tweety-project/fetch'
+
+const { t } = useI18n({ useScope: 'global' })
 
 // The inner body of an evaluation window/sheet: parameters, status strip, and results.
 // Extracted from BaseEvaluationWindow so it can render either inside a FloatingWindow /
@@ -52,13 +55,13 @@ const statusStrip = computed(() => {
   if (!isError.value) return undefined
   switch (error.value?.name) {
     case 'ServiceUnavailableError':
-      return { kind: 'warning', message: 'Server temporarily unavailable — retrying may help' }
+      return { kind: 'warning', message: t('evaluation.status.serviceUnavailable') }
     case 'RateLimitError':
-      return { kind: 'warning', message: 'Too many requests — please wait a moment' }
+      return { kind: 'warning', message: t('evaluation.status.rateLimited') }
     case 'EvaluationTimeoutError':
-      return { kind: 'warning', message: `Timed out after ${TIMEOUT_S}s` }
+      return { kind: 'warning', message: t('evaluation.status.timedOut', { seconds: TIMEOUT_S }) }
     default:
-      return { kind: 'error', message: 'Evaluation failed' }
+      return { kind: 'error', message: t('evaluation.status.failed') }
   }
 })
 
@@ -102,7 +105,9 @@ onUnmounted(() => {
     >
       <AdjustmentsHorizontalIcon class="size-4 shrink-0 opacity-70" />
       <span class="flex-1 min-w-0 truncate font-medium">{{ title }}</span>
-      <span class="text-[0.65rem] opacity-60">{{ paramsOpen ? 'Hide' : 'Edit' }}</span>
+      <span class="text-[0.65rem] opacity-60">{{
+        paramsOpen ? t('evaluation.status.hideParams') : t('evaluation.status.editParams')
+      }}</span>
     </button>
 
     <div
@@ -122,7 +127,9 @@ onUnmounted(() => {
       :class="statusStrip.kind === 'error' ? 'alert-error' : 'alert-warning'"
     >
       <span>{{ statusStrip.message }}</span>
-      <button class="btn btn-xs btn-ghost ml-auto" @click="() => refetch()">Retry</button>
+      <button class="btn btn-xs btn-ghost ml-auto" @click="() => refetch()">
+        {{ t('evaluation.status.retry') }}
+      </button>
     </div>
 
     <div v-if="isInitialLoad" aria-hidden="true" class="flex flex-wrap gap-2">
@@ -132,6 +139,8 @@ onUnmounted(() => {
 
     <slot v-if="!isPending || isLoading" name="results" />
 
-    <p v-if="isLoading" class="text-base-content/50">Evaluating… {{ remainingSeconds }}s</p>
+    <p v-if="isLoading" class="text-base-content/50">
+      {{ t('evaluation.status.evaluatingCountdown', { seconds: remainingSeconds }) }}
+    </p>
   </div>
 </template>

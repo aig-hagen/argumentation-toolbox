@@ -19,8 +19,17 @@
 import type { Publication } from '@/app/home/moduleConfig'
 import type { Example } from '@/modules/common/examples'
 
-/** Presentation-neutral shape of a module the new-document picker renders. */
+/** A tag with its label resolved for the active locale. */
+export interface ModuleCardTag {
+  id: string
+  name: string
+  description: string
+}
+
+/** Localized view model of a module the new-document picker renders. Built reactively from a
+ * {@link ModuleConfig} and the active locale; see `useModuleCards`. */
 export interface ModuleCard<DocumentT> {
+  id: string
   newNamePrefix: string
   displayNameSingular: string
   description?: string
@@ -29,4 +38,5 @@ export interface ModuleCard<DocumentT> {
   generateHref?: string
   underConstruction?: boolean
   publications?: Publication[]
+  tags: ModuleCardTag[]
 }

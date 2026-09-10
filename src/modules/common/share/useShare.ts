@@ -19,6 +19,21 @@
 import { trackEvent } from '@/app/usage/report'
 import { ANALYTICS_EVENTS } from '@/app/usage/signals'
 
+/** Stable code for a localized share-service failure under `share.load.errors.*`. */
+export type ShareErrorCode = 'rateLimited' | 'uploadFailed' | 'notFound' | 'loadFailed'
+
+/** A structured share-service failure carrying a stable code, localized at the boundary. */
+export class ShareError extends Error {
+  constructor(
+    readonly code: ShareErrorCode,
+    readonly params: { status?: number } = {},
+    readonly detail?: string,
+  ) {
+    super(code)
+    this.name = 'ShareError'
+  }
+}
+
 export async function uploadShare(content: string): Promise<{ id: string; url: string }> {
   const response = await fetch('/shares', {
     method: 'POST',
@@ -26,10 +41,9 @@ export async function uploadShare(content: string): Promise<{ id: string; url: s
     body: JSON.stringify({ content }),
   })
   if (!response.ok) {
-    if (response.status === 429)
-      throw new Error('Too many uploads — please wait a moment before trying again')
+    if (response.status === 429) throw new ShareError('rateLimited')
     const body = (await response.json().catch(() => ({}))) as { error?: string }
-    throw new Error(body.error ?? `Upload failed (${response.status})`)
+    throw new ShareError('uploadFailed', { status: response.status }, body.error)
   }
   const { id } = (await response.json()) as { id: string }
   trackEvent(ANALYTICS_EVENTS.shareCreate)
@@ -39,8 +53,8 @@ export async function uploadShare(content: string): Promise<{ id: string; url: s
 export async function fetchShare(id: string): Promise<string> {
   const response = await fetch(`/shares/${encodeURIComponent(id)}`)
   if (!response.ok) {
-    if (response.status === 404) throw new Error('Share link not found or expired')
-    throw new Error(`Failed to load share (${response.status})`)
+    if (response.status === 404) throw new ShareError('notFound')
+    throw new ShareError('loadFailed', { status: response.status })
   }
   const body = (await response.json()) as { content: string }
   return body.content

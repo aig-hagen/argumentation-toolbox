@@ -17,58 +17,43 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-export interface Tag {
-  name: string
-  description: string
-}
+/**
+ * A stable, language-independent tag identifier. The localized label/description live in
+ * the `modules.tags.<id>` message catalog; use {@link tagLabelKey}/{@link tagDescriptionKey}
+ * to resolve them reactively.
+ */
+export const TagId = {
+  Abstract: 'abstract',
+  Augmented: 'augmented',
+  Uncertainty: 'uncertainty',
+  Attack: 'attack',
+  Support: 'support',
+  CollectiveRelations: 'collectiveRelations',
+  Constraints: 'constraints',
+  Weights: 'weights',
+} as const
 
-export const TAG_ABSTRACT: Tag = {
-  name: 'Abstract',
-  description: 'Arguments are abstract entities without internal structure.',
-}
+export type TagId = (typeof TagId)[keyof typeof TagId]
 
-export const TAG_AUGMENTED: Tag = {
-  name: 'Augmented',
-  description: 'Arguments are augmented with additional information, such as a claim or premises.',
-}
+export const TAG_ABSTRACT = TagId.Abstract
+export const TAG_AUGMENTED = TagId.Augmented
+export const TAG_UNCERTAINTY = TagId.Uncertainty
+export const TAG_ATTACK = TagId.Attack
+export const TAG_SUPPORT = TagId.Support
+export const TAG_COLLECTIVE_RELATIONS = TagId.CollectiveRelations
+export const TAG_CONSTRAINTS = TagId.Constraints
+export const TAG_WEIGHTS = TagId.Weights
 
-export const TAG_UNCERTAINTY: Tag = {
-  name: 'Uncertainty',
-  description: 'The framework represents incomplete information or probabilities.',
-}
-
-export const TAG_ATTACK: Tag = {
-  name: 'Attack',
-  description: 'The framework models attack relations between arguments.',
-}
-
-export const TAG_SUPPORT: Tag = {
-  name: 'Support',
-  description: 'The framework models support relations between arguments.',
-}
-
-export const TAG_COLLECTIVE_RELATIONS: Tag = {
-  name: 'Collective Relations',
-  description: 'Relations can involve sets of arguments rather than single arguments.',
-}
-
-export const TAG_CONSTRAINTS: Tag = {
-  name: 'Constraints',
-  description: 'The framework allows for additional constraints on the acceptance of arguments.',
-}
-
-export const TAG_WEIGHTS: Tag = {
-  name: 'Weights',
-  description: 'Arguments or relations can be assigned weights, probabilities, or values.',
-}
-
-export const allTags: Tag[] = [
-  TAG_ABSTRACT,
-  TAG_AUGMENTED,
-  TAG_UNCERTAINTY,
-  TAG_ATTACK,
-  TAG_SUPPORT,
-  TAG_COLLECTIVE_RELATIONS,
-  TAG_CONSTRAINTS,
-  TAG_WEIGHTS,
+export const allTagIds: TagId[] = [
+  TagId.Abstract,
+  TagId.Augmented,
+  TagId.Uncertainty,
+  TagId.Attack,
+  TagId.Support,
+  TagId.CollectiveRelations,
+  TagId.Constraints,
+  TagId.Weights,
 ]
+
+export const tagLabelKey = (id: TagId) => `modules.tags.${id}.name`
+export const tagDescriptionKey = (id: TagId) => `modules.tags.${id}.description`

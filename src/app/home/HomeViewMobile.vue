@@ -19,6 +19,7 @@
 <script setup lang="ts" generic="DocumentT extends Objectish">
 import {
   ArrowDownTrayIcon,
+  Cog6ToothIcon,
   DocumentTextIcon,
   EllipsisHorizontalIcon,
   PencilSquareIcon,
@@ -28,22 +29,27 @@ import {
 } from '@heroicons/vue/24/outline'
 import type { Objectish } from 'immer'
 import { computed, provide, ref, useTemplateRef, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 
 import BlankDocumentCanvasMobile from '@/app/home/BlankDocumentCanvasMobile.vue'
 import type { ModuleConfig } from '@/app/home/moduleConfig'
 import type { HomeController } from '@/app/home/useHomeController'
 import { useHomeSurface } from '@/app/home/useHomeSurface'
+import { useModuleCards } from '@/app/home/useModuleCards'
 import { ACTIVE_MODULE_KEY } from '@/app/usage/moduleContext'
 import NotificationsDisplay from '@/modules/common/notifications/NotificationsDisplay.vue'
+import SettingsContent from '@/modules/common/settings/SettingsContent.vue'
 import { QUICK_SHARE_KEY } from '@/modules/common/share/quickShareKey'
-import { formatRelativeTime } from '@/modules/common/util'
+import { relativeTime } from '@/modules/common/util'
 import BottomSheet from '@/modules/common/window/BottomSheet.vue'
 
 const { modules, controller } = defineProps<{
   modules: ModuleConfig<DocumentT>[]
   controller: HomeController<DocumentT>
 }>()
+
+const moduleCards = useModuleCards(modules)
 
 const {
   notifications,
@@ -68,6 +74,17 @@ const {
   saveAsFile,
   exportAsFile,
 } = controller
+
+const { t, locale } = useI18n({ useScope: 'global' })
+
+function formatEdited(timestamp: number): string {
+  const rel = relativeTime(timestamp)
+  const time =
+    rel.unit === 'absolute'
+      ? new Date(rel.timestamp).toLocaleDateString(locale.value)
+      : t(`common.time.${rel.unit}`, rel.unit === 'justNow' ? {} : { count: rel.count })
+  return t('home.documents.edited', { time })
+}
 
 // Let deep editor surfaces (e.g. the export sheet) trigger a quick share.
 provide(QUICK_SHARE_KEY, quickShareDocument)
@@ -159,6 +176,8 @@ async function createFromNew(content: DocumentT, newNamePrefix: string) {
   goTo('editor')
 }
 
+const settingsOpen = ref(false)
+
 const fileInput = useTemplateRef<HTMLInputElement>('file-input')
 
 function loadFile() {
@@ -178,10 +197,18 @@ function loadFile() {
       style="padding-top: calc(env(safe-area-inset-top) + 1rem)"
     >
       <button
+        class="btn btn-square btn-ghost btn-sm absolute left-2"
+        style="top: calc(env(safe-area-inset-top) + 0.5rem)"
+        :aria-label="t('settings.title')"
+        @click="settingsOpen = true"
+      >
+        <Cog6ToothIcon class="size-5 opacity-70" />
+      </button>
+      <button
         v-if="selectedDocumentId !== undefined && documentState !== undefined"
         class="btn btn-square btn-ghost btn-sm absolute right-2"
         style="top: calc(env(safe-area-inset-top) + 0.5rem)"
-        aria-label="Back to editor"
+        :aria-label="t('home.backToEditor')"
         @click="goTo('editor')"
       >
         <XMarkIcon class="size-5 opacity-70" />
@@ -201,7 +228,7 @@ function loadFile() {
       </span>
       <h1 class="text-2xl font-bold tracking-tight">AgonProject</h1>
       <p class="text-sm text-base-content/60 mt-1 max-w-64 leading-snug">
-        The platform to explore different approaches to formal argumentation
+        {{ t('home.tagline') }}
       </p>
     </header>
 
@@ -213,14 +240,14 @@ function loadFile() {
           :class="surface === 'documents' ? 'bg-base-100 shadow-sm' : 'opacity-60'"
           @click="goTo('documents')"
         >
-          Frameworks
+          {{ t('home.surfaces.frameworks') }}
         </button>
         <button
           class="h-9 rounded-lg text-sm font-semibold transition-colors"
           :class="surface === 'new' ? 'bg-base-100 shadow-sm' : 'opacity-60'"
           @click="goTo('new')"
         >
-          New
+          {{ t('home.surfaces.new') }}
         </button>
       </div>
     </div>
@@ -232,12 +259,18 @@ function loadFile() {
           v-if="confirmDeleteAll"
           class="flex items-center gap-2 rounded-xl border border-error px-3 py-2 my-2"
         >
-          <span class="flex-1 text-sm">Delete all frameworks?</span>
-          <button class="btn btn-ghost btn-sm" @click="confirmDeleteAll = false">Cancel</button>
-          <button class="btn btn-error btn-sm" @click="deleteAll">Delete all</button>
+          <span class="flex-1 text-sm">{{ t('home.documents.confirmDeleteAll') }}</span>
+          <button class="btn btn-ghost btn-sm" @click="confirmDeleteAll = false">
+            {{ t('common.actions.cancel') }}
+          </button>
+          <button class="btn btn-error btn-sm" @click="deleteAll">
+            {{ t('home.documents.deleteAll') }}
+          </button>
         </div>
 
-        <p v-if="documents.length === 0" class="text-center opacity-60 py-10">No frameworks yet.</p>
+        <p v-if="documents.length === 0" class="text-center opacity-60 py-10">
+          {{ t('home.documents.empty') }}
+        </p>
 
         <ul class="flex flex-col">
           <li v-for="document of documents" :key="document.id">
@@ -252,8 +285,12 @@ function loadFile() {
                 @keydown.enter="commitRename"
                 @keydown.esc="renamingId = null"
               />
-              <button class="btn btn-ghost btn-sm" @click="renamingId = null">Cancel</button>
-              <button class="btn btn-primary btn-sm" @click="commitRename">Save</button>
+              <button class="btn btn-ghost btn-sm" @click="renamingId = null">
+                {{ t('common.actions.cancel') }}
+              </button>
+              <button class="btn btn-primary btn-sm" @click="commitRename">
+                {{ t('common.actions.save') }}
+              </button>
             </div>
 
             <!-- Default row -->
@@ -283,17 +320,17 @@ function loadFile() {
                 </span>
                 <span class="flex flex-col min-w-0 leading-tight">
                   <span class="truncate text-[0.95rem] font-semibold">{{
-                    document.name || 'Untitled'
+                    document.name || t('home.untitled')
                   }}</span>
                   <span
                     v-if="document.id === selectedDocumentId"
                     class="text-xs text-base-content/60"
-                    >Open now</span
+                    >{{ t('home.documents.openNow') }}</span
                   >
                   <span
                     v-else-if="document.lastEdited !== undefined"
                     class="text-xs text-base-content/60"
-                    >Edited {{ formatRelativeTime(document.lastEdited) }}</span
+                    >{{ formatEdited(document.lastEdited) }}</span
                   >
                 </span>
               </button>
@@ -303,7 +340,9 @@ function loadFile() {
               />
               <button
                 class="btn btn-square btn-ghost size-11"
-                :aria-label="`Actions for ${document.name || 'Untitled'}`"
+                :aria-label="
+                  t('home.documents.actionsFor', { name: document.name || t('home.untitled') })
+                "
                 @click="menuDocId = document.id"
               >
                 <EllipsisHorizontalIcon class="size-5 opacity-60" />
@@ -317,7 +356,7 @@ function loadFile() {
           class="btn btn-ghost btn-sm text-error/80 mt-4 mx-auto flex"
           @click="confirmDeleteAll = true"
         >
-          Delete all frameworks
+          {{ t('home.documents.deleteAllFrameworks') }}
         </button>
       </div>
 
@@ -328,7 +367,7 @@ function loadFile() {
         class="absolute inset-0 overflow-y-auto"
         style="scrollbar-gutter: stable"
       >
-        <BlankDocumentCanvasMobile :module-cards="modules" @open="createFromNew" />
+        <BlankDocumentCanvasMobile :module-cards="moduleCards" @open="createFromNew" />
       </div>
 
       <!-- Editor surface: mounted on first visit, then kept mounted across surface switches -->
@@ -343,7 +382,7 @@ function loadFile() {
             style="scrollbar-gutter: stable"
           >
             <BlankDocumentCanvasMobile
-              :module-cards="modules"
+              :module-cards="moduleCards"
               :source-document-id="selectedDocumentId"
               @open="overrideWithContent"
             />
@@ -385,26 +424,33 @@ function loadFile() {
       style="padding-bottom: max(env(safe-area-inset-bottom), 0.75rem)"
     >
       <button class="btn btn-primary w-full h-13 rounded-2xl gap-2 text-base" @click="goTo('new')">
-        <PlusIcon class="size-5" /> New framework
+        <PlusIcon class="size-5" /> {{ t('menu.newFramework') }}
       </button>
     </footer>
   </div>
 
   <!-- Per-document overflow actions. -->
-  <BottomSheet v-model:open="menuOpen" :title="menuDoc?.name || 'Untitled'">
+  <BottomSheet v-model:open="menuOpen" :title="menuDoc?.name || t('home.untitled')">
     <div v-if="menuDoc" class="flex flex-col gap-1 pb-4">
       <button
         class="btn btn-ghost justify-start gap-3"
         @click="menuRename({ id: menuDoc.id, name: menuDoc.name })"
       >
-        <PencilSquareIcon class="size-5 menu-icon" /> Rename
+        <PencilSquareIcon class="size-5 menu-icon" /> {{ t('common.actions.rename') }}
       </button>
       <button class="btn btn-ghost justify-start gap-3" @click="menuSave(menuDoc.id)">
-        <ArrowDownTrayIcon class="size-5 menu-icon" /> Save to device
+        <ArrowDownTrayIcon class="size-5 menu-icon" /> {{ t('menu.saveToDevice') }}
       </button>
       <button class="btn btn-ghost justify-start gap-3 text-error" @click="menuDelete(menuDoc.id)">
-        <TrashIcon class="size-5" /> Delete
+        <TrashIcon class="size-5" /> {{ t('common.actions.delete') }}
       </button>
+    </div>
+  </BottomSheet>
+
+  <!-- App settings. -->
+  <BottomSheet v-model:open="settingsOpen" :title="t('settings.title')">
+    <div class="pb-4">
+      <SettingsContent />
     </div>
   </BottomSheet>
 

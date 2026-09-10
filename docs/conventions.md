@@ -76,6 +76,17 @@ Document models are plain classes marked `[immerable] = true` (from [`immer`](ht
 - Import/validation errors are modeled as a small class hierarchy extending an abstract `ImportError` base with a `message` getter (`JsonSyntaxError`, `SchemaMismatchError`, `ValidationError`, ...), so different failure kinds can be distinguished with `instanceof` while all carry a user-displayable message.
 - Transient, non-recoverable UI feedback (a save succeeded/failed) uses the [`useNotifications()`](/src/modules/common/notifications/useNotifications.ts) composable's `addSuccessNotification`/`addErrorNotification`, which auto-dismiss after a timeout — not ad-hoc toasts per component.
 
+## Localization
+
+- All user-facing text is localized (English + German) via `vue-i18n`. Add keys to
+  `src/localization/locales/en/messages/` and their German counterpart, then read them with an
+  explicit `const { t } = useI18n({ useScope: 'global' })` — not implicit `$t`. English is the
+  schema; a missing German key fails `type-check`. See [localization.md](./localization.md) for
+  adding keys, structured content, and new locales.
+- Keep stable IDs (`ModuleConfig.id`, `TagId`, `ExportFormatId`, layout/relation keys) in domain
+  objects and derive localized labels in computed view models, never `t()` in module-level
+  singletons. Machine output (JSON/ICCMA/TGF/LaTeX exports, file names) stays locale-neutral.
+
 ## IDs
 
 - Graph node/edge/argument IDs are small sequential numbers, minted by [`IdGenerator`](/src/modules/common/ids.ts) and mapped across import/export boundaries with `IdMapping`.

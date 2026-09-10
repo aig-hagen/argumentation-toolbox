@@ -1,9 +1,10 @@
 ## Features
 - Rework fonts to be consistent across browsers
-- Localization
+- Localization of definitions, semantics, etc
 
 
 ## Bugs and Issues
+
 
 ### desktop/general
 - need a ranking tutorial for AF

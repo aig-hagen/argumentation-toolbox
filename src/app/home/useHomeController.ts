@@ -20,6 +20,7 @@ import copy from 'copy-to-clipboard'
 import type { IDBPDatabase } from 'idb'
 import type { Objectish } from 'immer'
 import { computed, ref, shallowRef, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import { exportFileName, nextDocumentName } from '@/app/home/homeControllerHelpers'
 import type { ModuleConfig } from '@/app/home/moduleConfig'
@@ -60,6 +61,7 @@ export function useHomeController<DocumentT extends Objectish>(
   db: IDBPDatabase<DocumentsDB>,
   modules: ModuleConfig<DocumentT>[],
 ) {
+  const { t } = useI18n({ useScope: 'global' })
   const { notifications, addSuccessNotification, addErrorNotification } = useNotifications()
 
   const { documents, createDocument, deleteDocument, renameDocument } = useDocumentMetadata(
@@ -170,6 +172,15 @@ export function useHomeController<DocumentT extends Objectish>(
       (documentLoading.value || documentState.value !== undefined),
   )
 
+  // True while the blank canvas is on screen (no document, or a selected-but-empty
+  // one) rather than an editor. A last-selected document is always restored from
+  // storage, so `selectedDocumentId` alone can't tell these apart.
+  const onBlankCanvas = computed(
+    () =>
+      selectedDocumentId.value === undefined ||
+      (!documentLoading.value && documentState.value === undefined),
+  )
+
   const historyState = computed<HistoryState>(() => {
     const currentState = documentState.value
     if (currentState === undefined) {
@@ -211,7 +222,7 @@ export function useHomeController<DocumentT extends Objectish>(
       fileName = file.name
       dataStr = await loadTextData(file)
     } catch {
-      addErrorNotification('Failed to upload file')
+      addErrorNotification(t('errors.file.uploadFailed'))
       return
     }
 
@@ -219,12 +230,12 @@ export function useHomeController<DocumentT extends Objectish>(
     try {
       unvalidatedData = JSON.parse(dataStr)
     } catch {
-      addErrorNotification('Uploaded file is not JSON')
+      addErrorNotification(t('errors.file.notJson'))
       return
     }
 
     if (typeof unvalidatedData !== 'object' || unvalidatedData === null) {
-      addErrorNotification('Uploaded file contains unsupported JSON')
+      addErrorNotification(t('errors.file.unsupportedJson'))
       return
     }
 
@@ -233,7 +244,7 @@ export function useHomeController<DocumentT extends Objectish>(
     )
 
     if (importModule === undefined) {
-      addErrorNotification('Uploaded file contains unsupported JSON')
+      addErrorNotification(t('errors.file.unsupportedJson'))
       return
     }
 
@@ -241,7 +252,10 @@ export function useHomeController<DocumentT extends Objectish>(
 
     if (result.errors !== undefined) {
       for (const error of result.errors) {
-        addErrorNotification('Failed loading', error.message)
+        addErrorNotification(
+          t('errors.file.loadFailedTitle'),
+          t(`errors.import.${error.code}`, { ...error.params, detail: error.detail ?? '' }),
+        )
       }
     }
     if (result.data !== undefined) {
@@ -253,7 +267,7 @@ export function useHomeController<DocumentT extends Objectish>(
             ? fileName.slice(0, -5)
             : fileName
       createDocumentWithContent(result.data, documentName)
-      addSuccessNotification('Data loaded')
+      addSuccessNotification(t('errors.file.loaded'))
     }
   }
 
@@ -285,7 +299,7 @@ export function useHomeController<DocumentT extends Objectish>(
       const result = await uploadShare(content)
       shareUrl.value = result.url
     } catch {
-      addErrorNotification('Failed to create share link')
+      addErrorNotification(t('share.actions.createFailed'))
     }
   }
 
@@ -322,9 +336,9 @@ export function useHomeController<DocumentT extends Objectish>(
       shareCopiedTimer = setTimeout(() => {
         shareCopied.value = false
       }, 2_000)
-      addSuccessNotification('Share link copied to clipboard')
+      addSuccessNotification(t('share.actions.linkCopied'))
     } catch {
-      addErrorNotification('Failed to create share link')
+      addErrorNotification(t('share.actions.createFailed'))
     } finally {
       isSharing.value = false
     }
@@ -380,6 +394,7 @@ export function useHomeController<DocumentT extends Objectish>(
     undo,
     redo,
     showCreate,
+    onBlankCanvas,
     historyState,
     handleEditorShortcut,
     loadFromFileInput,

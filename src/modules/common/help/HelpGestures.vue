@@ -28,11 +28,14 @@ import {
   TrashIcon,
 } from '@heroicons/vue/24/outline'
 import { type Component, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n({ useScope: 'global' })
 
 const {
   linkNames,
   allowHyperLinkCreation = false,
-  nodeTapAction = 'Rename it',
+  nodeTapAction,
 } = defineProps<{
   linkNames: string[]
   allowHyperLinkCreation?: boolean
@@ -44,9 +47,10 @@ const {
 const linkNamesSlash = computed(() => linkNames.join('/'))
 const hasTypes = computed(() => linkNames.length > 1)
 
-const nodeTapActionLower = computed(
-  () => nodeTapAction.charAt(0).toLowerCase() + nodeTapAction.slice(1),
-)
+const nodeTapActionLower = computed(() => {
+  const action = nodeTapAction ?? t('help.gestures.defaultTapAction')
+  return action.charAt(0).toLowerCase() + action.slice(1)
+})
 
 interface GestureRow {
   icon: Component
@@ -57,43 +61,47 @@ interface GestureRow {
 
 const rows = computed<GestureRow[]>(() => {
   const list: GestureRow[] = [
-    { icon: PlusCircleIcon, title: 'Double-tap the canvas', desc: 'Add a new argument' },
+    {
+      icon: PlusCircleIcon,
+      title: t('help.gestures.doubleTapCanvas.title'),
+      desc: t('help.gestures.doubleTapCanvas.desc'),
+    },
     {
       icon: CursorArrowRaysIcon,
-      title: 'Tap an argument',
-      desc: `Open its action bar — ${nodeTapActionLower.value}, delete and more`,
+      title: t('help.gestures.tapArgument.title'),
+      desc: t('help.gestures.tapArgument.desc', { action: nodeTapActionLower.value }),
     },
     {
       icon: ArrowLongRightIcon,
-      title: 'Hold + drag to another argument',
-      desc: `Create a ${linkNamesSlash.value} between them`,
+      title: t('help.gestures.holdDrag.title'),
+      desc: t('help.gestures.holdDrag.desc', { links: linkNamesSlash.value }),
     },
   ]
 
   if (allowHyperLinkCreation) {
     list.push({
       icon: PlusCircleIcon,
-      title: 'Add to attack',
-      desc: `Tap an argument and choose "Add to attack" — or long-press it — to build a source set, then hold + drag from a highlighted source to the target`,
+      title: t('help.gestures.addToAttack.title'),
+      desc: t('help.gestures.addToAttack.desc'),
     })
   }
 
   if (hasTypes.value) {
     list.push({
       icon: AdjustmentsHorizontalIcon,
-      title: 'Bottom-left selector',
-      desc: `Pick which ${linkNamesSlash.value} you create next`,
+      title: t('help.gestures.selector.title'),
+      desc: t('help.gestures.selector.desc', { links: linkNamesSlash.value }),
     })
     list.push({
       icon: CursorArrowRaysIcon,
-      title: `Tap a ${linkNamesSlash.value}`,
-      desc: 'Open its action bar to switch type or delete it — or long-press to delete',
+      title: t('help.gestures.tapLink.title', { links: linkNamesSlash.value }),
+      desc: t('help.gestures.tapLink.desc'),
     })
   } else {
     list.push({
       icon: TrashIcon,
-      title: `Long-press a ${linkNamesSlash.value}`,
-      desc: 'Delete it — or tap it and use the action bar',
+      title: t('help.gestures.longPressLink.title', { links: linkNamesSlash.value }),
+      desc: t('help.gestures.longPressLink.desc'),
       danger: true,
     })
   }
@@ -101,11 +109,19 @@ const rows = computed<GestureRow[]>(() => {
   list.push(
     {
       icon: ArrowsPointingOutIcon,
-      title: 'Drag with one finger',
-      desc: 'Pan the canvas — pinch to zoom',
+      title: t('help.gestures.drag.title'),
+      desc: t('help.gestures.drag.desc'),
     },
-    { icon: ArrowsPointingInIcon, title: 'Fit-view button', desc: 'Recenter the view' },
-    { icon: SparklesIcon, title: 'Relayout button', desc: 'Auto-arrange the graph' },
+    {
+      icon: ArrowsPointingInIcon,
+      title: t('help.gestures.fitView.title'),
+      desc: t('help.gestures.fitView.desc'),
+    },
+    {
+      icon: SparklesIcon,
+      title: t('help.gestures.relayout.title'),
+      desc: t('help.gestures.relayout.desc'),
+    },
   )
 
   return list

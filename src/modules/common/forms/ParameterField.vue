@@ -30,13 +30,16 @@ const { minWidth = '7rem', maxWidth = '14rem' } = defineProps<{
     class="flex flex-col gap-0.5 grow shrink"
     :style="{ flexBasis: minWidth, minWidth, maxWidth }"
   >
-    <span
-      v-if="label"
-      class="text-[0.65rem] font-medium uppercase tracking-wide text-base-content/50 truncate"
-      :title="title"
-    >
-      {{ label }}
-    </span>
+    <div v-if="label || $slots['label-suffix']" class="flex items-center gap-1">
+      <span
+        v-if="label"
+        class="text-[0.65rem] font-medium uppercase tracking-wide text-base-content/50 truncate"
+        :title="title"
+      >
+        {{ label }}
+      </span>
+      <slot name="label-suffix" />
+    </div>
     <slot />
   </div>
 </template>

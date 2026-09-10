@@ -18,21 +18,23 @@
 -->
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, useTemplateRef, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import EvaluationStatusFooter from '@/modules/common/evaluation/EvaluationStatusFooter.vue'
 
+const { t } = useI18n({ useScope: 'global' })
+
 const selected = defineModel<string | undefined>('selected')
-const props = withDefaults(
-  defineProps<{
-    items: { key: string; label: string; texLabel: string }[]
-    emptyMessage?: string
-    selectionHint?: string
-    evaluationDurationInMs?: number
-    /** Plural noun for the copy notification, e.g. "extensions". */
-    resultNoun?: string
-  }>(),
-  { emptyMessage: 'No results.', resultNoun: 'results' },
-)
+const props = defineProps<{
+  items: { key: string; label: string; texLabel: string }[]
+  emptyMessage?: string
+  selectionHint?: string
+  evaluationDurationInMs?: number
+  /** Localized plural noun for the copy notification, e.g. "extensions". */
+  resultNoun?: string
+}>()
+
+const resolvedEmptyMessage = computed(() => props.emptyMessage ?? t('evaluation.status.noResults'))
 
 const statusLine = computed(() => {
   const parts: string[] = []
@@ -135,7 +137,7 @@ onBeforeUnmount(() => {
     role="alert"
     class="alert alert-info alert-soft"
   >
-    <span>{{ props.emptyMessage }}</span>
+    <span>{{ resolvedEmptyMessage }}</span>
   </div>
   <div v-else data-evaluation-results class="evaluation-result-grid gap-2" ref="container">
     <button

@@ -17,18 +17,22 @@
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 -->
 <script setup lang="ts" generic="DocumentT extends Objectish">
+import { Cog6ToothIcon } from '@heroicons/vue/24/outline'
 import type { IDBPDatabase } from 'idb'
 import type { Objectish } from 'immer'
 import { computed, provide, useTemplateRef } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 
 import BlankDocumentCanvas from '@/app/home/BlankDocumentCanvas.vue'
 import LayoutTabs from '@/app/home/EditorTabs.vue'
 import type { ModuleConfig } from '@/app/home/moduleConfig'
 import type { HomeController } from '@/app/home/useHomeController'
+import { useModuleCards } from '@/app/home/useModuleCards'
 import { ACTIVE_MODULE_KEY } from '@/app/usage/moduleContext'
 import type { DocumentsDB } from '@/modules/common/documents/db'
 import NotificationsDisplay from '@/modules/common/notifications/NotificationsDisplay.vue'
+import WindowSettings from '@/modules/common/settings/WindowSettings.vue'
 import ShareModal from '@/modules/common/share/ShareModal.vue'
 
 const { db, modules, controller } = defineProps<{
@@ -36,6 +40,8 @@ const { db, modules, controller } = defineProps<{
   modules: ModuleConfig<DocumentT>[]
   controller: HomeController<DocumentT>
 }>()
+
+const moduleCards = useModuleCards(modules)
 
 const {
   notifications,
@@ -55,6 +61,7 @@ const {
   undo,
   redo,
   showCreate,
+  onBlankCanvas,
   historyState,
   handleEditorShortcut,
   loadFromFileInput,
@@ -74,6 +81,9 @@ provide(
 )
 
 const router = useRouter()
+const { t } = useI18n({ useScope: 'global' })
+
+const settingsDialog = useTemplateRef<InstanceType<typeof WindowSettings>>('settingsDialog')
 
 const fileInput = useTemplateRef<HTMLInputElement>('file-input')
 
@@ -99,18 +109,19 @@ function loadFile() {
       :show-create="showCreate"
       :sharing="isSharing"
       :share-copied="shareCopied"
+      :on-blank-canvas="onBlankCanvas"
       @quick-share="quickShareDocument"
     />
     <main class="border-t -mt-px border-base-300 editor flex-1 overflow-hidden">
       <div class="relative h-full w-full">
         <BlankDocumentCanvas
           v-if="selectedDocumentId === undefined"
-          :module-cards="modules"
+          :module-cards="moduleCards"
           @open="createDocumentWithContent"
         ></BlankDocumentCanvas>
         <BlankDocumentCanvas
           v-if="!documentLoading && documentState === undefined"
-          :module-cards="modules"
+          :module-cards="moduleCards"
           :source-document-id="selectedDocumentId"
           @open="overrideWithContent"
         ></BlankDocumentCanvas>
@@ -138,9 +149,20 @@ function loadFile() {
           @share="shareDocument(loadedDocument.id)"
           @export="exportAsFile(loadedDocument.id, $event)"
         />
+        <!-- Settings: blank canvas only (hidden once an editor is open). -->
+        <button
+          v-if="onBlankCanvas"
+          class="btn btn-square btn-ghost absolute top-4 right-4 bg-base-100 shadow-sm border border-base-300"
+          :title="t('settings.title')"
+          :aria-label="t('settings.title')"
+          @click="settingsDialog?.open()"
+        >
+          <Cog6ToothIcon class="size-5 opacity-70" />
+        </button>
       </div>
     </main>
   </div>
+  <WindowSettings ref="settingsDialog" />
   <NotificationsDisplay :notifications="notifications" />
   <ShareModal :url="shareUrl" @close="shareUrl = null" />
   <input

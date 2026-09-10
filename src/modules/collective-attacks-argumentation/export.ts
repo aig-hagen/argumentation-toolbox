@@ -22,7 +22,7 @@ import {
   exportLatexArgumentationCommon,
   latexExportCommonConfig,
 } from '@/modules/common/argumentation/export'
-import type { ExportConfig, ExportStyleOptions } from '@/modules/common/export'
+import { type ExportConfig, ExportFormatId, type ExportStyleOptions } from '@/modules/common/export'
 import { IdMapping } from '@/modules/common/ids'
 
 function* emptyIterator(): IterableIterator<[number, number]> {}
@@ -41,6 +41,7 @@ const exportLatexSetAF: ExportConfig<SetAF<SetAfArgumentData>> = {
 }
 
 const exportICCMA: ExportConfig<SetAF<SetAfArgumentData>> = {
+  id: ExportFormatId.Iccma,
   name: 'ICCMA',
   references: [
     {
@@ -68,6 +69,7 @@ const exportICCMA: ExportConfig<SetAF<SetAfArgumentData>> = {
 }
 
 const exportTGFSetAF: ExportConfig<SetAF<SetAfArgumentData>> = {
+  id: ExportFormatId.Tgf,
   name: 'Trivial Graph Format (TGF)',
   references: [{ label: 'TGF Format', url: 'https://en.wikipedia.org/wiki/Trivial_Graph_Format' }],
   extension: 'tgf',

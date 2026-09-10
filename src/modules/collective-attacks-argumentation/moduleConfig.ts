@@ -44,7 +44,7 @@ initialSetAF.addCollectiveAttack([2], 0)
 
 export const collectiveAttacksArgumentationModule: ModuleConfig<SetAF<SetAfArgumentData>> = {
   newNamePrefix: 'SetAF',
-  displayNameSingular: 'Argumentation with Collective Attacks',
+  id: 'collectiveAttacks',
   is(model: unknown) {
     return model instanceof SetAF
   },
@@ -95,8 +95,6 @@ export const collectiveAttacksArgumentationModule: ModuleConfig<SetAF<SetAfArgum
     return saveAsString(document, name)
   },
   generateHref: '/generate?type=setaf',
-  description:
-    'Extends abstract argumentation by allowing sets of arguments to collectively attack a target argument.',
   publications: [NP06, BCDFP21],
   tags: [TAG_ABSTRACT, TAG_ATTACK, TAG_COLLECTIVE_RELATIONS],
 }

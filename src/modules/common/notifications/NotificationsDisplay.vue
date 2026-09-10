@@ -18,11 +18,15 @@
 -->
 <script setup lang="ts">
 import { CheckIcon, ExclamationTriangleIcon, XMarkIcon } from '@heroicons/vue/24/outline'
+import { useI18n } from 'vue-i18n'
 
 import {
   type Notification,
   NotificationType,
 } from '@/modules/common/notifications/useNotifications'
+
+const { t } = useI18n({ useScope: 'global' })
+
 const { notifications, placement = 'end' } = defineProps<{
   notifications: Notification[]
   /** Horizontal placement of the toast stack. Mobile uses `center` to clear the command bar. */
@@ -62,20 +66,21 @@ const { notifications, placement = 'end' } = defineProps<{
         v-if="notification.type === NotificationType.ERROR"
         class="btn btn-square btn-xs btn-ghost -mr-1"
         @click="notification.remove()"
-        title="Dismiss"
+        :title="t('common.actions.dismiss')"
       >
         <XMarkIcon class="size-4" />
       </button>
     </div>
   </div>
 
-  <!-- Desktop: full alert cards. -->
+  <!-- Desktop: full alert cards, offset below the editor tab bar. -->
   <div
     v-else
     role="status"
     aria-live="polite"
     aria-atomic="false"
     class="toast toast-top toast-end"
+    style="top: 3.5rem"
   >
     <div
       v-for="notification of notifications"
@@ -97,7 +102,7 @@ const { notifications, placement = 'end' } = defineProps<{
         v-if="notification.type === NotificationType.ERROR"
         class="btn btn-square btn-xs ml-2 btn-ghost"
         @click="notification.remove()"
-        title="Dismiss"
+        :title="t('common.actions.dismiss')"
       >
         <XMarkIcon class="size-4"></XMarkIcon>
       </button>

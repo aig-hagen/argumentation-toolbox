@@ -18,6 +18,7 @@
 -->
 <script setup lang="ts">
 import { computed, inject, provide, ref, shallowRef, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import {
   createDefaultExtensionWindowInstance,
@@ -128,11 +129,13 @@ function transformToEditorState(
   }
 }
 
-const linkConfig = {
+const { t } = useI18n({ useScope: 'global' })
+
+const linkConfig = computed(() => ({
   SINGLE: {
-    displayName: 'Attack',
+    displayName: t('editor.links.attack'),
   },
-}
+}))
 
 function createNewState(recipe: (draft: AbstractArgumentation<ArgumentData>) => void) {
   if (renderedState.value === undefined) {

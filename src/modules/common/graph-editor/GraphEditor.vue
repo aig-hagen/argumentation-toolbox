@@ -73,6 +73,7 @@ import {
   useTemplateRef,
   watch,
 } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import { ARGUMENT_RADIUS_IN_PX } from '@/modules/common/argumentation/model'
 import { DOCUMENTS_DB_INJECTION_KEY } from '@/modules/common/documents/db'
@@ -121,7 +122,7 @@ import HelpControls from '@/modules/common/help/HelpControls.vue'
 import WindowHelp from '@/modules/common/help/WindowHelp.vue'
 import { IdGenerator, IdMapping } from '@/modules/common/ids'
 import { useLayoutMode } from '@/modules/common/layout/useLayoutMode'
-import { Layout, layoutDatas } from '@/modules/common/main-menu/layouting'
+import { Layout, layoutDatas, layoutLabelKey } from '@/modules/common/main-menu/layouting'
 import MainMenu from '@/modules/common/main-menu/MainMenu.vue'
 import { EntryState, type GridVisibility } from '@/modules/common/main-menu/types'
 import { getNextName } from '@/modules/common/nextName'
@@ -250,12 +251,17 @@ const selectionActions = computed<SelectionAction[]>(() => {
       const inSet = hyperLinkSources.value.includes(sel.id as number)
       actions.push({
         key: 'attack-source',
-        label: inSet ? 'Remove from attack' : 'Add to attack',
+        label: inSet ? t('editor.selection.removeFromAttack') : t('editor.selection.addToAttack'),
         icon: inSet ? MinusCircleIcon : PlusCircleIcon,
         run: () => graphComponentRef.value?.toggleHyperLinkSource(sel.id as number),
       })
     }
-    actions.push({ key: 'rename', label: 'Rename', icon: PencilSquareIcon, run: onSelectionRename })
+    actions.push({
+      key: 'rename',
+      label: t('common.actions.rename'),
+      icon: PencilSquareIcon,
+      run: onSelectionRename,
+    })
     if (nodeSelectionActions && idMapping.has(sel.id as number)) {
       actions.push(...nodeSelectionActions(idMapping.getOrFail(sel.id as number)))
     }
@@ -265,10 +271,10 @@ const selectionActions = computed<SelectionAction[]>(() => {
     if (enableLinkSwitching && keys.length > 0) {
       const current = currentLinkType(internalId)
       const next = keys[((current ? keys.indexOf(current) : -1) + 1) % keys.length]!
-      const nextName = linkConfigs[next]?.displayName ?? 'type'
+      const nextName = linkConfigs[next]?.displayName ?? t('editor.selection.linkFallback')
       actions.push({
         key: 'switch-type',
-        label: `Switch to ${nextName}`,
+        label: t('editor.selection.switchTo', { type: nextName }),
         icon: ArrowsRightLeftIcon,
         // In-place switcher: stay open so the user can cycle types across taps.
         keepOpen: true,
@@ -283,7 +289,7 @@ const selectionActions = computed<SelectionAction[]>(() => {
   }
   actions.push({
     key: 'delete',
-    label: 'Delete',
+    label: t('common.actions.delete'),
     icon: TrashIcon,
     danger: true,
     run: onSelectionDelete,
@@ -362,6 +368,7 @@ if (db === undefined) {
   throw new Error('Documents database not provided.')
 }
 
+const { t } = useI18n({ useScope: 'global' })
 const { isDark } = useTheme()
 const {
   graphStyle: graphStyleSetting,
@@ -1729,22 +1736,24 @@ const mobileTutorialRefs = computed<Record<string, HTMLElement | null>>(() => ({
 }))
 // Split the layouts into the two mockup groups: directed (edge-following) vs. the
 // force/geometric engines. The first four entries are the directed ones.
-const relayoutGroups = [
+const relayoutGroups = computed(() => [
   {
-    label: 'Directed',
+    label: t('menu.directed'),
     options: GRAPH_EDITOR_LAYOUTS.slice(0, 4).map((layout) => ({
       layout,
-      ...layoutDatas[layout],
+      label: t(layoutLabelKey(layout)),
+      icon: layoutDatas[layout].icon,
     })),
   },
   {
-    label: 'Other',
+    label: t('editor.relayout.other'),
     options: GRAPH_EDITOR_LAYOUTS.slice(4).map((layout) => ({
       layout,
-      ...layoutDatas[layout],
+      label: t(layoutLabelKey(layout)),
+      icon: layoutDatas[layout].icon,
     })),
   },
-]
+])
 
 function relayoutTo(layout: Layout) {
   doLayout(layout)
@@ -1905,7 +1914,7 @@ defineExpose({
               ref="extensionEvalButton"
               class="btn btn-square btn-sm"
               @click="emit('open-extension-window')"
-              title="Extension Semantics"
+              :title="t('editor.toolbar.extensionSemantics')"
             >
               <SigmaIcon class="size-6 opacity-70" />
             </button>
@@ -1913,7 +1922,7 @@ defineExpose({
               v-if="hasRankingSlot"
               class="btn btn-square btn-sm"
               @click="emit('open-ranking-window')"
-              title="Ranking Semantics"
+              :title="t('editor.toolbar.rankingSemantics')"
             >
               <SucceqIcon class="size-6 opacity-70" />
             </button>
@@ -1921,7 +1930,7 @@ defineExpose({
               v-if="hasSerialisationSlot"
               class="btn btn-square btn-sm"
               @click="emit('open-serialisation-window')"
-              title="Serialisation Sequences"
+              :title="t('editor.toolbar.serialisationSequences')"
             >
               <SerialisationIcon class="size-6 opacity-70" />
             </button>
@@ -1930,7 +1939,7 @@ defineExpose({
             ref="exportButton"
             class="btn btn-square btn-sm"
             @click="isExportOpened = !isExportOpened"
-            title="Export"
+            :title="t('menu.export')"
           >
             <PhotoIcon class="size-6 opacity-70" />
           </button>
@@ -1949,7 +1958,7 @@ defineExpose({
         <!-- Switcher chip: back to home / document picker -->
         <button
           class="flex items-center gap-2 h-11 min-w-0 pl-1.5 pr-2.5 rounded-xl bg-base-100 border border-base-300 shadow-sm"
-          aria-label="Back to frameworks"
+          :aria-label="t('editor.toolbar.backToFrameworks')"
           @click="openDocumentSwitcher"
         >
           <span
@@ -1983,7 +1992,7 @@ defineExpose({
         <button
           ref="mobileMenuButton"
           class="btn btn-square size-11 btn-ghost"
-          aria-label="Menu"
+          :aria-label="t('menu.label')"
           @click="isMenuOpen = true"
         >
           <Bars3Icon class="size-6 opacity-70" />
@@ -2000,8 +2009,8 @@ defineExpose({
           <button
             ref="mobileFitToViewButton"
             class="btn btn-square size-11 shrink-0 rounded-xl bg-base-100 border-base-300 shadow-sm"
-            aria-label="Fit to view"
-            title="Fit to view"
+            :aria-label="t('editor.toolbar.fitToView')"
+            :title="t('editor.toolbar.fitToView')"
             @click="(tutorialCenterCount++, fitToView())"
           >
             <ArrowsPointingInIcon class="size-6 opacity-70" />
@@ -2009,8 +2018,8 @@ defineExpose({
           <button
             ref="mobileRelayoutButton"
             class="btn btn-square size-11 shrink-0 rounded-xl bg-base-100 border-base-300 shadow-sm"
-            aria-label="Relayout"
-            title="Relayout"
+            :aria-label="t('menu.relayout')"
+            :title="t('menu.relayout')"
             @click="isRelayoutOpen = true"
           >
             <SparklesIcon class="size-6 opacity-70" />
@@ -2023,15 +2032,15 @@ defineExpose({
           @click="evaluationOpen = true"
         >
           <PlayIcon class="size-6 shrink-0" />
-          <span class="truncate">Evaluate</span>
+          <span class="truncate">{{ t('editor.toolbar.evaluate') }}</span>
         </button>
 
         <div class="contents">
           <button
             ref="mobileExportButton"
             class="btn btn-square size-11 shrink-0 rounded-xl bg-base-100 border-base-300 shadow-sm"
-            aria-label="Export"
-            title="Export"
+            :aria-label="t('menu.export')"
+            :title="t('menu.export')"
             @click="isExportOpened = true"
           >
             <ShareIcon class="size-6 opacity-70" />
@@ -2040,8 +2049,8 @@ defineExpose({
             ref="mobileUndoButton"
             class="btn btn-square size-11 shrink-0 rounded-xl bg-base-100 border-base-300 shadow-sm"
             :disabled="!historyState.canUndo"
-            aria-label="Undo"
-            title="Undo"
+            :aria-label="t('menu.undo')"
+            :title="t('menu.undo')"
             @click="emit('undo')"
           >
             <ArrowUturnLeftIcon class="size-6 opacity-70" />
@@ -2076,79 +2085,85 @@ defineExpose({
         </div>
       </div>
 
-      <BottomSheet v-model:open="isMenuOpen" title="Menu">
+      <BottomSheet v-model:open="isMenuOpen" :title="t('menu.label')">
         <div class="flex flex-col gap-4 pb-4">
           <section class="flex flex-col gap-1">
-            <h3 class="text-xs font-semibold uppercase tracking-wide opacity-60 px-1">Framework</h3>
+            <h3 class="text-xs font-semibold uppercase tracking-wide opacity-60 px-1">
+              {{ t('menu.sections.framework') }}
+            </h3>
             <button
               class="btn btn-ghost justify-start gap-3"
               @click="runFromMenu(() => emit('new'))"
             >
-              <DocumentPlusIcon class="size-5 menu-icon" /> New framework
+              <DocumentPlusIcon class="size-5 menu-icon" /> {{ t('menu.newFramework') }}
             </button>
             <button
               class="btn btn-ghost justify-start gap-3"
               @click="runFromMenu(() => emit('load'))"
             >
-              <FolderOpenIcon class="size-5 menu-icon" /> Open file
+              <FolderOpenIcon class="size-5 menu-icon" /> {{ t('menu.openFile') }}
             </button>
             <button
               class="btn btn-ghost justify-start gap-3"
               @click="runFromMenu(() => emit('save'))"
             >
-              <ArrowDownTrayIcon class="size-5 menu-icon" /> Save to device
+              <ArrowDownTrayIcon class="size-5 menu-icon" /> {{ t('menu.saveToDevice') }}
             </button>
             <button
               class="btn btn-ghost justify-start gap-3"
               @click="runFromMenu(() => emit('generate'))"
             >
-              <Squares2X2Icon class="size-5 menu-icon" /> Generate random
+              <Squares2X2Icon class="size-5 menu-icon" /> {{ t('menu.generateRandom') }}
             </button>
           </section>
           <section class="flex flex-col gap-1">
-            <h3 class="text-xs font-semibold uppercase tracking-wide opacity-60 px-1">Edit</h3>
+            <h3 class="text-xs font-semibold uppercase tracking-wide opacity-60 px-1">
+              {{ t('menu.sections.edit') }}
+            </h3>
             <button
               class="btn btn-ghost justify-start gap-3"
               :disabled="!historyState.canUndo"
               @click="runFromMenu(() => emit('undo'))"
             >
-              <ArrowUturnLeftIcon class="size-5 menu-icon" /> Undo
+              <ArrowUturnLeftIcon class="size-5 menu-icon" /> {{ t('menu.undo') }}
             </button>
             <button
               class="btn btn-ghost justify-start gap-3"
               :disabled="!historyState.canRedo"
               @click="runFromMenu(() => emit('redo'))"
             >
-              <ArrowUturnRightIcon class="size-5 menu-icon" /> Redo
+              <ArrowUturnRightIcon class="size-5 menu-icon" /> {{ t('menu.redo') }}
             </button>
           </section>
           <section class="flex flex-col gap-1">
-            <h3 class="text-xs font-semibold uppercase tracking-wide opacity-60 px-1">App</h3>
+            <h3 class="text-xs font-semibold uppercase tracking-wide opacity-60 px-1">
+              {{ t('menu.sections.app') }}
+            </h3>
             <button class="btn btn-ghost justify-start gap-3" @click="runFromMenu(openSettings)">
-              <Cog6ToothIcon class="size-5 menu-icon" /> Settings
+              <Cog6ToothIcon class="size-5 menu-icon" /> {{ t('menu.settings') }}
             </button>
             <button
               v-if="tutorials"
               class="btn btn-ghost justify-start gap-3"
               @click="runFromMenu(openTutorials)"
             >
-              <AcademicCapIcon class="size-5 menu-icon" /> Tutorials
+              <AcademicCapIcon class="size-5 menu-icon" /> {{ t('menu.tutorials') }}
             </button>
             <RouterLink
               to="/glossary"
               class="btn btn-ghost justify-start gap-3"
               @click="isMenuOpen = false"
             >
-              <BookOpenIcon class="size-5 menu-icon" /> Glossary
+              <BookOpenIcon class="size-5 menu-icon" /> {{ t('menu.glossary') }}
             </RouterLink>
             <button class="btn btn-ghost justify-start gap-3" @click="runFromMenu(openHelp)">
-              <QuestionMarkCircleIcon class="size-5 menu-icon" /> Help
+              <QuestionMarkCircleIcon class="size-5 menu-icon" /> {{ t('menu.help') }}
             </button>
           </section>
         </div>
       </BottomSheet>
 
-      <BottomSheet v-model:open="isRelayoutOpen" title="Relayout">
+      <BottomSheet v-model:open="isRelayoutOpen" :title="t('menu.relayout')">
         <div class="flex flex-col gap-5 pb-4">
           <section v-for="group in relayoutGroups" :key="group.label" class="flex flex-col gap-2">
             <h3 class="text-xs font-semibold uppercase tracking-wide opacity-60 px-1">
@@ -2166,14 +2181,14 @@ defineExpose({
                 >
                   <component :is="option.icon" class="size-5" />
                 </span>
-                {{ option.name }}
+                {{ option.label }}
               </button>
             </div>
           </section>
         </div>
       </BottomSheet>
 
-      <BottomSheet v-model:open="isSettingsOpen" title="Settings">
+      <BottomSheet v-model:open="isSettingsOpen" :title="t('settings.title')">
         <div class="pb-4">
           <SettingsContent />
         </div>

@@ -19,6 +19,7 @@
 <script setup lang="ts">
 import { CheckCircleIcon } from '@heroicons/vue/24/solid'
 import { computed, inject } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import type { Tutorial, TutorialContext } from '@/modules/common/tutorial/types'
 import { TUTORIAL_INSTANCE_KEY, useTutorial } from '@/modules/common/tutorial/useTutorial'
@@ -32,6 +33,8 @@ const { tutorials, context } = defineProps<{
 const open = defineModel('open', { required: true })
 
 const emit = defineEmits<{ close: [] }>()
+
+const { t } = useI18n({ useScope: 'global' })
 
 const instanceId = inject(TUTORIAL_INSTANCE_KEY, '')
 const { isTouchDevice, isTutorialDone, startTutorial } = useTutorial()
@@ -50,13 +53,13 @@ function launch(tutorial: Tutorial) {
 <template>
   <WindowShell
     v-model:open="open"
-    title="Tutorials"
+    :title="t('tutorial.title')"
     :initial-position="{ x: 128, y: 128 }"
     :intitalSize="{ width: 360, height: 300 }"
   >
     <div class="p-4 flex flex-col gap-3">
       <p class="text-sm text-base-content/60">
-        Step-by-step guides to help you learn the key features.
+        {{ t('tutorial.intro') }}
       </p>
       <div
         v-for="tutorial in visibleTutorials"
@@ -69,13 +72,15 @@ function launch(tutorial: Tutorial) {
             <CheckCircleIcon
               v-if="isTutorialDone(tutorial.id)"
               class="size-4 text-success shrink-0"
-              title="Completed"
+              :title="t('tutorial.completed')"
             />
           </div>
           <p class="text-xs text-base-content/50 mt-0.5">{{ tutorial.description }}</p>
         </div>
         <button class="btn btn-primary btn-xs shrink-0" @click="launch(tutorial)">
-          {{ isTutorialDone(tutorial.id) ? '↺ Restart' : '▶ Start' }}
+          {{
+            isTutorialDone(tutorial.id) ? `↺ ${t('tutorial.restart')}` : `▶ ${t('tutorial.start')}`
+          }}
         </button>
       </div>
     </div>

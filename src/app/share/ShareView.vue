@@ -20,6 +20,7 @@
 import type { IDBPDatabase } from 'idb'
 import type { Objectish } from 'immer'
 import { onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 
 import type { ModuleConfig } from '@/app/home/moduleConfig'
@@ -29,12 +30,14 @@ import {
   useDocumentMetadata,
 } from '@/modules/common/documents/useDocuments'
 import { notifyStorageFailureOnce } from '@/modules/common/notifications/storageFailure'
-import { fetchShare } from '@/modules/common/share/useShare'
+import { fetchShare, ShareError } from '@/modules/common/share/useShare'
 
 const { db, modules } = defineProps<{
   db: IDBPDatabase<DocumentsDB>
   modules: ModuleConfig<Objectish>[]
 }>()
+
+const { t } = useI18n({ useScope: 'global' })
 
 const route = useRoute()
 const router = useRouter()
@@ -50,7 +53,10 @@ onMounted(async () => {
   try {
     content = await fetchShare(id)
   } catch (e) {
-    errorMessage.value = e instanceof Error ? e.message : 'Failed to load share'
+    errorMessage.value =
+      e instanceof ShareError
+        ? t(`share.load.errors.${e.code}`, e.params)
+        : t('share.load.errors.loadFailed')
     return
   }
 
@@ -58,24 +64,24 @@ onMounted(async () => {
   try {
     parsed = JSON.parse(content)
   } catch {
-    errorMessage.value = 'Share contains invalid data'
+    errorMessage.value = t('share.load.errors.invalidData')
     return
   }
 
   if (typeof parsed !== 'object' || parsed === null) {
-    errorMessage.value = 'Share contains unsupported data'
+    errorMessage.value = t('share.load.errors.unsupportedData')
     return
   }
 
   const importModule = modules.find((m) => m.canLoadFromObject(parsed as Record<string, unknown>))
   if (importModule === undefined) {
-    errorMessage.value = 'Share contains an unsupported framework type'
+    errorMessage.value = t('share.load.errors.unsupportedType')
     return
   }
 
   const result = importModule.load(content, '')
   if (result.data === undefined) {
-    errorMessage.value = 'Failed to parse shared framework'
+    errorMessage.value = t('share.load.errors.parseFailed')
     return
   }
 
@@ -99,7 +105,9 @@ onMounted(async () => {
   <div class="h-screen w-screen flex items-center justify-center bg-base-100">
     <div v-if="errorMessage" class="flex flex-col items-center gap-4 text-center max-w-sm">
       <p class="text-error font-medium">{{ errorMessage }}</p>
-      <router-link to="/" class="btn btn-primary btn-sm">Go to editor</router-link>
+      <router-link to="/" class="btn btn-primary btn-sm">{{
+        t('share.load.goToEditor')
+      }}</router-link>
     </div>
     <span v-else class="loading loading-spinner loading-lg text-primary" />
   </div>

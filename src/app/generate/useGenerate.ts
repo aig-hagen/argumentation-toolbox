@@ -19,6 +19,7 @@
 import type { IDBPDatabase } from 'idb'
 import type { Objectish } from 'immer'
 import { computed, onMounted, reactive, ref, shallowRef, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 
 import type { ModuleConfig } from '@/app/home/moduleConfig'
@@ -99,6 +100,7 @@ const MAX_EDGES_FOR_EDITOR = 100
  * loading, dynamic parameters, the generate request, and open-in-editor / download actions.
  */
 export function useGenerate(db: IDBPDatabase<DocumentsDB>, modules: ModuleConfig<Objectish>[]) {
+  const { t } = useI18n({ useScope: 'global' })
   const route = useRoute()
   const router = useRouter()
 
@@ -122,26 +124,22 @@ export function useGenerate(db: IDBPDatabase<DocumentsDB>, modules: ModuleConfig
 
   // --- Framework type from URL ---
   const frameworkTypeId = computed<string>(() => {
-    const t = route.query.type
+    const type = route.query.type
     if (
-      t === 'bipolar' ||
-      t === 'incomplete' ||
-      t === 'probabilistic' ||
-      t === 'adf' ||
-      t === 'setaf'
+      type === 'bipolar' ||
+      type === 'incomplete' ||
+      type === 'probabilistic' ||
+      type === 'adf' ||
+      type === 'setaf'
     )
-      return t
+      return type
     return 'abstract'
   })
 
-  // Resolve the matching module config via generateHref so names/abbreviations
-  // come from a single source of truth (ModuleConfig.displayNameSingular / newNamePrefix).
+  // Resolve the matching module config via generateHref so names/abbreviations come from a
+  // single source of truth (ModuleConfig.id / newNamePrefix).
   const activeModule = computed(
     () => modules.find((m) => m.generateHref === `/generate?type=${frameworkTypeId.value}`) ?? null,
-  )
-
-  const pageTitle = computed(
-    () => (activeModule.value?.displayNameSingular ?? 'Argumentation') + ' Framework',
   )
 
   // Short module name (e.g. "AF") for compact titles.
@@ -167,8 +165,8 @@ export function useGenerate(db: IDBPDatabase<DocumentsDB>, modules: ModuleConfig
         fetch('/graph-gen/algorithms', { signal: AbortSignal.timeout(5_000) }),
         fetch('/graph-gen/framework-types', { signal: AbortSignal.timeout(5_000) }),
       ])
-      if (!algoRes.ok) throw new Error(`HTTP ${algoRes.status}`)
-      if (!ftRes.ok) throw new Error(`HTTP ${ftRes.status}`)
+      if (!algoRes.ok) throw new Error(t('errors.generate.httpStatus', { status: algoRes.status }))
+      if (!ftRes.ok) throw new Error(t('errors.generate.httpStatus', { status: ftRes.status }))
 
       const algoData = (await algoRes.json()) as AlgorithmInfo[]
       algorithms.value = algoData.filter((a) => a.available)
@@ -177,7 +175,7 @@ export function useGenerate(db: IDBPDatabase<DocumentsDB>, modules: ModuleConfig
 
       frameworkTypes.value = (await ftRes.json()) as FrameworkTypeInfo[]
     } catch (e) {
-      loadError.value = e instanceof Error ? e.message : 'Failed to load algorithms'
+      loadError.value = e instanceof Error ? e.message : t('errors.generate.loadFailed')
     }
   })
 
@@ -262,12 +260,14 @@ export function useGenerate(db: IDBPDatabase<DocumentsDB>, modules: ModuleConfig
         signal: AbortSignal.timeout(GENERATE_TIMEOUT_MS),
       })
       if (!response.ok) {
-        if (response.status === 429)
-          throw new Error('Too many requests — please wait a moment before generating again')
+        if (response.status === 429) throw new Error(t('errors.generate.rateLimited'))
         if (response.status === 502 || response.status === 503)
-          throw new Error('The server is temporarily unavailable — please try again in a moment')
+          throw new Error(t('errors.generate.unavailable'))
         const detail = await response.json().catch(() => ({}))
-        throw new Error((detail as { detail?: string }).detail ?? `HTTP ${response.status}`)
+        throw new Error(
+          (detail as { detail?: string }).detail ??
+            t('errors.generate.httpStatus', { status: response.status }),
+        )
       }
 
       const data = (await response.json()) as {
@@ -372,10 +372,10 @@ export function useGenerate(db: IDBPDatabase<DocumentsDB>, modules: ModuleConfig
     } catch (e) {
       error.value =
         e instanceof DOMException && e.name === 'TimeoutError'
-          ? `Generation timed out after ${GENERATE_TIMEOUT_MS / 1000} s`
+          ? t('errors.generate.timeout', { seconds: GENERATE_TIMEOUT_MS / 1000 })
           : e instanceof Error
             ? e.message
-            : 'Generation failed'
+            : t('errors.generate.failed')
     } finally {
       isLoading.value = false
     }
@@ -467,7 +467,6 @@ export function useGenerate(db: IDBPDatabase<DocumentsDB>, modules: ModuleConfig
   return {
     MAX_EDGES_FOR_EDITOR,
     frameworkTypeId,
-    pageTitle,
     shortName,
     algorithms,
     loadError,

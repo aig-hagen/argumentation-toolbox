@@ -20,6 +20,7 @@
 import { AdjustmentsHorizontalIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/vue/24/outline'
 import { createReusableTemplate } from '@vueuse/core'
 import { computed, onMounted, provide, ref, shallowRef, toRef, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import type { SerialisationWindowInstanceState } from '@/modules/abstract-argumentation/evaluation/serialisationWindowState'
 import {
@@ -75,6 +76,8 @@ const emit = defineEmits<{
 
 provide(TOOLTIP_REGISTRY_KEY, abstractArgumentationGlossary)
 
+const { t } = useI18n({ useScope: 'global' })
+
 function resolveFunction(fns: SerialisationFunction[], key: string): SerialisationFunction {
   return fns.find((f) => f.key === key) ?? fns[0]!
 }
@@ -109,7 +112,10 @@ const paramsOpen = ref(!hosted)
 const windowTitle = computed(() => {
   const sel = selectedSelectionFunction.value.displayName
   const term = selectedTerminationFunction.value.displayName
-  const modeLabel = selectedMode.value === 'interactive' ? 'Interactive' : 'Sequences'
+  const modeLabel =
+    selectedMode.value === 'interactive'
+      ? t('evaluation.serialisation.modeInteractive')
+      : t('evaluation.serialisation.modeSequences')
   return `${sel} · ${term} · ${modeLabel}`
 })
 
@@ -321,7 +327,9 @@ function onWindowFocus() {
       >
         <AdjustmentsHorizontalIcon class="size-4 shrink-0 opacity-70" />
         <span class="flex-1 min-w-0 truncate font-medium">{{ windowTitle }}</span>
-        <span class="text-[0.65rem] opacity-60">{{ paramsOpen ? 'Hide' : 'Edit' }}</span>
+        <span class="text-[0.65rem] opacity-60">{{
+          paramsOpen ? t('evaluation.status.hideParams') : t('evaluation.status.editParams')
+        }}</span>
       </button>
 
       <div
@@ -329,14 +337,14 @@ function onWindowFocus() {
         class="rounded-field bg-base-200/60 border border-base-300 p-2.5 flex flex-col gap-2"
       >
         <div class="flex flex-wrap gap-3">
-          <ParameterField label="Selection" min-width="9rem">
+          <ParameterField :label="t('evaluation.fields.selection')" min-width="9rem">
             <select v-model="selectedSelectionFunction" class="select select-sm w-full bg-base-200">
               <option v-for="fn in SELECTION_FUNCTIONS" :key="fn.key" :value="fn">
                 {{ fn.displayName }}
               </option>
             </select>
           </ParameterField>
-          <ParameterField label="Termination" min-width="9rem">
+          <ParameterField :label="t('evaluation.fields.termination')" min-width="9rem">
             <select
               v-model="selectedTerminationFunction"
               class="select select-sm w-full bg-base-200"
@@ -346,10 +354,12 @@ function onWindowFocus() {
               </option>
             </select>
           </ParameterField>
-          <ParameterField label="Mode" max-width="8rem">
+          <ParameterField :label="t('evaluation.fields.mode')" max-width="8rem">
             <select v-model="selectedMode" class="select select-sm w-full bg-base-200">
-              <option value="sequences">Sequences</option>
-              <option value="interactive">Interactive</option>
+              <option value="sequences">{{ t('evaluation.serialisation.modeSequences') }}</option>
+              <option value="interactive">
+                {{ t('evaluation.serialisation.modeInteractive') }}
+              </option>
             </select>
           </ParameterField>
         </div>
@@ -365,12 +375,16 @@ function onWindowFocus() {
           class="alert alert-soft py-1.5"
           :class="isTimeout ? 'alert-warning' : 'alert-error'"
         >
-          <span>{{ isTimeout ? 'Evaluation timed out' : 'Evaluation failed' }}</span>
-          <button class="btn btn-xs btn-ghost ml-auto" @click="() => refetch()">Retry</button>
+          <span>{{
+            isTimeout ? t('evaluation.serialisation.timedOut') : t('evaluation.status.failed')
+          }}</span>
+          <button class="btn btn-xs btn-ghost ml-auto" @click="() => refetch()">
+            {{ t('evaluation.status.retry') }}
+          </button>
         </div>
         <template v-if="data !== undefined">
           <div v-if="data.sequences.length === 0" class="text-sm opacity-60">
-            No serialisation sequences found.
+            {{ t('evaluation.serialisation.noSequences') }}
           </div>
           <ol v-else class="flex flex-col gap-2">
             <li
@@ -388,18 +402,19 @@ function onWindowFocus() {
             </li>
           </ol>
           <p class="label">
-            {{ data.evaluationDurationInMs }}ms · {{ data.sequences.length }} sequences
+            {{ data.evaluationDurationInMs }}ms · {{ data.sequences.length }}
+            {{ t('evaluation.serialisation.sequenceCount', data.sequences.length) }}
           </p>
         </template>
-        <p v-if="isLoading" class="text-base-content/50">Evaluating…</p>
+        <p v-if="isLoading" class="text-base-content/50">{{ t('evaluation.status.evaluating') }}</p>
       </template>
 
       <!-- ── INTERACTIVE RESULTS ── -->
       <template v-if="selectedMode === 'interactive'">
         <div v-if="interactiveError" role="alert" class="alert alert-error alert-soft py-1.5">
-          <span>Evaluation failed</span>
+          <span>{{ t('evaluation.status.failed') }}</span>
           <button class="btn btn-xs btn-ghost ml-auto" @click="fetchInteractiveStep()">
-            Retry
+            {{ t('evaluation.status.retry') }}
           </button>
         </div>
 
@@ -419,7 +434,11 @@ function onWindowFocus() {
           <div v-if="interactiveIsTerminal !== null" class="flex items-center gap-1.5 text-sm">
             <CheckCircleIcon v-if="interactiveIsTerminal" class="size-4 text-success" />
             <XCircleIcon v-else class="size-4 text-error" />
-            <span>{{ interactiveIsTerminal ? 'Terminal' : 'Not terminal' }}</span>
+            <span>{{
+              interactiveIsTerminal
+                ? t('evaluation.serialisation.terminal')
+                : t('evaluation.serialisation.notTerminal')
+            }}</span>
           </div>
 
           <!-- Step selection -->
@@ -427,10 +446,10 @@ function onWindowFocus() {
             v-if="selectableStepsDisplay.length === 0 && !interactiveIsLoading"
             class="text-sm opacity-60"
           >
-            No initial sets available.
+            {{ t('evaluation.serialisation.noInitialSets') }}
           </div>
           <div v-else-if="selectableStepsDisplay.length > 0" class="flex flex-col gap-1.5">
-            <p class="opacity-60">Select next initial set:</p>
+            <p class="opacity-60">{{ t('evaluation.serialisation.selectNextInitialSet') }}</p>
             <div class="flex flex-wrap gap-2">
               <button
                 v-for="(step, i) in selectableStepsDisplay"
@@ -443,11 +462,15 @@ function onWindowFocus() {
               </button>
             </div>
           </div>
-          <p v-if="interactiveIsLoading" class="text-base-content/50">Evaluating…</p>
+          <p v-if="interactiveIsLoading" class="text-base-content/50">
+            {{ t('evaluation.status.evaluating') }}
+          </p>
         </template>
 
         <div class="flex">
-          <button class="btn btn-xs btn-soft" @click="resetInteractive()">Reset</button>
+          <button class="btn btn-xs btn-soft" @click="resetInteractive()">
+            {{ t('common.actions.reset') }}
+          </button>
         </div>
       </template>
     </div>

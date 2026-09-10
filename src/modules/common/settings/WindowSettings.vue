@@ -19,9 +19,11 @@
 <script setup lang="ts">
 import { XMarkIcon } from '@heroicons/vue/24/outline'
 import { useTemplateRef } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import SettingsContent from '@/modules/common/settings/SettingsContent.vue'
 
+const { t } = useI18n({ useScope: 'global' })
 const dialog = useTemplateRef('dialog')
 
 function open() {
@@ -35,16 +37,19 @@ defineExpose({ open })
   <dialog class="modal" ref="dialog">
     <div class="modal-box max-w-sm">
       <form method="dialog">
-        <button class="btn btn-sm btn-square btn-ghost absolute right-2 top-2" aria-label="Close">
+        <button
+          class="btn btn-sm btn-square btn-ghost absolute right-2 top-2"
+          :aria-label="t('common.actions.close')"
+        >
           <XMarkIcon class="size-4" />
         </button>
       </form>
-      <h3 class="text-lg font-bold mb-5">Settings</h3>
+      <h3 class="text-lg font-bold mb-5">{{ t('settings.title') }}</h3>
 
       <SettingsContent />
     </div>
     <form method="dialog" class="modal-backdrop">
-      <button>Close</button>
+      <button>{{ t('common.actions.close') }}</button>
     </form>
   </dialog>
 </template>

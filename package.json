@@ -17,6 +17,7 @@
     "lint:oxlint": "oxlint . --fix",
     "lint:eslint": "eslint . --fix --cache",
     "format": "prettier --write --experimental-cli src/",
+    "format:check": "prettier --check --experimental-cli src/",
     "generate-attributions": "node ./scripts/generate-attributions.ts"
   },
   "dependencies": {
@@ -43,6 +44,7 @@
     "katex": "^0.16.45",
     "opentype.js": "^2.0.0",
     "vue": "^3.5.28",
+    "vue-i18n": "^11.4.10",
     "vue-router": "^5.0.2",
     "wawoff2": "^2.0.1",
     "xml-formatter": "^3.7.0",

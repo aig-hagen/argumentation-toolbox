@@ -21,7 +21,7 @@ import {
   exportLatexArgumentationCommon,
   latexExportCommonConfig,
 } from '@/modules/common/argumentation/export'
-import type { ExportConfig, ExportStyleOptions } from '@/modules/common/export'
+import { type ExportConfig, ExportFormatId, type ExportStyleOptions } from '@/modules/common/export'
 import { IdMapping } from '@/modules/common/ids'
 import type {
   PafArgumentData,
@@ -57,6 +57,7 @@ const exportLatexPaf: ExportConfig<ProbabilisticArgumentation<PafArgumentData>> 
 }
 
 const exportICCMA: ExportConfig<ProbabilisticArgumentation<PafArgumentData>> = {
+  id: ExportFormatId.Iccma,
   name: 'ICCMA',
   references: [
     {
@@ -90,6 +91,7 @@ const exportICCMA: ExportConfig<ProbabilisticArgumentation<PafArgumentData>> = {
 }
 
 const exportTGFPaf: ExportConfig<ProbabilisticArgumentation<PafArgumentData>> = {
+  id: ExportFormatId.Tgf,
   name: 'Trivial Graph Format (TGF)',
   references: [{ label: 'TGF Format', url: 'https://en.wikipedia.org/wiki/Trivial_Graph_Format' }],
   extension: 'tgf',

@@ -28,8 +28,11 @@ import {
   useTemplateRef,
   watch,
 } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import { useVisualViewport } from '@/modules/common/layout/useVisualViewport'
+
+const { t } = useI18n({ useScope: 'global' })
 
 const open = defineModel<boolean>('open', { required: true })
 
@@ -315,7 +318,7 @@ function onHandlePointerUp(event: PointerEvent) {
             <button
               type="button"
               class="btn btn-square size-11 btn-ghost shrink-0"
-              aria-label="Close"
+              :aria-label="t('common.actions.close')"
               @click="close"
             >
               <XMarkIcon class="size-5" />

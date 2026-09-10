@@ -22,7 +22,7 @@ import type { EvaluationKind } from '@/modules/common/evaluation/types'
 import type { Example } from '@/modules/common/examples'
 import type { EditorComponent } from '@/modules/common/graph-editor/graphEditor'
 import type { DeserializationResult } from '@/modules/common/save/load'
-import type { Tag } from '@/modules/common/tags'
+import type { TagId } from '@/modules/common/tags'
 import type { Publication } from '@/modules/common/tooltip/publications'
 
 export type { Publication }
@@ -34,10 +34,10 @@ export interface ModuleConfig<DocumentT extends Objectish> {
    */
   newNamePrefix: string
   /**
-   * Name used when displaying this module to the user.
-   * For example, for creating new documents of this type.
+   * Stable, language-independent module identifier. Localized display name/description live
+   * in the `modules.<id>` message catalog; presentation code builds a {@link ModuleCard} from it.
    */
-  displayNameSingular: string
+  id: string
   /**
    * Check if any given model can be handled by this module.
    * @param model model
@@ -99,10 +99,6 @@ export interface ModuleConfig<DocumentT extends Objectish> {
    */
   generateHref?: string
   /**
-   * Brief description of this argumentation type shown on the welcome screen.
-   */
-  description?: string
-  /**
    * Relevant publications shown in a tooltip on the welcome screen card.
    */
   publications?: Publication[]
@@ -111,7 +107,8 @@ export interface ModuleConfig<DocumentT extends Objectish> {
    */
   underConstruction?: boolean
   /**
-   * Tags describing properties of this argumentation type, e.g. for filtering or search.
+   * Stable tag IDs describing properties of this argumentation type, e.g. for filtering or
+   * search. Labels are localized via the `modules.tags.<id>` catalog.
    */
-  tags?: Tag[]
+  tags?: TagId[]
 }

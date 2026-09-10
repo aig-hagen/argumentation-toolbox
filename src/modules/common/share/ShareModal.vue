@@ -20,6 +20,9 @@
 import { CheckIcon, ClipboardIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 import copy from 'copy-to-clipboard'
 import { ref, useTemplateRef, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n({ useScope: 'global' })
 
 const { url } = defineProps<{ url: string | null }>()
 const emit = defineEmits<{ close: [] }>()
@@ -57,13 +60,16 @@ function onClose() {
   <dialog ref="dialog" class="modal" @close="onClose">
     <div class="modal-box max-w-md p-5">
       <form method="dialog">
-        <button class="btn btn-sm btn-square btn-ghost absolute right-2 top-2" aria-label="Close">
+        <button
+          class="btn btn-sm btn-square btn-ghost absolute right-2 top-2"
+          :aria-label="t('common.actions.close')"
+        >
           <XMarkIcon class="size-4" />
         </button>
       </form>
-      <h3 class="text-base font-bold mb-1 pr-8">Share Link</h3>
+      <h3 class="text-base font-bold mb-1 pr-8">{{ t('share.title') }}</h3>
       <p class="text-xs text-base-content/70 mb-3">
-        Anyone with this link can import a copy of this framework into their browser.
+        {{ t('share.description') }}
       </p>
       <div class="flex gap-2">
         <input
@@ -76,7 +82,7 @@ function onClose() {
         <button
           class="btn btn-sm btn-square btn-primary"
           @click="onCopy"
-          :title="copied ? 'Copied!' : 'Copy link'"
+          :title="copied ? t('share.copied') : t('share.copyLink')"
         >
           <CheckIcon v-if="copied" class="size-4" />
           <ClipboardIcon v-else class="size-4" />
@@ -84,7 +90,7 @@ function onClose() {
       </div>
     </div>
     <form method="dialog" class="modal-backdrop">
-      <button>close</button>
+      <button>{{ t('common.actions.close') }}</button>
     </form>
   </dialog>
 </template>

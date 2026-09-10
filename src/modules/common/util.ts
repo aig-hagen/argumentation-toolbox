@@ -16,19 +16,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-/** Compact relative time for lists, e.g. "just now", "5m ago", "3h ago", "2d ago". */
-export function formatRelativeTime(timestamp: number, now: number = Date.now()): string {
+/**
+ * Locale-neutral descriptor for compact relative time. The caller maps `unit`
+ * to a localized message (`common.time.*`); `absolute` falls back to a
+ * locale-formatted date for anything older than a few weeks.
+ */
+export type RelativeTime =
+  | { unit: 'justNow' }
+  | { unit: 'minutesAgo' | 'hoursAgo' | 'daysAgo' | 'weeksAgo'; count: number }
+  | { unit: 'absolute'; timestamp: number }
+
+export function relativeTime(timestamp: number, now: number = Date.now()): RelativeTime {
   const seconds = Math.round((now - timestamp) / 1000)
-  if (seconds < 45) return 'just now'
+  if (seconds < 45) return { unit: 'justNow' }
   const minutes = Math.round(seconds / 60)
-  if (minutes < 60) return `${minutes}m ago`
+  if (minutes < 60) return { unit: 'minutesAgo', count: minutes }
   const hours = Math.round(minutes / 60)
-  if (hours < 24) return `${hours}h ago`
+  if (hours < 24) return { unit: 'hoursAgo', count: hours }
   const days = Math.round(hours / 24)
-  if (days < 7) return `${days}d ago`
+  if (days < 7) return { unit: 'daysAgo', count: days }
   const weeks = Math.round(days / 7)
-  if (weeks < 5) return `${weeks}w ago`
-  return new Date(timestamp).toLocaleDateString()
+  if (weeks < 5) return { unit: 'weeksAgo', count: weeks }
+  return { unit: 'absolute', timestamp }
 }
 
 export function getOrSet<KeyT, ValueT>(

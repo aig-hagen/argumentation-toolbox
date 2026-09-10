@@ -47,7 +47,7 @@ initialIncompleteArgumentation.addUncertainAttack(1, 2)
 export const incompleteArgumentationModule: ModuleConfig<IncompleteArgumentation<IafArgumentData>> =
   {
     newNamePrefix: 'iAF',
-    displayNameSingular: 'Incomplete Argumentation',
+    id: 'incomplete',
     is(model: unknown) {
       return model instanceof IncompleteArgumentation
     },
@@ -84,8 +84,6 @@ export const incompleteArgumentationModule: ModuleConfig<IncompleteArgumentation
       return saveAsString(document, name)
     },
     generateHref: '/generate?type=incomplete',
-    description:
-      'Distinguish between certain and uncertain arguments and attacks to represent incomplete information.',
     publications: [CDKLM07, BJNNR21],
     tags: [TAG_ABSTRACT, TAG_ATTACK, TAG_UNCERTAINTY],
   }

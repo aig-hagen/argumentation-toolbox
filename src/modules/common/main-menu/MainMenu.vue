@@ -36,11 +36,19 @@ import {
   Squares2X2Icon,
 } from '@heroicons/vue/24/outline'
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { RouterLink } from 'vue-router'
 
-import { Layout, type LayoutData, layoutDatas } from '@/modules/common/main-menu/layouting'
+import {
+  Layout,
+  type LayoutData,
+  layoutDatas,
+  layoutLabelKey,
+} from '@/modules/common/main-menu/layouting'
 import { EntryState } from '@/modules/common/main-menu/types'
 import { REDO_SHORTCUT, UNDO_SHORTCUT } from '@/modules/common/shortcuts'
+
+const { t } = useI18n({ useScope: 'global' })
 
 const {
   showSave = EntryState.HIDE,
@@ -108,15 +116,19 @@ const hasDirectedLayouts = computed(() => Object.keys(directedLayoutDatasToShow.
 </script>
 <template>
   <div class="dropdown pointer-events-auto">
-    <div tabindex="0" role="button" class="btn btn-square btn-sm" title="Menu">
+    <div tabindex="0" role="button" class="btn btn-square btn-sm" :title="t('menu.label')">
       <Bars3Icon class="size-6 opacity-70" />
     </div>
     <ul tabindex="-1" class="dropdown-content w-max menu bg-base-100 rounded-box z-1 shadow-md/30">
       <li>
-        <a @click="emit('new')"><DocumentPlusIcon class="size-5 menu-icon" />New</a>
+        <a @click="emit('new')"
+          ><DocumentPlusIcon class="size-5 menu-icon" />{{ t('menu.newFramework') }}</a
+        >
       </li>
       <li>
-        <a @click="emit('load')"><FolderOpenIcon class="size-5 menu-icon" />Open</a>
+        <a @click="emit('load')"
+          ><FolderOpenIcon class="size-5 menu-icon" />{{ t('menu.openFile') }}</a
+        >
       </li>
       <li v-if="showSave !== EntryState.HIDE">
         <a
@@ -124,11 +136,13 @@ const hasDirectedLayouts = computed(() => Object.keys(directedLayoutDatasToShow.
             'opacity-50 pointer-events-none': showSave === EntryState.DISABLE,
           }"
           @click="emit('save')"
-          ><ArrowDownTrayIcon class="size-5 menu-icon" />Save</a
+          ><ArrowDownTrayIcon class="size-5 menu-icon" />{{ t('menu.saveToDevice') }}</a
         >
       </li>
       <li>
-        <a @click="emit('generate')"><Squares2X2Icon class="size-5 menu-icon" />Generate</a>
+        <a @click="emit('generate')"
+          ><Squares2X2Icon class="size-5 menu-icon" />{{ t('menu.generateRandom') }}</a
+        >
       </li>
       <template v-if="showUndo !== EntryState.HIDE || showRedo !== EntryState.HIDE">
         <li class="disabled"><hr class="mt-2 border-base-300" /></li>
@@ -141,7 +155,7 @@ const hasDirectedLayouts = computed(() => Object.keys(directedLayoutDatasToShow.
             class="flex justify-between gap-8"
           >
             <span class="flex items-center gap-2">
-              <ArrowUturnLeftIcon class="size-5 menu-icon" />Undo
+              <ArrowUturnLeftIcon class="size-5 menu-icon" />{{ t('menu.undo') }}
             </span>
             <span class="flex gap-1 items-center">
               <kbd class="text-xs opacity-40 font-mono" v-if="UNDO_SHORTCUT.modifiers.ctrl"
@@ -165,7 +179,7 @@ const hasDirectedLayouts = computed(() => Object.keys(directedLayoutDatasToShow.
             class="flex justify-between gap-8"
           >
             <span class="flex items-center gap-2">
-              <ArrowUturnRightIcon class="size-5 menu-icon" />Redo
+              <ArrowUturnRightIcon class="size-5 menu-icon" />{{ t('menu.redo') }}
             </span>
             <span class="flex gap-1 items-center">
               <kbd class="text-xs opacity-40 font-mono" v-if="REDO_SHORTCUT.modifiers.ctrl"
@@ -187,7 +201,7 @@ const hasDirectedLayouts = computed(() => Object.keys(directedLayoutDatasToShow.
             <a class="flex flex-row justify-between">
               <div>
                 <SparklesIcon class="inline size-5 menu-icon mr-2" />
-                <span>Relayout</span>
+                <span>{{ t('menu.relayout') }}</span>
               </div>
               <ChevronRightIcon class="size-5 opacity-40" />
             </a>
@@ -198,7 +212,7 @@ const hasDirectedLayouts = computed(() => Object.keys(directedLayoutDatasToShow.
                     <a class="flex flex-row justify-between">
                       <div>
                         <ArrowsUpDownIcon class="inline size-5 menu-icon mr-2" />
-                        <span>Directed</span>
+                        <span>{{ t('menu.directed') }}</span>
                       </div>
                       <ChevronRightIcon class="size-5 opacity-40" />
                     </a>
@@ -210,7 +224,7 @@ const hasDirectedLayouts = computed(() => Object.keys(directedLayoutDatasToShow.
                         >
                           <a @click="onClickLayout(layoutType)"
                             ><component :is="layoutData.icon" class="size-5 menu-icon" />{{
-                              layoutData.name
+                              t(layoutLabelKey(layoutType))
                             }}</a
                           >
                         </li>
@@ -221,7 +235,7 @@ const hasDirectedLayouts = computed(() => Object.keys(directedLayoutDatasToShow.
                 <li v-for="(layoutData, layoutType) in otherLayoutDatasToShow" :key="layoutType">
                   <a @click="onClickLayout(layoutType)"
                     ><component :is="layoutData.icon" class="size-5 menu-icon" />{{
-                      layoutData.name
+                      t(layoutLabelKey(layoutType))
                     }}</a
                   >
                 </li>
@@ -238,7 +252,7 @@ const hasDirectedLayouts = computed(() => Object.keys(directedLayoutDatasToShow.
               'opacity-50 pointer-events-none': showExport === EntryState.DISABLE,
             }"
             @click="emit('export')"
-            ><PhotoIcon class="size-5 menu-icon" />Export</a
+            ><PhotoIcon class="size-5 menu-icon" />{{ t('menu.export') }}</a
           >
         </li>
         <li v-if="showShare !== EntryState.HIDE">
@@ -247,22 +261,30 @@ const hasDirectedLayouts = computed(() => Object.keys(directedLayoutDatasToShow.
               'opacity-50 pointer-events-none': showShare === EntryState.DISABLE,
             }"
             @click="emit('share')"
-            ><ShareIcon class="size-5 menu-icon" />Share link</a
+            ><ShareIcon class="size-5 menu-icon" />{{ t('menu.shareLink') }}</a
           >
         </li>
       </template>
       <li class="disabled"><hr class="mt-2 border-base-300" /></li>
       <li>
-        <a @click="emit('settings')"><Cog6ToothIcon class="size-5 menu-icon" />Settings</a>
+        <a @click="emit('settings')"
+          ><Cog6ToothIcon class="size-5 menu-icon" />{{ t('menu.settings') }}</a
+        >
       </li>
       <li>
-        <a @click="emit('tutorial')"><AcademicCapIcon class="size-5 menu-icon" />Tutorials</a>
+        <a @click="emit('tutorial')"
+          ><AcademicCapIcon class="size-5 menu-icon" />{{ t('menu.tutorials') }}</a
+        >
       </li>
       <li>
-        <RouterLink to="/glossary"><BookOpenIcon class="size-5 menu-icon" />Glossary</RouterLink>
+        <RouterLink to="/glossary"
+          ><BookOpenIcon class="size-5 menu-icon" />{{ t('menu.glossary') }}</RouterLink
+        >
       </li>
       <li>
-        <a @click="emit('help')"><QuestionMarkCircleIcon class="size-5 menu-icon" />Help</a>
+        <a @click="emit('help')"
+          ><QuestionMarkCircleIcon class="size-5 menu-icon" />{{ t('menu.help') }}</a
+        >
       </li>
     </ul>
   </div>

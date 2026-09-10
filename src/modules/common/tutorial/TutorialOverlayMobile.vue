@@ -28,6 +28,7 @@ import {
   watch,
   watchEffect,
 } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import { TUTORIAL_REFIT_KEY } from '@/modules/common/graph-editor/graphEditor'
 import TermTooltip from '@/modules/common/tooltip/TermTooltip.vue'
@@ -60,6 +61,7 @@ const {
 } = useTutorial()
 
 const instanceId = inject(TUTORIAL_INSTANCE_KEY, '')
+const { t } = useI18n({ useScope: 'global' })
 
 // This overlay only renders if no other tab owns the active tutorial.
 const isOwner = computed(() => !isActive.value || activeOwnerId.value === instanceId)
@@ -246,7 +248,7 @@ function handleStartNext() {
           ></progress>
           <button
             class="btn btn-ghost btn-xs btn-square"
-            aria-label="Skip tutorial"
+            :aria-label="t('tutorial.controls.skipTutorial')"
             @click="skipTutorial"
           >
             <svg
@@ -284,7 +286,7 @@ function handleStartNext() {
             >
               <path d="M15 6l-6 6 6 6" />
             </svg>
-            Back
+            {{ t('tutorial.controls.back') }}
           </button>
           <div v-else class="flex-0"></div>
           <div class="flex items-center gap-2">
@@ -296,14 +298,16 @@ function handleStartNext() {
               >
                 ▶ {{ nextTutorial.name }}
               </button>
-              <button class="btn btn-primary btn-sm" @click="handleDone">Done</button>
+              <button class="btn btn-primary btn-sm" @click="handleDone">
+                {{ t('tutorial.controls.done') }}
+              </button>
             </template>
             <button
               v-else-if="resolvedAdvanceOn === 'button'"
               class="btn btn-primary btn-sm gap-1"
               @click="handleNext"
             >
-              Next
+              {{ t('tutorial.controls.next') }}
               <svg
                 viewBox="0 0 24 24"
                 fill="none"
@@ -319,7 +323,7 @@ function handleStartNext() {
               class="flex items-center gap-2 text-[13px] font-medium text-primary bg-primary/10 px-3 py-1.5 rounded-full"
             >
               <span class="size-2 rounded-full bg-primary animate-pulse"></span>
-              Waiting for you…
+              {{ t('tutorial.controls.waiting') }}
             </span>
           </div>
         </div>

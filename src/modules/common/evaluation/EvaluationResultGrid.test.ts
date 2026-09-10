@@ -20,6 +20,7 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { afterEach, beforeEach, expect, test, vi } from 'vitest'
 import { defineComponent, h, nextTick, ref } from 'vue'
 
+import { i18n } from '@/localization'
 import EvaluationResultGrid from '@/modules/common/evaluation/EvaluationResultGrid.vue'
 
 class FakeResizeObserver implements ResizeObserver {
@@ -87,6 +88,7 @@ test('remeasures results that were first rendered inside a hidden evaluation', a
           }),
         ]),
     ),
+    { global: { plugins: [i18n] } },
   )
   await flushPromises()
 

@@ -29,6 +29,7 @@ import {
   watch,
   watchEffect,
 } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import { abstractArgumentationGlossary } from '@/modules/abstract-argumentation/glossary'
 import type { ArgumentId } from '@/modules/common/argumentation/model'
@@ -85,6 +86,8 @@ provide(TOOLTIP_REGISTRY_KEY, {
   ...abstractArgumentationGlossary,
   ...probabilisticArgumentationGlossary,
 })
+
+const { t } = useI18n({ useScope: 'global' })
 
 const allSemantics = KNOWN_SEMANTIC_GROUPS.flatMap((g) => g.semantics)
 const semanticsSelectGroups: GroupedSelectGroup<Semantics>[] = KNOWN_SEMANTIC_GROUPS.map((g) => ({
@@ -156,13 +159,16 @@ const emittedWeights = computed(() =>
 watch(emittedWeights, (w) => emit('setWeights', w))
 
 const windowTitle = computed(() => {
-  const modeLabel = selectedMode.value === 'skeptical' ? 'Skeptical' : 'Credulous'
-  const solverLabel = isApproximate.value ? ' · Approx.' : ''
+  const modeLabel =
+    selectedMode.value === 'skeptical'
+      ? t('evaluation.modes.skeptical')
+      : t('evaluation.modes.credulous')
+  const solverLabel = isApproximate.value ? ` · ${t('evaluation.inference.approxShort')}` : ''
   return `${selectedSemantic.value.displayName} · ${modeLabel}${solverLabel}`
 })
 
 // The compact host labels its switcher pill with this title (not the raw key).
-watch(windowTitle, (t) => emit('title', t), { immediate: true })
+watch(windowTitle, (title) => emit('title', title), { immediate: true })
 </script>
 
 <template>
@@ -179,7 +185,7 @@ watch(windowTitle, (t) => emit('title', t), { immediate: true })
     @close="emit('close')"
   >
     <template #parameters>
-      <ParameterField label="Semantics" min-width="10rem">
+      <ParameterField :label="t('evaluation.fields.semantics')" min-width="10rem">
         <GroupedSelect
           ref="semanticsSelect"
           v-model="selectedSemantic"
@@ -187,24 +193,24 @@ watch(windowTitle, (t) => emit('title', t), { immediate: true })
           full-width
         />
       </ParameterField>
-      <ParameterField label="Mode" max-width="8rem">
+      <ParameterField :label="t('evaluation.fields.mode')" max-width="8rem">
         <PickerSelect
           v-model="selectedMode"
           :options="[
-            { value: 'credulous', label: 'Credulous' },
-            { value: 'skeptical', label: 'Skeptical' },
+            { value: 'credulous', label: t('evaluation.modes.credulous') },
+            { value: 'skeptical', label: t('evaluation.modes.skeptical') },
           ]"
         />
       </ParameterField>
-      <ParameterField label="Inference" min-width="100%" max-width="100%">
+      <ParameterField :label="t('evaluation.inference.label')" min-width="100%" max-width="100%">
         <div class="flex items-center gap-1.5 text-sm h-8">
-          <TermTooltip id="exactInference" :class="!isApproximate ? '' : 'opacity-40'"
-            >Exact</TermTooltip
-          >
+          <TermTooltip id="exactInference" :class="!isApproximate ? '' : 'opacity-40'">{{
+            t('evaluation.inference.exact')
+          }}</TermTooltip>
           <input type="checkbox" class="toggle toggle-sm" v-model="isApproximate" />
-          <TermTooltip id="approximateInference" :class="isApproximate ? '' : 'opacity-40'"
-            >Approximate</TermTooltip
-          >
+          <TermTooltip id="approximateInference" :class="isApproximate ? '' : 'opacity-40'">{{
+            t('evaluation.inference.approximate')
+          }}</TermTooltip>
         </div>
       </ParameterField>
     </template>

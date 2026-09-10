@@ -19,10 +19,13 @@
 <script setup lang="ts">
 import { ArrowLeftIcon, BookOpenIcon } from '@heroicons/vue/24/outline'
 import { watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { RouterLink } from 'vue-router'
 
 import { glossaryModules, useGlossary } from '@/app/glossary/useGlossary'
 import KatexInlineElement from '@/modules/common/tooltip/KatexInlineElement.vue'
+
+const { t } = useI18n({ useScope: 'global' })
 
 const {
   allEntries,
@@ -57,9 +60,9 @@ watch(
     <div class="flex items-center gap-4 px-6 py-3 border-b border-base-300 shrink-0">
       <RouterLink to="/" class="btn btn-sm btn-ghost gap-1">
         <ArrowLeftIcon class="size-4" />
-        Back to Editor
+        {{ t('glossary.backToEditor') }}
       </RouterLink>
-      <h1 class="text-lg font-bold">Glossary</h1>
+      <h1 class="text-lg font-bold">{{ t('glossary.title') }}</h1>
     </div>
 
     <!-- Module tabs -->
@@ -89,12 +92,12 @@ watch(
             v-model="searchQuery"
             type="search"
             class="input input-sm w-full"
-            placeholder="Search…"
+            :placeholder="t('glossary.searchPlaceholder')"
           />
         </div>
         <div class="overflow-y-auto flex-1 py-2">
           <p v-if="groupedTerms.length === 0" class="text-sm text-base-content/40 px-4 py-2">
-            No results
+            {{ t('glossary.noResults') }}
           </p>
           <template v-for="group in groupedTerms" :key="group.letter">
             <div
@@ -151,7 +154,7 @@ watch(
             </template>
           </p>
         </div>
-        <p v-else class="text-sm text-base-content/40">Select a term from the list.</p>
+        <p v-else class="text-sm text-base-content/40">{{ t('glossary.selectTerm') }}</p>
       </div>
     </div>
   </div>

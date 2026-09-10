@@ -19,6 +19,7 @@
 <script setup lang="ts">
 import { ExclamationCircleIcon } from '@heroicons/vue/24/solid'
 import { computed, onMounted, ref, useTemplateRef, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import type { NodeId } from '@/modules/common/graph-editor/graphEditor'
 import {
@@ -42,6 +43,8 @@ const emit = defineEmits<{
   'update:formula': [FormulaNode]
   close: []
 }>()
+
+const { t } = useI18n({ useScope: 'global' })
 
 const inputRef = useTemplateRef<HTMLInputElement>('input')
 const isFocused = ref(false)
@@ -144,7 +147,7 @@ function insertAtCursor(text: string, cursorOffset?: number) {
           <button
             class="flex h-full w-8 items-center justify-center border-r border-base-300 font-mono text-sm transition-colors hover:bg-base-200"
             type="button"
-            title="Negation (¬)"
+            :title="`${t('editor.condition.keys.negation')} (¬)`"
             @mousedown.prevent
             @click="insertAtCursor('¬')"
           >
@@ -153,7 +156,7 @@ function insertAtCursor(text: string, cursorOffset?: number) {
           <button
             class="flex h-full w-8 items-center justify-center border-r border-base-300 font-mono text-sm transition-colors hover:bg-base-200"
             type="button"
-            title="Conjunction (∧)"
+            :title="`${t('editor.condition.keys.conjunction')} (∧)`"
             @mousedown.prevent
             @click="insertAtCursor(' ∧ ')"
           >
@@ -162,7 +165,7 @@ function insertAtCursor(text: string, cursorOffset?: number) {
           <button
             class="flex h-full w-8 items-center justify-center border-r border-base-300 font-mono text-sm transition-colors hover:bg-base-200"
             type="button"
-            title="Disjunction (∨)"
+            :title="`${t('editor.condition.keys.disjunction')} (∨)`"
             @mousedown.prevent
             @click="insertAtCursor(' ∨ ')"
           >
@@ -171,7 +174,7 @@ function insertAtCursor(text: string, cursorOffset?: number) {
           <button
             class="flex h-full w-8 items-center justify-center border-r border-base-300 font-mono text-sm transition-colors hover:bg-base-200"
             type="button"
-            title="Tautology (⊤)"
+            :title="`${t('editor.condition.keys.tautology')} (⊤)`"
             @mousedown.prevent
             @click="insertAtCursor('⊤')"
           >
@@ -180,7 +183,7 @@ function insertAtCursor(text: string, cursorOffset?: number) {
           <button
             class="flex h-full w-8 items-center justify-center border-r border-base-300 font-mono text-sm transition-colors hover:bg-base-200"
             type="button"
-            title="Contradiction (⊥)"
+            :title="`${t('editor.condition.keys.contradiction')} (⊥)`"
             @mousedown.prevent
             @click="insertAtCursor('⊥')"
           >
@@ -189,7 +192,7 @@ function insertAtCursor(text: string, cursorOffset?: number) {
           <button
             class="flex h-full w-8 items-center justify-center font-mono text-sm transition-colors hover:bg-base-200"
             type="button"
-            title="Parentheses"
+            :title="t('editor.condition.keys.parentheses')"
             @mousedown.prevent
             @click="insertAtCursor('()', 1)"
           >
@@ -205,7 +208,7 @@ function insertAtCursor(text: string, cursorOffset?: number) {
             type="button"
             @mousedown.prevent
           >
-            Arg ▾
+            {{ t('editor.condition.atom') }} ▾
           </button>
           <ul
             class="dropdown-content bg-base-200 shadow-lg rounded-box p-1 flex flex-col items-start gap-1 mb-1 max-h-40 overflow-y-auto z-50"
@@ -224,7 +227,7 @@ function insertAtCursor(text: string, cursorOffset?: number) {
               v-if="availableArguments.length === 0"
               class="text-xs text-base-content/50 px-2 py-1"
             >
-              No arguments
+              {{ t('editor.condition.noArguments') }}
             </li>
           </ul>
         </div>
@@ -232,7 +235,7 @@ function insertAtCursor(text: string, cursorOffset?: number) {
         <button
           class="ml-auto flex h-7 w-7 items-center justify-center rounded-lg text-base-content/60 transition-colors hover:bg-base-200 hover:text-base-content"
           type="button"
-          aria-label="Close"
+          :aria-label="t('common.actions.close')"
           @click="emit('close')"
         >
           ✕
@@ -254,7 +257,7 @@ function insertAtCursor(text: string, cursorOffset?: number) {
         <span
           v-if="isInvalid"
           class="tooltip tooltip-left absolute right-2 top-1/2 -translate-y-1/2 text-error select-none cursor-default"
-          data-tip="Acceptance condition is syntactically incorrect and will not be saved"
+          :data-tip="t('editor.condition.syntaxError')"
         >
           <ExclamationCircleIcon class="size-5" />
         </span>

@@ -18,10 +18,13 @@
 -->
 <script setup lang="ts">
 import { BookOpenIcon, ChevronLeftIcon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
+import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 
 import { glossaryModules, useGlossary } from '@/app/glossary/useGlossary'
 import KatexInlineElement from '@/modules/common/tooltip/KatexInlineElement.vue'
+
+const { t } = useI18n({ useScope: 'global' })
 
 const { allEntries, activeModulePrefix, searchQuery, groupedTerms, selectModule, followRef } =
   useGlossary()
@@ -38,12 +41,12 @@ const router = useRouter()
     >
       <button
         class="btn btn-square btn-ghost btn-sm"
-        aria-label="Back to editor"
+        :aria-label="t('glossary.backToEditor')"
         @click="router.push('/')"
       >
         <ChevronLeftIcon class="size-6 opacity-70" />
       </button>
-      <span class="flex-1 text-lg font-bold py-2.5">Glossary</span>
+      <span class="flex-1 text-lg font-bold py-2.5">{{ t('glossary.title') }}</span>
     </header>
 
     <!-- Module selector -->
@@ -75,7 +78,7 @@ const router = useRouter()
           v-model="searchQuery"
           type="search"
           class="flex-1 bg-transparent outline-none text-sm placeholder:text-base-content/40"
-          placeholder="Search terms…"
+          :placeholder="t('glossary.searchPlaceholder')"
         />
       </label>
     </div>
@@ -86,7 +89,7 @@ const router = useRouter()
       style="padding-bottom: max(env(safe-area-inset-bottom), 1.25rem)"
     >
       <p v-if="groupedTerms.length === 0" class="text-sm text-base-content/40 px-1 py-4">
-        No results
+        {{ t('glossary.noResults') }}
       </p>
       <template v-for="group in groupedTerms" :key="group.letter">
         <div class="text-xs font-bold text-secondary tracking-wide mt-1.5 px-0.5">

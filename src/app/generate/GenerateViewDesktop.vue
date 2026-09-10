@@ -18,9 +18,12 @@
 -->
 <script setup lang="ts">
 import { ArrowLeftIcon, BoltIcon } from '@heroicons/vue/24/outline'
+import { useI18n } from 'vue-i18n'
 import { RouterLink } from 'vue-router'
 
 import type { GenerateController } from '@/app/generate/useGenerate'
+
+const { t } = useI18n({ useScope: 'global' })
 
 const { controller } = defineProps<{ controller: GenerateController }>()
 
@@ -59,18 +62,18 @@ const {
       <div class="mb-6">
         <RouterLink to="/" class="btn btn-sm btn-ghost gap-1">
           <ArrowLeftIcon class="size-4" />
-          Back to Editor
+          {{ t('generate.backToEditor') }}
         </RouterLink>
       </div>
 
-      <h1 class="text-2xl font-bold mb-1">Generate random {{ shortName }}</h1>
+      <h1 class="text-2xl font-bold mb-1">{{ t('generate.title', { name: shortName }) }}</h1>
       <p v-if="selectedFrameworkType" class="text-base-content/60 mb-6 text-sm">
         {{ selectedFrameworkType.description }}
       </p>
 
       <!-- Load error -->
       <div v-if="loadError !== null" role="alert" class="alert alert-error mb-4">
-        <span>Could not load algorithms: {{ loadError }}</span>
+        <span>{{ t('generate.loadError', { error: loadError }) }}</span>
       </div>
 
       <!-- Loading skeleton -->
@@ -90,7 +93,7 @@ const {
         <div class="card-body gap-5">
           <!-- Algorithm selector -->
           <div>
-            <label class="text-sm font-medium block mb-1">Algorithm</label>
+            <label class="text-sm font-medium block mb-1">{{ t('generate.algorithm') }}</label>
             <select class="select select-sm w-full" v-model="selectedAlgorithmId">
               <option v-for="algo in algorithms" :key="algo.id" :value="algo.id">
                 {{ formatAlgorithmName(algo.id) }}
@@ -189,7 +192,9 @@ const {
 
           <!-- Type-specific parameters -->
           <template v-if="selectedFrameworkType && selectedFrameworkType.params.length > 0">
-            <div class="divider text-xs text-base-content/40 my-0">Type Options</div>
+            <div class="divider text-xs text-base-content/40 my-0">
+              {{ t('generate.typeOptions') }}
+            </div>
             <template v-for="p in selectedFrameworkType.params" :key="p.name">
               <div v-if="p.min !== null && p.max !== null">
                 <div class="flex justify-between mb-1">
@@ -251,7 +256,7 @@ const {
           <div v-if="hasSeed" class="flex flex-col gap-2">
             <label class="flex items-center gap-3 cursor-pointer">
               <input type="checkbox" class="toggle toggle-sm" v-model="seedEnabled" />
-              <span class="text-sm">Fix random seed</span>
+              <span class="text-sm">{{ t('generate.fixSeed') }}</span>
             </label>
             <input
               v-if="seedEnabled"
@@ -259,14 +264,14 @@ const {
               class="input input-sm w-32"
               step="1"
               v-model.number="seedValue"
-              placeholder="Seed"
+              :placeholder="t('generate.seedPlaceholder')"
             />
           </div>
 
           <button class="btn btn-primary w-full mt-1" :disabled="isLoading" @click="generate">
             <span v-if="isLoading" class="loading loading-spinner loading-sm"></span>
             <BoltIcon v-else class="size-5" />
-            {{ isLoading ? 'Generating…' : 'Generate' }}
+            {{ isLoading ? t('generate.generating') : t('generate.generate') }}
           </button>
         </div>
       </div>
@@ -279,59 +284,78 @@ const {
       <!-- Result -->
       <div v-if="stats !== null" class="card bg-base-200 shadow-sm mt-4">
         <div class="card-body gap-3">
-          <p v-if="frameworkTypeId === 'abstract'" class="text-sm text-base-content/70">
-            Generated <strong>{{ stats.nArgs }}</strong> argument{{
-              stats.nArgs === 1 ? '' : 's'
-            }}
-            with <strong>{{ stats.nAttacks }}</strong> attack{{ stats.nAttacks === 1 ? '' : 's' }}.
-          </p>
-          <p v-else-if="frameworkTypeId === 'bipolar'" class="text-sm text-base-content/70">
-            Generated <strong>{{ stats.nArgs }}</strong> argument{{
-              stats.nArgs === 1 ? '' : 's'
-            }}
-            with <strong>{{ stats.nAttacks }}</strong> attack{{
-              stats.nAttacks === 1 ? '' : 's'
-            }}
-            and <strong>{{ stats.nSupports }}</strong> support{{
-              stats.nSupports === 1 ? '' : 's'
-            }}.
-          </p>
-          <p v-else-if="frameworkTypeId === 'incomplete'" class="text-sm text-base-content/70">
-            Generated <strong>{{ stats.nArgs }}</strong> argument{{
-              stats.nArgs === 1 ? '' : 's'
-            }}
-            (<strong>{{ stats.nUncertainArgs }}</strong> uncertain) with
-            <strong>{{ stats.nAttacks }}</strong> definite and
-            <strong>{{ stats.nUncertainAttacks }}</strong> uncertain attack{{
-              stats.nUncertainAttacks === 1 ? '' : 's'
-            }}.
-          </p>
-          <p v-else-if="frameworkTypeId === 'probabilistic'" class="text-sm text-base-content/70">
-            Generated <strong>{{ stats.nArgs }}</strong> argument{{
-              stats.nArgs === 1 ? '' : 's'
-            }}
-            with <strong>{{ stats.nAttacks }}</strong> attack{{ stats.nAttacks === 1 ? '' : 's' }}.
-          </p>
-          <p v-else-if="frameworkTypeId === 'adf'" class="text-sm text-base-content/70">
-            Generated <strong>{{ stats.nArgs }}</strong> argument{{
-              stats.nArgs === 1 ? '' : 's'
-            }}
-            with <strong>{{ stats.nAttacks }}</strong> link{{ stats.nAttacks === 1 ? '' : 's' }}.
-          </p>
-          <p v-else-if="frameworkTypeId === 'setaf'" class="text-sm text-base-content/70">
-            Generated <strong>{{ stats.nArgs }}</strong> argument{{
-              stats.nArgs === 1 ? '' : 's'
-            }}
-            with <strong>{{ stats.nAttacks }}</strong> collective attack{{
-              stats.nAttacks === 1 ? '' : 's'
-            }}.
-          </p>
+          <i18n-t
+            v-if="frameworkTypeId === 'bipolar'"
+            keypath="generate.result.generatedBipolar"
+            tag="p"
+            scope="global"
+            class="text-sm text-base-content/70"
+          >
+            <template #args
+              ><strong>{{ stats.nArgs }}</strong>
+              {{ t('generate.counts.arguments', stats.nArgs) }}</template
+            >
+            <template #attacks
+              ><strong>{{ stats.nAttacks }}</strong>
+              {{ t('generate.counts.attacks', stats.nAttacks) }}</template
+            >
+            <template #supports
+              ><strong>{{ stats.nSupports }}</strong>
+              {{ t('generate.counts.supports', stats.nSupports ?? 0) }}</template
+            >
+          </i18n-t>
+          <i18n-t
+            v-else-if="frameworkTypeId === 'incomplete'"
+            keypath="generate.result.generatedIncomplete"
+            tag="p"
+            scope="global"
+            class="text-sm text-base-content/70"
+          >
+            <template #args
+              ><strong>{{ stats.nArgs }}</strong>
+              {{ t('generate.counts.arguments', stats.nArgs) }}</template
+            >
+            <template #uncertainArgs
+              ><strong>{{ stats.nUncertainArgs }}</strong></template
+            >
+            <template #definite
+              ><strong>{{ stats.nAttacks }}</strong></template
+            >
+            <template #uncertain
+              ><strong>{{ stats.nUncertainAttacks }}</strong></template
+            >
+            <template #attacks>{{
+              t('generate.counts.attacks', stats.nAttacks + (stats.nUncertainAttacks ?? 0))
+            }}</template>
+          </i18n-t>
+          <i18n-t
+            v-else
+            keypath="generate.result.generated"
+            tag="p"
+            scope="global"
+            class="text-sm text-base-content/70"
+          >
+            <template #args
+              ><strong>{{ stats.nArgs }}</strong>
+              {{ t('generate.counts.arguments', stats.nArgs) }}</template
+            >
+            <template #attacks
+              ><strong>{{ stats.nAttacks }}</strong>
+              {{
+                frameworkTypeId === 'adf'
+                  ? t('generate.counts.links', stats.nAttacks)
+                  : frameworkTypeId === 'setaf'
+                    ? t('generate.counts.collectiveAttacks', stats.nAttacks)
+                    : t('generate.counts.attacks', stats.nAttacks)
+              }}</template
+            >
+          </i18n-t>
           <div class="flex flex-wrap gap-2">
             <span
               class="tooltip tooltip-top"
               :data-tip="
                 tooManyEdgesForEditor
-                  ? `Too many edges to open in editor (maximum is ${MAX_EDGES_FOR_EDITOR})`
+                  ? t('generate.tooManyEdges', { max: MAX_EDGES_FOR_EDITOR })
                   : undefined
               "
             >
@@ -340,7 +364,7 @@ const {
                 :disabled="tooManyEdgesForEditor"
                 @click="openInEditor"
               >
-                Open in Editor
+                {{ t('generate.openInEditor') }}
               </button>
             </span>
             <button
@@ -348,14 +372,14 @@ const {
               class="btn btn-sm btn-soft"
               @click="downloadICCMA"
             >
-              Download ICCMA
+              {{ t('generate.downloadIccma') }}
             </button>
             <button
               v-if="frameworkTypeId !== 'adf' && frameworkTypeId !== 'setaf'"
               class="btn btn-sm btn-soft"
               @click="downloadTGF"
             >
-              Download TGF
+              {{ t('generate.downloadTgf') }}
             </button>
           </div>
         </div>

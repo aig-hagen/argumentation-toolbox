@@ -41,40 +41,19 @@ export const Layout = {
 
 export type Layout = (typeof Layout)[keyof typeof Layout]
 export interface LayoutData {
-  name: string
   icon: Component
 }
+
+/** Localized label for a layout; resolve reactively via `t(layoutLabelKey(layout))`. */
+export const layoutLabelKey = (layout: Layout) => `editor.relayout.layouts.${layout}`
+
 export const layoutDatas: Record<Layout, LayoutData> = {
-  [Layout.TopToBottom]: {
-    name: 'Top to bottom',
-    icon: ArrowLongDownIcon,
-  },
-  [Layout.BottomToTop]: {
-    name: 'Bottom to top',
-    icon: ArrowLongUpIcon,
-  },
-  [Layout.LeftToRight]: {
-    name: 'Left to right',
-    icon: ArrowLongLeftIcon,
-  },
-  [Layout.RightToLeft]: {
-    name: 'Right to left',
-    icon: ArrowLongRightIcon,
-  },
-  [Layout.ForceDirected]: {
-    name: 'Force-directed',
-    icon: ArrowsPointingOutIcon,
-  },
-  [Layout.Neato]: {
-    name: 'Spring model',
-    icon: ArrowsPointingInIcon,
-  },
-  [Layout.Circular]: {
-    name: 'Circular',
-    icon: ArrowPathIcon,
-  },
-  [Layout.Radial]: {
-    name: 'Radial',
-    icon: SignalIcon,
-  },
+  [Layout.TopToBottom]: { icon: ArrowLongDownIcon },
+  [Layout.BottomToTop]: { icon: ArrowLongUpIcon },
+  [Layout.LeftToRight]: { icon: ArrowLongLeftIcon },
+  [Layout.RightToLeft]: { icon: ArrowLongRightIcon },
+  [Layout.ForceDirected]: { icon: ArrowsPointingOutIcon },
+  [Layout.Neato]: { icon: ArrowsPointingInIcon },
+  [Layout.Circular]: { icon: ArrowPathIcon },
+  [Layout.Radial]: { icon: SignalIcon },
 }

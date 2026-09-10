@@ -29,6 +29,7 @@ import {
   watch,
   watchEffect,
 } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import TermTooltip from '@/modules/common/tooltip/TermTooltip.vue'
 import type { Tutorial, TutorialBodyPart, TutorialContext } from '@/modules/common/tutorial/types'
@@ -60,6 +61,7 @@ const {
 } = useTutorial()
 
 const instanceId = inject(TUTORIAL_INSTANCE_KEY, '')
+const { t } = useI18n({ useScope: 'global' })
 
 // This overlay only renders if no other tab owns the active tutorial.
 const isOwner = computed(() => !isActive.value || activeOwnerId.value === instanceId)
@@ -237,7 +239,7 @@ const { floatingStyles } = useFloating(anchorRef, floatingEl, {
           </div>
           <div class="flex items-center justify-between gap-2 pt-1">
             <button v-if="activeStepIndex > 0" class="btn btn-ghost btn-xs" @click="handlePrev">
-              ← Back
+              ← {{ t('tutorial.controls.back') }}
             </button>
             <div v-else class="flex-0"></div>
             <div class="flex items-center gap-2">
@@ -246,7 +248,7 @@ const { floatingStyles } = useFloating(anchorRef, floatingEl, {
                 class="btn btn-ghost btn-xs text-base-content/50"
                 @click="skipTutorial"
               >
-                Skip
+                {{ t('tutorial.controls.skip') }}
               </button>
               <template v-if="isLastStep">
                 <button
@@ -256,16 +258,20 @@ const { floatingStyles } = useFloating(anchorRef, floatingEl, {
                 >
                   ▶ {{ nextTutorial.name }}
                 </button>
-                <button class="btn btn-primary btn-xs" @click="handleDone">Done</button>
+                <button class="btn btn-primary btn-xs" @click="handleDone">
+                  {{ t('tutorial.controls.done') }}
+                </button>
               </template>
               <button
                 v-else-if="resolvedAdvanceOn === 'button'"
                 class="btn btn-primary btn-xs"
                 @click="handleNext"
               >
-                Next →
+                {{ t('tutorial.controls.next') }} →
               </button>
-              <span v-else class="text-xs text-base-content/40 italic">Waiting…</span>
+              <span v-else class="text-xs text-base-content/40 italic">{{
+                t('tutorial.controls.waiting')
+              }}</span>
             </div>
           </div>
         </div>
@@ -297,7 +303,7 @@ const { floatingStyles } = useFloating(anchorRef, floatingEl, {
           </div>
           <div class="flex items-center justify-between gap-2 pt-1">
             <button v-if="activeStepIndex > 0" class="btn btn-ghost btn-xs" @click="handlePrev">
-              ← Back
+              ← {{ t('tutorial.controls.back') }}
             </button>
             <div v-else class="flex-0"></div>
             <div class="flex items-center gap-2">
@@ -306,7 +312,7 @@ const { floatingStyles } = useFloating(anchorRef, floatingEl, {
                 class="btn btn-ghost btn-xs text-base-content/50"
                 @click="skipTutorial"
               >
-                Skip tutorial
+                {{ t('tutorial.controls.skipTutorial') }}
               </button>
               <template v-if="isLastStep">
                 <button
@@ -316,16 +322,20 @@ const { floatingStyles } = useFloating(anchorRef, floatingEl, {
                 >
                   ▶ {{ nextTutorial.name }}
                 </button>
-                <button class="btn btn-primary btn-xs" @click="handleDone">Done</button>
+                <button class="btn btn-primary btn-xs" @click="handleDone">
+                  {{ t('tutorial.controls.done') }}
+                </button>
               </template>
               <button
                 v-else-if="resolvedAdvanceOn === 'button'"
                 class="btn btn-primary btn-xs"
                 @click="handleNext"
               >
-                Next →
+                {{ t('tutorial.controls.next') }} →
               </button>
-              <span v-else class="text-xs text-base-content/40 italic">Waiting…</span>
+              <span v-else class="text-xs text-base-content/40 italic">{{
+                t('tutorial.controls.waiting')
+              }}</span>
             </div>
           </div>
         </div>

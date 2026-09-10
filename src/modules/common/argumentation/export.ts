@@ -19,9 +19,10 @@
 import { type Extension } from '@codemirror/state'
 
 import { ARGUMENT_RADIUS_IN_PX, type ArgumentData } from '@/modules/common/argumentation/model'
-import type { ExportResult, ExportStyleOptions } from '@/modules/common/export'
+import { ExportFormatId, type ExportResult, type ExportStyleOptions } from '@/modules/common/export'
 
 export function latexExportCommonConfig(): {
+  id: ExportFormatId
   name: string
   codemirrorOptions?: {
     loadExtensions: () => Promise<Extension[]>
@@ -30,6 +31,7 @@ export function latexExportCommonConfig(): {
   extension: string
 } {
   return {
+    id: ExportFormatId.Latex,
     name: 'LaTeX (argumentation)',
     codemirrorOptions: {
       loadExtensions: () =>

@@ -16,43 +16,57 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+/** Stable code for a localized import-error message under `errors.import.*`. */
+export type ImportErrorCode = 'jsonSyntax' | 'schemaMismatch' | 'invalidData' | 'validation'
+
+/**
+ * A structured import failure. Carries a stable `code` plus interpolation `params`
+ * and an optional technical `detail` (e.g. a raw parser or Zod message) instead of a
+ * finalized English string, so the presentation boundary can localize it.
+ */
 export abstract class ImportError {
-  abstract message: string
+  abstract code: ImportErrorCode
+  abstract params: { fileName: string }
+  detail?: string
 }
 
 export class JsonSyntaxError extends ImportError {
-  message: string
+  code = 'jsonSyntax' as const
+  params: { fileName: string }
   constructor(cause: string, fileName: string) {
     super()
-    this.message = `The provided file \`${fileName}\` is not a valid JSON file: ${cause}`
+    this.params = { fileName }
+    this.detail = cause
   }
 }
 
 export class SchemaMismatchError extends ImportError {
-  message: string
-  constructor(cause: string) {
+  code = 'schemaMismatch' as const
+  params: { fileName: string }
+  constructor(cause: string, fileName: string) {
     super()
-    // The `cause` will already contain a file name
-    this.message = `Data does not match the expected schema: ${cause}`
+    this.params = { fileName }
+    this.detail = cause
   }
 }
 
 export class InvalidDataError extends ImportError {
-  message: string
+  code = 'invalidData' as const
+  params: { fileName: string }
   constructor(cause: string, fileName: string) {
     super()
-    this.message = `The provided file \`${fileName}\` contains invalid data: ${cause}`
+    this.params = { fileName }
+    this.detail = cause
   }
 }
 
 export class ValidationError extends ImportError {
-  message: string
+  code = 'validation' as const
+  params: { fileName: string }
   constructor(cause: string, fileName: string) {
     super()
-    this.message = `The provided file \`${fileName}\` contains invalid data:
-
-${cause}
-`
+    this.params = { fileName }
+    this.detail = cause
   }
 }
 
