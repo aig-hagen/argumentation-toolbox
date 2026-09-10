@@ -21,10 +21,17 @@ export default {
   description: 'Anyone with this link can import a copy of this framework into their browser.',
   copyLink: 'Copy link',
   copied: 'Copied!',
+  actions: {
+    createFailed: 'Failed to create share link',
+    linkCopied: 'Share link copied to clipboard',
+  },
   load: {
     goToEditor: 'Go to editor',
     errors: {
       loadFailed: 'Failed to load share',
+      rateLimited: 'Too many uploads — please wait a moment before trying again',
+      uploadFailed: 'Upload failed ({status})',
+      notFound: 'Share link not found or expired',
       invalidData: 'Share contains invalid data',
       unsupportedData: 'Share contains unsupported data',
       unsupportedType: 'Share contains an unsupported framework type',

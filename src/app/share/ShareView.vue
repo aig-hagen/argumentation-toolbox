@@ -30,7 +30,7 @@ import {
   useDocumentMetadata,
 } from '@/modules/common/documents/useDocuments'
 import { notifyStorageFailureOnce } from '@/modules/common/notifications/storageFailure'
-import { fetchShare } from '@/modules/common/share/useShare'
+import { fetchShare, ShareError } from '@/modules/common/share/useShare'
 
 const { db, modules } = defineProps<{
   db: IDBPDatabase<DocumentsDB>
@@ -53,7 +53,10 @@ onMounted(async () => {
   try {
     content = await fetchShare(id)
   } catch (e) {
-    errorMessage.value = e instanceof Error ? e.message : t('share.load.errors.loadFailed')
+    errorMessage.value =
+      e instanceof ShareError
+        ? t(`share.load.errors.${e.code}`, e.params)
+        : t('share.load.errors.loadFailed')
     return
   }
 

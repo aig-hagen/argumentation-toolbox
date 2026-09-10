@@ -568,24 +568,41 @@ consolidated visual-polish pass.
 
 ### Phase 5 — Notifications, validation, and server failures
 
-- [ ] Introduce a typed message descriptor for notifications (`messageKey` plus named parameters).
-- [ ] Migrate home-controller file loading, saving, sharing, and clipboard notifications.
-- [ ] Replace import-error finalized messages with error codes and structured data.
-- [ ] Decide how to present Zod's detailed validation paths: localized wrapper plus technical detail,
-  or a custom German issue formatter. Do not claim full German validation while displaying an
-  unexplained English Zod message as the primary text.
-- [ ] Map evaluation timeout, rate-limit, unavailable-service, and generic failures to localized
-  messages.
-- [ ] Map generator timeouts and known HTTP statuses to localized messages.
-- [ ] Map share-service known failures to localized messages.
-- [ ] Keep programmer errors, invariant violations, and console diagnostics outside translation
-  catalogs.
+- [x] Introduce a typed message descriptor for notifications (`messageKey` plus named parameters).
+  (**Hybrid, by decision** — the notification API stays string-based (`title`/`description`), matching
+  the Phase-4 precedent of translating at the call site with `t()` for transient toasts. The
+  "descriptor" intent lives where it matters: domain errors carry a stable **code + params + detail**
+  in the domain layer — `ImportError` (`code`/`params`/`detail`) and a new `ShareError`
+  (`code`/`params`/`detail`) — translated at the presentation boundary. New `errors` namespace.)
+- [x] Migrate home-controller file loading, saving, sharing, and clipboard notifications.
+  (`useHomeController` toasts → `t()` via `errors.file.*` + `share.actions.*`; no separate save toast
+  exists. `storageFailure.ts` runs outside setup → uses `i18n.global.t` with `errors.storage.*`.)
+- [x] Replace import-error finalized messages with error codes and structured data.
+  (`ImportError` subclasses drop baked English; carry `code` (`jsonSyntax`/`schemaMismatch`/
+  `invalidData`/`validation`), `params.fileName`, and a technical `detail`. Localized at the
+  boundary via `errors.import.<code>`. Save-format unit tests assert on code/params/detail.)
+- [x] Decide how to present Zod's detailed validation paths: localized wrapper plus technical detail,
+  or a custom German issue formatter. (**Localized wrapper + technical detail** — `errors.import.validation`
+  is a German sentence with the raw `z.prettifyError` output interpolated as `{detail}`. Honest: German
+  framing, English technical detail; no English Zod string as primary text.)
+- [x] Map evaluation timeout, rate-limit, unavailable-service, and generic failures to localized
+  messages. (Already done in Phase 4 under `evaluation.status.*`; verified, not re-done.)
+- [x] Map generator timeouts and known HTTP statuses to localized messages.
+  (`useGenerate` → `errors.generate.*`: timeout w/ `{seconds}`, rate-limit (429), unavailable (502/503),
+  generic failure, load failure, `httpStatus` w/ `{status}`. Backend `detail` still preferred when present.)
+- [x] Map share-service known failures to localized messages.
+  (`useShare` throws typed `ShareError` (`rateLimited`/`uploadFailed`/`notFound`/`loadFailed`);
+  `ShareView` translates via `share.load.errors.<code>` instead of leaking `e.message`.)
+- [x] Keep programmer errors, invariant violations, and console diagnostics outside translation
+  catalogs. (Unchanged — e.g. reader-callback invariant in `useHomeController`, `console.error` in
+  `storageFailure` stay English.)
 - [ ] Test interpolation with file names and other user data, ensuring values are escaped safely.
 - [ ] Test that unknown backend errors use a localized generic heading and do not expose unsafe
   markup.
 
 Deliverable: every expected user-facing failure has an English and German presentation while
-diagnostic information remains useful.
+diagnostic information remains useful. **Nearly done** — all failure paths localized; the two
+dedicated interpolation-safety / unknown-error tests remain.
 
 ### Phase 6 — Generator metadata
 

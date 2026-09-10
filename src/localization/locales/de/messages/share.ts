@@ -22,10 +22,17 @@ export default {
     'Jede Person mit diesem Link kann eine Kopie dieses Argumentationsgraphen in ihren Browser importieren.',
   copyLink: 'Link kopieren',
   copied: 'Kopiert!',
+  actions: {
+    createFailed: 'Link zum Teilen konnte nicht erstellt werden',
+    linkCopied: 'Link zum Teilen in die Zwischenablage kopiert',
+  },
   load: {
     goToEditor: 'Zum Editor',
     errors: {
       loadFailed: 'Geteilter Inhalt konnte nicht geladen werden',
+      rateLimited: 'Zu viele Uploads — bitte warte einen Moment, bevor du es erneut versuchst',
+      uploadFailed: 'Upload fehlgeschlagen ({status})',
+      notFound: 'Link zum Teilen nicht gefunden oder abgelaufen',
       invalidData: 'Geteilter Inhalt enthält ungültige Daten',
       unsupportedData: 'Geteilter Inhalt enthält nicht unterstützte Daten',
       unsupportedType: 'Geteilter Inhalt enthält einen nicht unterstützten Graphtyp',

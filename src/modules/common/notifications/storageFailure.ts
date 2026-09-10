@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+import { i18n } from '@/localization'
 import { useNotifications } from '@/modules/common/notifications/useNotifications'
 
 let hasNotified = false
@@ -32,9 +33,6 @@ export function notifyStorageFailureOnce(error?: unknown) {
   if (hasNotified) return
   hasNotified = true
   const { addErrorNotification } = useNotifications()
-  addErrorNotification(
-    'Could not save your data',
-    'Your browser is blocking local storage, so some settings, window layouts, and progress may not be saved between visits. This can happen in private browsing or if storage is disabled.',
-    10_000,
-  )
+  const t = i18n.global.t
+  addErrorNotification(t('errors.storage.title'), t('errors.storage.description'), 10_000)
 }
