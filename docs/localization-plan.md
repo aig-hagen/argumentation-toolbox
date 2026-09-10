@@ -546,11 +546,25 @@ these are technical/canonical and never localized.
   (GraphEditor already localized. `WindowExtensions` is pure reuse of the shared eval
   components + existing `evaluation.modes/fields/nouns` keys — no new terms. Semantics
   `displayName` stays English, same deferral.)
-- [ ] Localize titles, tooltips, placeholders, option labels, status messages, screen-reader labels,
-  and contextual menus in every module.
-- [ ] Review German text expansion in narrow mobile headers, buttons, chips, and bottom sheets.
+- [x] Localize titles, tooltips, placeholders, option labels, status messages, screen-reader labels,
+  and contextual menus in every module. (Audited every live module `.vue`: no hardcoded
+  user-facing literals remain. Intentional exceptions left as-is — LaTeX export style *values*
+  (`standard`/`bold`/…, Phase 3 decision), keyboard key names (`Ctrl`/`Shift`), semantics
+  `displayName` + meta-reasoner param labels (deferred semantics-metadata split), tutorial-overlay
+  chrome ("Done"/"Skip tutorial", Phase 7), and server error strings (Phase 5). The dialectical
+  `WindowConditionEditor.vue` + `condition/FormulaEditor.vue` were **dead code** — imported by
+  nothing, superseded by the live `ConditionEditorBar`/`ConditionSheet` — and were deleted here.)
+- [x] Review German text expansion in narrow mobile headers, buttons, chips, and bottom sheets.
+  (Text-length review done. Flagged for the end-stage visual-polish pass, not fixed here per the
+  mobile-design-later convention: the eval **mode** segmented control — "Leichtgläubig" (13 ch) vs
+  EN "Credulous" (9) — is the tightest 3-way chip; `inference.approximate` "Approximativ" already
+  has an `approxShort` "Approx." fallback; `kinds.extension` "Extensionsbasierte Semantiken" and
+  `metaSemantics` are long but render as wrapping section labels, not chips.)
 
 Deliverable: all interactive UI except long-form tutorial/glossary copy is available in German.
+**Done.** Every live module editor/window is localized; remaining English literals are documented
+intentional exceptions or dead code. German mobile text-expansion risks are catalogued for the
+consolidated visual-polish pass.
 
 ### Phase 5 — Notifications, validation, and server failures
 

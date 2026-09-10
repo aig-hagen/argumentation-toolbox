@@ -5,6 +5,8 @@
 
 ## Bugs and Issues
 
+- The semantics mode (cred/skept) is not explained in the UI anymore. How to add that to the eval window? mobile?
+
 ### desktop/general
 - need a ranking tutorial for AF
 
