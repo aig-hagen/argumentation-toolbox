@@ -61,6 +61,7 @@ const {
   undo,
   redo,
   showCreate,
+  onBlankCanvas,
   historyState,
   handleEditorShortcut,
   loadFromFileInput,
@@ -108,6 +109,7 @@ function loadFile() {
       :show-create="showCreate"
       :sharing="isSharing"
       :share-copied="shareCopied"
+      :on-blank-canvas="onBlankCanvas"
       @quick-share="quickShareDocument"
     />
     <main class="border-t -mt-px border-base-300 editor flex-1 overflow-hidden">
@@ -147,18 +149,18 @@ function loadFile() {
           @share="shareDocument(loadedDocument.id)"
           @export="exportAsFile(loadedDocument.id, $event)"
         />
+        <!-- Settings: blank canvas only (hidden once an editor is open). -->
+        <button
+          v-if="onBlankCanvas"
+          class="btn btn-square btn-ghost absolute top-4 right-4 bg-base-100 shadow-sm border border-base-300"
+          :title="t('settings.title')"
+          :aria-label="t('settings.title')"
+          @click="settingsDialog?.open()"
+        >
+          <Cog6ToothIcon class="size-5 opacity-70" />
+        </button>
       </div>
     </main>
-    <!-- Settings: home view only (hidden once an editor is open). -->
-    <button
-      v-if="selectedDocumentId === undefined"
-      class="btn btn-square btn-ghost absolute bottom-4 right-4 bg-base-100 shadow-sm border border-base-300"
-      :title="t('settings.title')"
-      :aria-label="t('settings.title')"
-      @click="settingsDialog?.open()"
-    >
-      <Cog6ToothIcon class="size-5 opacity-70" />
-    </button>
   </div>
   <WindowSettings ref="settingsDialog" />
   <NotificationsDisplay :notifications="notifications" />

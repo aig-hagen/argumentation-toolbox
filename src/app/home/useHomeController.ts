@@ -172,6 +172,15 @@ export function useHomeController<DocumentT extends Objectish>(
       (documentLoading.value || documentState.value !== undefined),
   )
 
+  // True while the blank canvas is on screen (no document, or a selected-but-empty
+  // one) rather than an editor. A last-selected document is always restored from
+  // storage, so `selectedDocumentId` alone can't tell these apart.
+  const onBlankCanvas = computed(
+    () =>
+      selectedDocumentId.value === undefined ||
+      (!documentLoading.value && documentState.value === undefined),
+  )
+
   const historyState = computed<HistoryState>(() => {
     const currentState = documentState.value
     if (currentState === undefined) {
@@ -385,6 +394,7 @@ export function useHomeController<DocumentT extends Objectish>(
     undo,
     redo,
     showCreate,
+    onBlankCanvas,
     historyState,
     handleEditorShortcut,
     loadFromFileInput,

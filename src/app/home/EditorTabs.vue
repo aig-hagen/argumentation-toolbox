@@ -39,6 +39,7 @@ defineProps<{
   showCreate?: boolean
   sharing?: boolean
   shareCopied?: boolean
+  onBlankCanvas?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -92,6 +93,7 @@ function openClearAllModal() {
       class="flex items-center px-1 gap-0.5 shrink-0 border-b border-base-300"
     >
       <button
+        v-if="!onBlankCanvas"
         class="btn btn-square btn-xs btn-ghost"
         :disabled="sharing"
         @click="emit('quickShare')"
