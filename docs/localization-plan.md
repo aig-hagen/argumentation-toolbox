@@ -501,7 +501,9 @@ these are technical/canonical and never localized.
   `formatAlgorithmName`/`formatParamLabel` and backend `description`s — stays for Phase 6; the
   raw server `error`/`loadError` values stay for Phase 5.)
 - [ ] Glossary desktop and mobile page chrome, search placeholders, empty states, and navigation.
-- [ ] Share-loading view and expired/error states.
+- [x] Share-loading view and expired/error states. (`ShareView.vue`; `share.load` keys for the
+  go-to-editor action and locally-authored error states. Raw `fetchShare` server messages stay
+  for Phase 5.)
 - [ ] Third-party desktop and mobile views.
 - [ ] Abstract argumentation editor and extension/ranking/serialisation windows.
 - [ ] Bipolar argumentation editor and evaluation windows.

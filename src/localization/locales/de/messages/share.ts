@@ -22,4 +22,14 @@ export default {
     'Jede Person mit diesem Link kann eine Kopie dieses Argumentationsgraphen in ihren Browser importieren.',
   copyLink: 'Link kopieren',
   copied: 'Kopiert!',
+  load: {
+    goToEditor: 'Zum Editor',
+    errors: {
+      loadFailed: 'Geteilter Inhalt konnte nicht geladen werden',
+      invalidData: 'Geteilter Inhalt enthält ungültige Daten',
+      unsupportedData: 'Geteilter Inhalt enthält nicht unterstützte Daten',
+      unsupportedType: 'Geteilter Inhalt enthält einen nicht unterstützten Graphtyp',
+      parseFailed: 'Geteilter Argumentationsgraph konnte nicht verarbeitet werden',
+    },
+  },
 }

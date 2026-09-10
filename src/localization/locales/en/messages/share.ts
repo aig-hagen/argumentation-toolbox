@@ -21,4 +21,14 @@ export default {
   description: 'Anyone with this link can import a copy of this framework into their browser.',
   copyLink: 'Copy link',
   copied: 'Copied!',
+  load: {
+    goToEditor: 'Go to editor',
+    errors: {
+      loadFailed: 'Failed to load share',
+      invalidData: 'Share contains invalid data',
+      unsupportedData: 'Share contains unsupported data',
+      unsupportedType: 'Share contains an unsupported framework type',
+      parseFailed: 'Failed to parse shared framework',
+    },
+  },
 }
