@@ -500,7 +500,9 @@ these are technical/canonical and never localized.
   edge limit, and action buttons localized. Algorithm/parameter **metadata** —
   `formatAlgorithmName`/`formatParamLabel` and backend `description`s — stays for Phase 6; the
   raw server `error`/`loadError` values stay for Phase 5.)
-- [ ] Glossary desktop and mobile page chrome, search placeholders, empty states, and navigation.
+- [x] Glossary desktop and mobile page chrome, search placeholders, empty states, and navigation.
+  (`glossary` namespace: title, back, search placeholder, no-results, select-term. Module tabs
+  (stable prefixes) and KaTeX term content stay for Phase 8.)
 - [x] Share-loading view and expired/error states. (`ShareView.vue`; `share.load` keys for the
   go-to-editor action and locally-authored error states. Raw `fetchShare` server messages stay
   for Phase 5.)
