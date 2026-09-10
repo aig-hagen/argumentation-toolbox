@@ -19,6 +19,7 @@
 <script setup lang="ts" generic="DocumentT extends Objectish">
 import {
   ArrowDownTrayIcon,
+  Cog6ToothIcon,
   DocumentTextIcon,
   EllipsisHorizontalIcon,
   PencilSquareIcon,
@@ -38,6 +39,7 @@ import { useHomeSurface } from '@/app/home/useHomeSurface'
 import { useModuleCards } from '@/app/home/useModuleCards'
 import { ACTIVE_MODULE_KEY } from '@/app/usage/moduleContext'
 import NotificationsDisplay from '@/modules/common/notifications/NotificationsDisplay.vue'
+import SettingsContent from '@/modules/common/settings/SettingsContent.vue'
 import { QUICK_SHARE_KEY } from '@/modules/common/share/quickShareKey'
 import { relativeTime } from '@/modules/common/util'
 import BottomSheet from '@/modules/common/window/BottomSheet.vue'
@@ -174,6 +176,8 @@ async function createFromNew(content: DocumentT, newNamePrefix: string) {
   goTo('editor')
 }
 
+const settingsOpen = ref(false)
+
 const fileInput = useTemplateRef<HTMLInputElement>('file-input')
 
 function loadFile() {
@@ -192,6 +196,14 @@ function loadFile() {
       class="flex-none relative flex flex-col items-center text-center px-6 pb-3"
       style="padding-top: calc(env(safe-area-inset-top) + 1rem)"
     >
+      <button
+        class="btn btn-square btn-ghost btn-sm absolute left-2"
+        style="top: calc(env(safe-area-inset-top) + 0.5rem)"
+        :aria-label="t('settings.title')"
+        @click="settingsOpen = true"
+      >
+        <Cog6ToothIcon class="size-5 opacity-70" />
+      </button>
       <button
         v-if="selectedDocumentId !== undefined && documentState !== undefined"
         class="btn btn-square btn-ghost btn-sm absolute right-2"
@@ -432,6 +444,13 @@ function loadFile() {
       <button class="btn btn-ghost justify-start gap-3 text-error" @click="menuDelete(menuDoc.id)">
         <TrashIcon class="size-5" /> {{ t('common.actions.delete') }}
       </button>
+    </div>
+  </BottomSheet>
+
+  <!-- App settings. -->
+  <BottomSheet v-model:open="settingsOpen" :title="t('settings.title')">
+    <div class="pb-4">
+      <SettingsContent />
     </div>
   </BottomSheet>
 

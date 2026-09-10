@@ -5,7 +5,9 @@
 
 ## Bugs and Issues
 
-- The semantics mode (cred/skept) is not explained in the UI anymore. How to add that to the eval window? mobile?
+- quick share should not show on blankCanvas screen
+- Notification placement should respect the tab bar and not overlap it
+- Settings button only shows if no document exists at all; probably related to prev. issue, since that should not show; position settings top right
 
 ### desktop/general
 - need a ranking tutorial for AF

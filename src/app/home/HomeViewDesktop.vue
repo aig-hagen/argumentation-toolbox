@@ -17,9 +17,11 @@
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 -->
 <script setup lang="ts" generic="DocumentT extends Objectish">
+import { Cog6ToothIcon } from '@heroicons/vue/24/outline'
 import type { IDBPDatabase } from 'idb'
 import type { Objectish } from 'immer'
 import { computed, provide, useTemplateRef } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 
 import BlankDocumentCanvas from '@/app/home/BlankDocumentCanvas.vue'
@@ -30,6 +32,7 @@ import { useModuleCards } from '@/app/home/useModuleCards'
 import { ACTIVE_MODULE_KEY } from '@/app/usage/moduleContext'
 import type { DocumentsDB } from '@/modules/common/documents/db'
 import NotificationsDisplay from '@/modules/common/notifications/NotificationsDisplay.vue'
+import WindowSettings from '@/modules/common/settings/WindowSettings.vue'
 import ShareModal from '@/modules/common/share/ShareModal.vue'
 
 const { db, modules, controller } = defineProps<{
@@ -77,6 +80,9 @@ provide(
 )
 
 const router = useRouter()
+const { t } = useI18n({ useScope: 'global' })
+
+const settingsDialog = useTemplateRef<InstanceType<typeof WindowSettings>>('settingsDialog')
 
 const fileInput = useTemplateRef<HTMLInputElement>('file-input')
 
@@ -143,7 +149,18 @@ function loadFile() {
         />
       </div>
     </main>
+    <!-- Settings: home view only (hidden once an editor is open). -->
+    <button
+      v-if="selectedDocumentId === undefined"
+      class="btn btn-square btn-ghost absolute bottom-4 right-4 bg-base-100 shadow-sm border border-base-300"
+      :title="t('settings.title')"
+      :aria-label="t('settings.title')"
+      @click="settingsDialog?.open()"
+    >
+      <Cog6ToothIcon class="size-5 opacity-70" />
+    </button>
   </div>
+  <WindowSettings ref="settingsDialog" />
   <NotificationsDisplay :notifications="notifications" />
   <ShareModal :url="shareUrl" @close="shareUrl = null" />
   <input
