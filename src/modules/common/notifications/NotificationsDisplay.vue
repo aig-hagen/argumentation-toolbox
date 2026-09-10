@@ -73,13 +73,14 @@ const { notifications, placement = 'end' } = defineProps<{
     </div>
   </div>
 
-  <!-- Desktop: full alert cards. -->
+  <!-- Desktop: full alert cards, offset below the editor tab bar. -->
   <div
     v-else
     role="status"
     aria-live="polite"
     aria-atomic="false"
     class="toast toast-top toast-end"
+    style="top: 3.5rem"
   >
     <div
       v-for="notification of notifications"
