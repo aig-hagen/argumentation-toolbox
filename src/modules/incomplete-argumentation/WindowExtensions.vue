@@ -29,6 +29,7 @@ import {
   watch,
   watchEffect,
 } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import { abstractArgumentationGlossary } from '@/modules/abstract-argumentation/glossary'
 import type { DocumentId } from '@/modules/common/documents/db'
@@ -89,6 +90,8 @@ provide(TOOLTIP_REGISTRY_KEY, {
   ...abstractArgumentationGlossary,
   ...incompleteArgumentationGlossary,
 })
+
+const { t } = useI18n({ useScope: 'global' })
 
 const semanticGroups = KNOWN_SEMANTIC_GROUPS
 const allSemantics = semanticGroups.flatMap((g) => g.semantics)
@@ -168,18 +171,21 @@ function onWindowFocus() {
 }
 
 const windowTitle = computed(() => {
-  const typeLabel = selectedType.value === 'pos' ? 'Possible' : 'Necessary'
+  const typeLabel =
+    selectedType.value === 'pos'
+      ? t('evaluation.acceptanceType.possible')
+      : t('evaluation.acceptanceType.necessary')
   const modeLabel =
     selectedMode.value === 'enumerate'
-      ? 'Enumerate'
+      ? t('evaluation.modes.enumerate')
       : selectedMode.value === 'credulous'
-        ? 'Credulous'
-        : 'Skeptical'
+        ? t('evaluation.modes.credulous')
+        : t('evaluation.modes.skeptical')
   return `${selectedSemantic.value.displayName} · ${typeLabel} · ${modeLabel}`
 })
 
 // The compact host labels its switcher pill with this title (not the raw key).
-watch(windowTitle, (t) => emit('title', t), { immediate: true })
+watch(windowTitle, (title) => emit('title', title), { immediate: true })
 </script>
 
 <template>
@@ -196,17 +202,17 @@ watch(windowTitle, (t) => emit('title', t), { immediate: true })
     @evaluate="emit('evaluate')"
   >
     <template #parameters>
-      <ParameterField label="Type" max-width="8rem">
+      <ParameterField :label="t('evaluation.acceptanceType.label')" max-width="8rem">
         <PickerSelect
           ref="typeSelect"
           v-model="selectedType"
           :options="[
-            { value: 'pos', label: 'Possible' },
-            { value: 'nec', label: 'Necessary' },
+            { value: 'pos', label: t('evaluation.acceptanceType.possible') },
+            { value: 'nec', label: t('evaluation.acceptanceType.necessary') },
           ]"
         />
       </ParameterField>
-      <ParameterField label="Semantics" min-width="10rem">
+      <ParameterField :label="t('evaluation.fields.semantics')" min-width="10rem">
         <GroupedSelect
           ref="semanticsSelect"
           v-model="selectedSemantic"
@@ -214,13 +220,13 @@ watch(windowTitle, (t) => emit('title', t), { immediate: true })
           full-width
         />
       </ParameterField>
-      <ParameterField label="Mode" max-width="8rem">
+      <ParameterField :label="t('evaluation.fields.mode')" max-width="8rem">
         <PickerSelect
           v-model="selectedMode"
           :options="[
-            { value: 'enumerate', label: 'Enumerate' },
-            { value: 'credulous', label: 'Credulous' },
-            { value: 'skeptical', label: 'Skeptical' },
+            { value: 'enumerate', label: t('evaluation.modes.enumerate') },
+            { value: 'credulous', label: t('evaluation.modes.credulous') },
+            { value: 'skeptical', label: t('evaluation.modes.skeptical') },
           ]"
         />
       </ParameterField>
@@ -232,7 +238,7 @@ watch(windowTitle, (t) => emit('title', t), { immediate: true })
       <div v-if="dataExtensionsFormatedAndSorted !== undefined" ref="resultsArea" class="contents">
         <EvaluationResultGrid
           v-model:selected="selectedExtension"
-          result-noun="extensions"
+          :result-noun="t('evaluation.nouns.extensions')"
           :items="resultItems"
           :empty-message="emptyMessage"
           :selection-hint="selectionHint"

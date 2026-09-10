@@ -186,7 +186,7 @@ function iafNodeSelectionActions(id: NodeId): SelectionAction[] {
   return [
     {
       key: 'certainty',
-      label: uncertain ? 'Mark definite' : 'Mark uncertain',
+      label: uncertain ? t('editor.certainty.markDefinite') : t('editor.certainty.markUncertain'),
       icon: ArrowsRightLeftIcon,
       // In-place switcher: stay open so the user can toggle certainty across taps.
       keepOpen: true,
@@ -328,12 +328,16 @@ const tutorialRefs = computed(() => ({
   >
     <template #canvasSelector>
       <!-- Compact twin of the desktop argument-type toolbar (horizontal). -->
-      <div ref="mobileArgumentModeButton" class="join shadow-md" title="Argument type">
+      <div
+        ref="mobileArgumentModeButton"
+        class="join shadow-md"
+        :title="t('editor.certainty.argumentType')"
+      >
         <button
           class="join-item btn btn-sm btn-square"
           :class="isDefiniteArgumentMode ? 'btn-primary' : 'btn-neutral'"
           :aria-pressed="isDefiniteArgumentMode"
-          aria-label="Definite argument"
+          :aria-label="t('editor.certainty.definiteArgument')"
           @click="isDefiniteArgumentMode = true"
         >
           <svg
@@ -351,7 +355,7 @@ const tutorialRefs = computed(() => ({
           class="join-item btn btn-sm btn-square"
           :class="!isDefiniteArgumentMode ? 'btn-primary' : 'btn-neutral'"
           :aria-pressed="!isDefiniteArgumentMode"
-          aria-label="Uncertain argument"
+          :aria-label="t('editor.certainty.uncertainArgument')"
           @click="isDefiniteArgumentMode = false"
         >
           <svg
@@ -369,11 +373,15 @@ const tutorialRefs = computed(() => ({
       </div>
     </template>
     <template #toolbar>
-      <div ref="argumentModeButton" class="join join-vertical mb-2" title="Argument type">
+      <div
+        ref="argumentModeButton"
+        class="join join-vertical mb-2"
+        :title="t('editor.certainty.argumentType')"
+      >
         <button
           class="join-item btn btn-square btn-sm"
           :class="{ 'btn-active': isDefiniteArgumentMode }"
-          title="Definite argument"
+          :title="t('editor.certainty.definiteArgument')"
           @click="isDefiniteArgumentMode = true"
         >
           <svg
@@ -390,7 +398,7 @@ const tutorialRefs = computed(() => ({
         <button
           class="join-item btn btn-square btn-sm"
           :class="{ 'btn-active': !isDefiniteArgumentMode }"
-          title="Uncertain argument"
+          :title="t('editor.certainty.uncertainArgument')"
           @click="isDefiniteArgumentMode = false"
         >
           <svg

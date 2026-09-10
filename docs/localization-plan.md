@@ -526,7 +526,11 @@ these are technical/canonical and never localized.
   `evaluation` namespace; added `evaluation.support.*` for the bipolar support-interpretation
   selector — Deductive/Necessary/Coalition. Semantics `displayName` stays English, same
   deferral as elsewhere.)
-- [ ] Incomplete argumentation editor, certainty controls, and evaluation windows.
+- [x] Incomplete argumentation editor, certainty controls, and evaluation windows.
+  (GraphEditor certainty controls → new `editor.certainty.*` (argument type, definite/uncertain,
+  mark definite/uncertain); WindowExtensions acceptance-type selector → new
+  `evaluation.acceptanceType.*` (Type/Possible/Necessary), rest reuse. Terminology rule:
+  arguments are "sicher"/"unsicher", only attacks are "bedingt sicher".)
 - [ ] Probabilistic argumentation editor, probability controls, and evaluation windows.
 - [ ] Dialectical argumentation condition editor, formula keypad labels, and interpretation window.
 - [x] Collective-attacks editor and evaluation windows.

@@ -31,6 +31,13 @@ export default {
     switchTo: 'Zu {type} wechseln',
     linkFallback: 'Typ',
   },
+  certainty: {
+    argumentType: 'Argumenttyp',
+    definiteArgument: 'Sicheres Argument',
+    uncertainArgument: 'Unsicheres Argument',
+    markDefinite: 'Als sicher markieren',
+    markUncertain: 'Als unsicher markieren',
+  },
   links: {
     attack: 'Angriff',
     support: 'Unterstützung',

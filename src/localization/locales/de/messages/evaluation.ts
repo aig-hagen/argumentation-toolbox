@@ -47,6 +47,12 @@ export default {
     deductive: 'Deduktiv',
     necessary: 'Notwendig',
   },
+  // Incomplete-argumentation acceptance-type selector.
+  acceptanceType: {
+    label: 'Typ',
+    possible: 'Möglich',
+    necessary: 'Notwendig',
+  },
   // Plural nouns used by the copy footer and result grid.
   nouns: {
     results: 'Ergebnisse',
