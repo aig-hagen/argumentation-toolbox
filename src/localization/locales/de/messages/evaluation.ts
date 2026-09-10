@@ -65,6 +65,7 @@ export default {
     results: 'Ergebnisse',
     extensions: 'Extensionen',
     ranking: 'Ranking',
+    interpretations: 'Interpretationen',
   },
   status: {
     copyPlain: 'Als Text kopieren',
@@ -87,6 +88,10 @@ export default {
     selectArgumentHint: 'Argument zum Hervorheben auswählen',
     noExtensions: 'Es existieren keine Extensionen.',
     noAcceptableArguments: 'Es existieren keine akzeptablen Argumente.',
+  },
+  interpretationWindow: {
+    selectModelHint: 'Modell zum Hervorheben auswählen',
+    noModels: 'Es existieren keine Modelle.',
   },
   ranking: {
     modeLabel: 'Ranking',

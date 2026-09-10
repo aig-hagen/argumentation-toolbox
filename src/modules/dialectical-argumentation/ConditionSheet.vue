@@ -20,6 +20,7 @@
 import { BackspaceIcon } from '@heroicons/vue/24/outline'
 import { ExclamationCircleIcon } from '@heroicons/vue/24/solid'
 import { computed, nextTick, ref, useTemplateRef, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import type { NodeId } from '@/modules/common/graph-editor/graphEditor'
 import BottomSheet from '@/modules/common/window/BottomSheet.vue'
@@ -60,8 +61,12 @@ const availableArguments = computed(() =>
 const argName = computed(() =>
   argumentId !== null ? (argNameMap.value.get(argumentId) ?? '') : '',
 )
+const { t } = useI18n({ useScope: 'global' })
+
 const sheetTitle = computed(() =>
-  argName.value ? `Acceptance condition of ${argName.value}` : 'Acceptance condition',
+  argName.value
+    ? t('editor.condition.titleOf', { name: argName.value })
+    : t('editor.condition.title'),
 )
 
 const inputRef = useTemplateRef<HTMLInputElement>('input')
@@ -132,14 +137,14 @@ function clearFormula() {
   void nextTick(() => inputRef.value?.focus())
 }
 
-const operatorKeys = [
-  { label: '¬', text: '¬', title: 'Negation' },
-  { label: '∧', text: ' ∧ ', title: 'Conjunction' },
-  { label: '∨', text: ' ∨ ', title: 'Disjunction' },
-  { label: '⊤', text: '⊤', title: 'Tautology' },
-  { label: '⊥', text: '⊥', title: 'Contradiction' },
-  { label: '( )', text: '()', title: 'Parentheses', cursorOffset: 1 },
-]
+const operatorKeys = computed(() => [
+  { label: '¬', text: '¬', title: t('editor.condition.keys.negation') },
+  { label: '∧', text: ' ∧ ', title: t('editor.condition.keys.conjunction') },
+  { label: '∨', text: ' ∨ ', title: t('editor.condition.keys.disjunction') },
+  { label: '⊤', text: '⊤', title: t('editor.condition.keys.tautology') },
+  { label: '⊥', text: '⊥', title: t('editor.condition.keys.contradiction') },
+  { label: '( )', text: '()', title: t('editor.condition.keys.parentheses'), cursorOffset: 1 },
+])
 </script>
 
 <template>
@@ -161,7 +166,7 @@ const operatorKeys = [
             <span
               v-if="isInvalid"
               class="absolute right-3 top-1/2 -translate-y-1/2 text-error select-none"
-              title="Condition is syntactically incorrect and will not be saved"
+              :title="t('editor.condition.syntaxError')"
             >
               <ExclamationCircleIcon class="size-5" />
             </span>
@@ -169,21 +174,21 @@ const operatorKeys = [
           <button
             type="button"
             class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border-2 border-base-300 bg-base-200 text-base-content transition-colors hover:bg-base-300"
-            aria-label="Backspace"
-            title="Backspace"
+            :aria-label="t('editor.condition.backspace')"
+            :title="t('editor.condition.backspace')"
             @click="deleteAtCursor"
           >
             <BackspaceIcon class="size-5" />
           </button>
         </div>
-        <p class="text-xs opacity-50">
-          Tap the operator keys and argument chips to build the condition.
-        </p>
+        <p class="text-xs opacity-50">{{ t('editor.condition.hint') }}</p>
       </div>
 
       <!-- Operator keypad -->
       <div class="flex flex-col gap-1.5">
-        <span class="text-xs font-semibold uppercase opacity-60">Operators</span>
+        <span class="text-xs font-semibold uppercase opacity-60">{{
+          t('editor.condition.operators')
+        }}</span>
         <div class="grid grid-cols-3 gap-2">
           <button
             v-for="key in operatorKeys"
@@ -201,7 +206,9 @@ const operatorKeys = [
 
       <!-- Argument atom chips -->
       <div class="flex flex-col gap-1.5">
-        <span class="text-xs font-semibold uppercase opacity-60">Arguments</span>
+        <span class="text-xs font-semibold uppercase opacity-60">{{
+          t('editor.condition.arguments')
+        }}</span>
         <div v-if="availableArguments.length > 0" class="flex flex-wrap gap-1.5">
           <button
             v-for="arg in availableArguments"
@@ -213,7 +220,7 @@ const operatorKeys = [
             {{ arg.name }}
           </button>
         </div>
-        <p v-else class="text-xs opacity-50">Add arguments to the graph to reference them here.</p>
+        <p v-else class="text-xs opacity-50">{{ t('editor.condition.referenceEmpty') }}</p>
       </div>
 
       <!-- Clear: always present so clearing doesn't shift the sheet -->
@@ -224,7 +231,7 @@ const operatorKeys = [
           :disabled="inputText.length === 0"
           @click="clearFormula"
         >
-          Clear all
+          {{ t('editor.condition.clearAll') }}
         </button>
       </div>
     </div>

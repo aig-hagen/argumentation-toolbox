@@ -65,6 +65,7 @@ export default {
     results: 'results',
     extensions: 'extensions',
     ranking: 'ranking',
+    interpretations: 'interpretations',
   },
   status: {
     copyPlain: 'Copy as plain text',
@@ -87,6 +88,10 @@ export default {
     selectArgumentHint: 'Select acceptable argument to highlight',
     noExtensions: 'No extensions exist.',
     noAcceptableArguments: 'No acceptable arguments exist.',
+  },
+  interpretationWindow: {
+    selectModelHint: 'Select model to highlight',
+    noModels: 'No models exist.',
   },
   ranking: {
     modeLabel: 'Ranking',

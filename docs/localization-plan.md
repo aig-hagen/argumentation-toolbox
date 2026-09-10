@@ -536,7 +536,12 @@ these are technical/canonical and never localized.
   (title, editProbability, arguments/attacks legends, empty state); WindowExtensions inference
   selector → new `evaluation.inference.*` (Inference/Exact/Approximate + Approx. title abbrev),
   rest reuse. "inference" toggle localized as *Inferenz* (user's choice over *Schlussfolgerung*).)
-- [ ] Dialectical argumentation condition editor, formula keypad labels, and interpretation window.
+- [x] Dialectical argumentation condition editor, formula keypad labels, and interpretation window.
+  (ConditionEditorBar (desktop) + ConditionSheet (mobile) formula keypad, GraphEditor edit-condition
+  action, ProbabilityEditor-style ConditionSheet → new `editor.condition.*` (title, keys
+  negation/conjunction/disjunction/tautology/contradiction/parentheses, operators, atom,
+  syntax error, backspace, hint, clear all, etc.); WindowInterpretations → reuses eval namespace +
+  new `evaluation.interpretationWindow.*` (model hint, no-models) and `evaluation.nouns.interpretations`.)
 - [x] Collective-attacks editor and evaluation windows.
   (GraphEditor already localized. `WindowExtensions` is pure reuse of the shared eval
   components + existing `evaluation.modes/fields/nouns` keys — no new terms. Semantics

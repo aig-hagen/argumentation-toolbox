@@ -29,6 +29,7 @@ import {
   watch,
   watchEffect,
 } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import { abstractArgumentationGlossary } from '@/modules/abstract-argumentation/glossary'
 import { NODE_BLUE, NODE_GREEN, NODE_RED } from '@/modules/common/colors'
@@ -90,6 +91,8 @@ provide(TOOLTIP_REGISTRY_KEY, {
   ...dialecticalArgumentationGlossary,
 })
 
+const { t } = useI18n({ useScope: 'global' })
+
 const semanticGroups = KNOWN_SEMANTIC_GROUPS
 const allSemantics = semanticGroups.flatMap((g) => g.semantics)
 const semanticsSelectGroups: GroupedSelectGroup<Semantics>[] = semanticGroups.map((g) => ({
@@ -148,11 +151,13 @@ function formatInterpretationTex(interp: Interpretation): string {
 
 const selectionHint = computed(() =>
   selectedMode.value === 'enumerate'
-    ? 'Select model to highlight'
-    : 'Select acceptable argument to highlight',
+    ? t('evaluation.interpretationWindow.selectModelHint')
+    : t('evaluation.extensionWindow.selectArgumentHint'),
 )
 const emptyMessage = computed(() =>
-  selectedMode.value === 'enumerate' ? 'No models exist.' : 'No acceptable arguments exist.',
+  selectedMode.value === 'enumerate'
+    ? t('evaluation.interpretationWindow.noModels')
+    : t('evaluation.extensionWindow.noAcceptableArguments'),
 )
 
 const formattedData = computed(() => {
@@ -196,10 +201,10 @@ const resultItems = computed(
 const windowTitle = computed(() => {
   const modeLabel =
     selectedMode.value === 'enumerate'
-      ? 'Enumerate'
+      ? t('evaluation.modes.enumerate')
       : selectedMode.value === 'credulous'
-        ? 'Credulous'
-        : 'Skeptical'
+        ? t('evaluation.modes.credulous')
+        : t('evaluation.modes.skeptical')
   return `${selectedSemantic.value.displayName} · ${modeLabel}`
 })
 
@@ -259,7 +264,7 @@ function onWindowFocus() {
 }
 
 // The compact host labels its switcher pill with this title (not the raw key).
-watch(windowTitle, (t) => emit('title', t), { immediate: true })
+watch(windowTitle, (title) => emit('title', title), { immediate: true })
 </script>
 
 <template>
@@ -276,7 +281,7 @@ watch(windowTitle, (t) => emit('title', t), { immediate: true })
     @evaluate="emit('evaluate')"
   >
     <template #parameters>
-      <ParameterField label="Semantics" min-width="10rem">
+      <ParameterField :label="t('evaluation.fields.semantics')" min-width="10rem">
         <GroupedSelect
           ref="semanticsSelect"
           v-model="selectedSemantic"
@@ -284,13 +289,13 @@ watch(windowTitle, (t) => emit('title', t), { immediate: true })
           full-width
         />
       </ParameterField>
-      <ParameterField label="Mode" max-width="8rem">
+      <ParameterField :label="t('evaluation.fields.mode')" max-width="8rem">
         <PickerSelect
           v-model="selectedMode"
           :options="[
-            { value: 'enumerate', label: 'Enumerate' },
-            { value: 'credulous', label: 'Credulous' },
-            { value: 'skeptical', label: 'Skeptical' },
+            { value: 'enumerate', label: t('evaluation.modes.enumerate') },
+            { value: 'credulous', label: t('evaluation.modes.credulous') },
+            { value: 'skeptical', label: t('evaluation.modes.skeptical') },
           ]"
         />
       </ParameterField>
@@ -302,7 +307,7 @@ watch(windowTitle, (t) => emit('title', t), { immediate: true })
       <div v-if="formattedData !== undefined" ref="resultsArea" class="contents">
         <EvaluationResultGrid
           v-model:selected="selectedKey"
-          result-noun="interpretations"
+          :result-noun="t('evaluation.nouns.interpretations')"
           :items="resultItems"
           :empty-message="emptyMessage"
           :selection-hint="selectionHint"

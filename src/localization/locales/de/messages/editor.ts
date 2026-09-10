@@ -46,6 +46,28 @@ export default {
     empty:
       'Füge dem Argumentationsgraphen Argumente hinzu, um ihre Wahrscheinlichkeiten festzulegen.',
   },
+  condition: {
+    title: 'Akzeptanzbedingung',
+    titleOf: 'Akzeptanzbedingung von {name}',
+    editCondition: 'Bedingung bearbeiten',
+    syntaxError: 'Bedingung ist syntaktisch inkorrekt und wird nicht gespeichert',
+    backspace: 'Löschen',
+    hint: 'Tippe auf die Operatortasten und Argument-Chips, um die Bedingung zu erstellen.',
+    operators: 'Operatoren',
+    arguments: 'Argumente',
+    referenceEmpty: 'Füge dem Argumentationsgraphen Argumente hinzu, um sie hier zu referenzieren.',
+    clearAll: 'Alle löschen',
+    atom: 'Arg',
+    noArguments: 'Keine Argumente',
+    keys: {
+      negation: 'Negation',
+      conjunction: 'Konjunktion',
+      disjunction: 'Disjunktion',
+      tautology: 'Tautologie',
+      contradiction: 'Kontradiktion',
+      parentheses: 'Klammern',
+    },
+  },
   links: {
     attack: 'Angriff',
     support: 'Unterstützung',

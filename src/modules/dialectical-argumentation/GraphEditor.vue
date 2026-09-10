@@ -234,7 +234,7 @@ function adfNodeSelectionActions(id: NodeId): SelectionAction[] {
   return [
     {
       key: 'condition',
-      label: 'Edit condition',
+      label: t('editor.condition.editCondition'),
       icon: VariableIcon,
       run: () => {
         selectedNodeId.value = id
