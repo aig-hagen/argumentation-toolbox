@@ -697,8 +697,8 @@ Deliverable: complete, structurally valid English and German glossary experience
   `relativeTime()` descriptor localized via `common.time.*` (see the number-formatting item above).
   **PrivacyView**
   — was fully English (0 `t()`), now localized via new `privacy` namespace + `<i18n-t>` for
-  markup paragraphs (intro/opt-out/imprint); **German privacy/imprint copy is first-pass and
-  flagged for user legal/wording review**. **Tutorial chrome** — `WindowTutorials` +
+  markup paragraphs (intro/opt-out/imprint); German privacy/imprint copy reviewed and approved by
+  the user (2026-09-10). **Tutorial chrome** — `WindowTutorials` +
   `TutorialOverlay`/`TutorialOverlayMobile` window title, intro, Start/Restart, Back/Next/Skip/
   Done/Completed/Waiting + skip aria-labels, via new `tutorial` namespace (mobile "Waiting for
   you…" normalized to the shared `waiting` key). Remaining English is all documented intentional
