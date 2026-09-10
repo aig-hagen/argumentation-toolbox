@@ -1,13 +1,10 @@
 ## Features
 - Rework fonts to be consistent across browsers
-- Localization
+- Localization of definitions, semantics, etc
 
 
 ## Bugs and Issues
 
-- quick share should not show on blankCanvas screen
-- Notification placement should respect the tab bar and not overlap it
-- Settings button only shows if no document exists at all; probably related to prev. issue, since that should not show; position settings top right
 
 ### desktop/general
 - need a ranking tutorial for AF
