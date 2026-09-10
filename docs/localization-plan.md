@@ -679,11 +679,23 @@ Deliverable: complete, structurally valid English and German glossary experience
   English/German mechanism that works while the application is unavailable. (Inline `<script>`
   with an embedded en/de message map; resolves locale from persisted `settings:locale` → browser
   languages → English, sets `<html lang>` + `<title>` + `[data-i18n]` text. No Vue/network needed.)
-- [ ] Review page/document titles and any visible static metadata.
-- [ ] Apply locale-aware formatting to human-readable probabilities, counts, and durations where
-  appropriate; verify exports remain canonical.
-- [~] Search the frontend for remaining visible English literals and classify each intentional
-  exception. (**Audit done 2026-09-10.** Two non-domain gaps found and fixed: **PrivacyView**
+- [x] Review page/document titles and any visible static metadata. (Only `<title>` is the static
+  brand name **AgonProject** in `index.html`; the router sets no per-route titles and no code
+  writes `document.title`. Brand name stays untranslated by decision — nothing to localize.)
+- [x] Apply locale-aware formatting to human-readable probabilities, counts, and durations where
+  appropriate; verify exports remain canonical. (**Durations:** `formatRelativeTime` → locale-neutral
+  `relativeTime()` descriptor in `util.ts`; formatted at the call site (`HomeViewMobile`) via new
+  `common.time.*` keys (justNow/minutesAgo/hoursAgo/daysAgo/weeksAgo) with the older-than-weeks
+  fallback using `toLocaleDateString(locale)`. **Counts** were already pluralized in Phases 4–5.
+  **Probabilities** stay canonical dot-notation by decision — the `.toFixed(2/3)` graph labels and
+  extension probabilities pair with dot-notation numeric inputs; a German decimal comma on display
+  only would mismatch the editable value. Exports unchanged: all `toFixed`/`Math.round` in
+  `export.ts`/`renderSvg.ts` are locale-neutral geometry/serialization.)
+- [x] Search the frontend for remaining visible English literals and classify each intentional
+  exception. (**Audit done 2026-09-10.** Three non-domain gaps found and fixed. **Relative time:**
+  `formatRelativeTime` returned hardcoded English ("just now"/"5m ago") — now the locale-neutral
+  `relativeTime()` descriptor localized via `common.time.*` (see the number-formatting item above).
+  **PrivacyView**
   — was fully English (0 `t()`), now localized via new `privacy` namespace + `<i18n-t>` for
   markup paragraphs (intro/opt-out/imprint); **German privacy/imprint copy is first-pass and
   flagged for user legal/wording review**. **Tutorial chrome** — `WindowTutorials` +
@@ -692,13 +704,32 @@ Deliverable: complete, structurally valid English and German glossary experience
   you…" normalized to the shared `waiting` key). Remaining English is all documented intentional
   exceptions: deferred domain content (semantics `displayName`, generator metadata, tutorial/
   glossary *content*), technical labels (LaTeX styles, format names), and key names (Ctrl/Shift).)
-- [ ] Remove temporary compatibility fields, fallbacks, and migration comments.
-- [ ] Document how contributors add a key, update structured content, and add a new locale.
-- [ ] Consider `@intlify/unplugin-vue-i18n` for message precompilation and
+- [x] Remove temporary compatibility fields, fallbacks, and migration comments. (Nothing left to
+  remove: the deprecated `ModuleConfig.displayNameSingular`/`description` were dropped in Phase 3,
+  and no other contract keeps an old English display field beside its stable ID. The remaining
+  `name` fields — `ExportConfig.name`, the module-card view-model `displayNameSingular` built by
+  `useModuleCards` — are the permanent shapes, not compat shims. The only "Migration" comments in
+  `src` (`db.ts`, `FloatingWindow.vue`) are data/settings migrations unrelated to i18n.)
+- [x] Document how contributors add a key, update structured content, and add a new locale.
+  (New [`docs/localization.md`](./localization.md) contributor guide — layout, add/change a key,
+  structured glossary/tutorial content, add a new locale, and the check commands. Linked from a
+  new `## Localization` section in [`conventions.md`](./conventions.md).)
+- [x] Consider `@intlify/unplugin-vue-i18n` for message precompilation and
   `@intlify/eslint-plugin-vue-i18n` for catalog/template linting after the base integration is
-  stable; add them only if they materially improve the repository checks.
-- [ ] Measure production chunks and ensure German/rich content is not part of the initial English
-  bundle unless intentionally required.
+  stable; add them only if they materially improve the repository checks. (**Decided against for
+  now.** The catalogs are plain `.ts` objects — key parity is already enforced at compile time by
+  `LocaleMessageSchema`, and placeholder/interpolation safety by `messages.test.ts`. The message
+  compiler runs at runtime for a small catalog with no measured cost, and we deliberately avoid
+  `$t`/template message syntax, so the eslint plugin's template-linting has little to check.
+  Adding either plugin now is build-config complexity for marginal benefit — revisit if catalogs
+  grow large or if runtime compile cost shows up in profiling.)
+- [x] Measure production chunks and ensure German/rich content is not part of the initial English
+  bundle unless intentionally required. (`npm run build` 2026-09-10: German is code-split into its
+  own dynamically-imported chunk — **19.16 kB / gzip 7.12 kB** — loaded only on switch to `de`;
+  English is the eager fallback in the entry bundle. The `de` chunk grew from the 858-byte Phase-0
+  baseline because ~17 namespaces are now translated, which is expected and still off the initial
+  path. Largest chunks are unchanged app code — `ThirdPartyView` 1.94 MB, entry 1.72 MB, `index`
+  820 kB, `renderSvg` 246 kB — none affected by localization.)
 
 Deliverable: no unclassified user-facing English remains, static fallback surfaces are covered,
 and contributor documentation is complete.
