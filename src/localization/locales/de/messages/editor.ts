@@ -38,6 +38,14 @@ export default {
     markDefinite: 'Als sicher markieren',
     markUncertain: 'Als unsicher markieren',
   },
+  probabilities: {
+    title: 'Wahrscheinlichkeiten',
+    editProbability: 'Wahrscheinlichkeit bearbeiten',
+    arguments: 'Argumente',
+    attacks: 'Angriffe',
+    empty:
+      'Füge dem Argumentationsgraphen Argumente hinzu, um ihre Wahrscheinlichkeiten festzulegen.',
+  },
   links: {
     attack: 'Angriff',
     support: 'Unterstützung',

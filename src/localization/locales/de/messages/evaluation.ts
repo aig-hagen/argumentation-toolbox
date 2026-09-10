@@ -53,6 +53,13 @@ export default {
     possible: 'Möglich',
     necessary: 'Notwendig',
   },
+  // Probabilistic-argumentation inference (solver) selector.
+  inference: {
+    label: 'Inferenz',
+    exact: 'Exakt',
+    approximate: 'Approximativ',
+    approxShort: 'Approx.',
+  },
   // Plural nouns used by the copy footer and result grid.
   nouns: {
     results: 'Ergebnisse',

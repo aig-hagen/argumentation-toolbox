@@ -531,7 +531,11 @@ these are technical/canonical and never localized.
   mark definite/uncertain); WindowExtensions acceptance-type selector → new
   `evaluation.acceptanceType.*` (Type/Possible/Necessary), rest reuse. Terminology rule:
   arguments are "sicher"/"unsicher", only attacks are "bedingt sicher".)
-- [ ] Probabilistic argumentation editor, probability controls, and evaluation windows.
+- [x] Probabilistic argumentation editor, probability controls, and evaluation windows.
+  (GraphEditor probability toolbar/action + ProbabilityEditor window → new `editor.probabilities.*`
+  (title, editProbability, arguments/attacks legends, empty state); WindowExtensions inference
+  selector → new `evaluation.inference.*` (Inference/Exact/Approximate + Approx. title abbrev),
+  rest reuse. "inference" toggle localized as *Inferenz* (user's choice over *Schlussfolgerung*).)
 - [ ] Dialectical argumentation condition editor, formula keypad labels, and interpretation window.
 - [x] Collective-attacks editor and evaluation windows.
   (GraphEditor already localized. `WindowExtensions` is pure reuse of the shared eval

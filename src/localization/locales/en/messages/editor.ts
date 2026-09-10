@@ -38,6 +38,13 @@ export default {
     markDefinite: 'Mark definite',
     markUncertain: 'Mark uncertain',
   },
+  probabilities: {
+    title: 'Probabilities',
+    editProbability: 'Edit probability',
+    arguments: 'Arguments',
+    attacks: 'Attacks',
+    empty: 'Add arguments to the graph to set their probabilities.',
+  },
   links: {
     attack: 'Attack',
     support: 'Support',

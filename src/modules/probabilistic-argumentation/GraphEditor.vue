@@ -307,7 +307,7 @@ function openProbabilitySheet(focusKey: string) {
 
 const probabilityAction = (focusKey: string): SelectionAction => ({
   key: 'probability',
-  label: 'Edit probability',
+  label: t('editor.probabilities.editProbability'),
   icon: AdjustmentsHorizontalIcon,
   run: () => openProbabilitySheet(focusKey),
 })
@@ -526,7 +526,7 @@ function onPopupKeydown(event: KeyboardEvent) {
           ref="probabilityButton"
           class="btn btn-square btn-sm"
           :class="{ 'btn-active': isProbabilitiesOpen }"
-          title="Probabilities"
+          :title="t('editor.probabilities.title')"
           @click="isProbabilitiesOpen = !isProbabilitiesOpen"
         >
           <AdjustmentsHorizontalIcon class="size-6 opacity-70" />

@@ -18,6 +18,7 @@
 -->
 <script setup lang="ts">
 import { computed, nextTick, ref, useTemplateRef, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import type { DocumentId } from '@/modules/common/documents/db'
 import type { Input } from '@/modules/common/evaluation/types'
@@ -40,6 +41,8 @@ const emit = defineEmits<{
   changeArgumentProbability: [id: number, probability: number]
   changeAttackProbability: [sourceId: number, targetId: number, probability: number]
 }>()
+
+const { t } = useI18n({ useScope: 'global' })
 
 const argumentList = computed(() => {
   return [...input.content.arguments()].map(([id, data]) => ({
@@ -102,7 +105,7 @@ watch(
 <template>
   <WindowShell
     v-model:open="open"
-    title="Probabilities"
+    :title="t('editor.probabilities.title')"
     :initial-position="{ x: 128, y: 64 }"
     :intitalSize="{ width: 360, height: 300 }"
     :document-id="documentId"
@@ -110,7 +113,7 @@ watch(
   >
     <div ref="body" class="p-2 flex flex-col gap-2 overflow-y-auto h-full">
       <fieldset class="fieldset" v-if="argumentList.length > 0">
-        <legend class="fieldset-legend">Arguments</legend>
+        <legend class="fieldset-legend">{{ t('editor.probabilities.arguments') }}</legend>
         <div class="flex flex-col gap-0.5">
           <div
             v-for="arg in argumentList"
@@ -143,7 +146,7 @@ watch(
       </fieldset>
 
       <fieldset class="fieldset" v-if="attackList.length > 0">
-        <legend class="fieldset-legend">Attacks</legend>
+        <legend class="fieldset-legend">{{ t('editor.probabilities.attacks') }}</legend>
         <div class="flex flex-col gap-0.5">
           <div
             v-for="atk in attackList"
@@ -178,7 +181,7 @@ watch(
       </fieldset>
 
       <p v-if="argumentList.length === 0" class="text-sm text-base-content/50">
-        Add arguments to the graph to set their probabilities.
+        {{ t('editor.probabilities.empty') }}
       </p>
     </div>
   </WindowShell>
