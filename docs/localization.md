@@ -2,8 +2,7 @@
 
 AgonProject ships English and German. Localization is built on
 [`vue-i18n`](https://vue-i18n.intlify.dev/) v11 in Composition API mode. This guide covers the
-three routine contributor tasks; the design rationale and roadmap live in
-[`localization-plan.md`](./localization-plan.md).
+routine contributor tasks plus what is still untranslated.
 
 ## Layout
 
@@ -62,7 +61,7 @@ trusted HTML that the message compiler would choke on. It lives as typed data in
 `locales/<locale>/glossaries/` and `locales/<locale>/tutorials/`, selected by the same locale
 service. Keep term IDs, cross-reference targets, tutorial/step IDs, anchors, and `advanceOn`
 behavior **stable across languages**; translate only labels, titles, and bodies. (These bundles
-are Phases 7–8 and not yet populated — see the plan.)
+are not yet populated — see [Not yet translated](#not-yet-translated).)
 
 ## Adding a new locale
 
@@ -80,6 +79,34 @@ are Phases 7–8 and not yet populated — see the plan.)
    leaf strings, and type the new `index.ts` as `: LocaleMessageSchema`.
 4. Normalization (`de-DE` → `de`) and the Settings selector pick the locale up automatically from
    `SUPPORTED_LOCALES`.
+
+## Not yet translated
+
+All interactive chrome, notifications, and expected errors are localized. The following is
+**deferred** — mostly scientific/domain content that needs German domain-expert review, grouped
+for a later pass:
+
+- **Semantics labels** — semantics and semantics-family display names (e.g. the extension/ranking
+  selectors) and meta-reasoner parameter labels/descriptions stay English. The `displayName` also
+  feeds notation (`formatNotation`, `.toLowerCase()`), so localizing it needs a notation-vs-label
+  split first.
+- **Generator metadata** — framework-type, algorithm, and parameter names/descriptions in the
+  Generate view (`formatAlgorithmName`/`formatParamLabel` plus the backend `graph-gen` English
+  `description`s).
+- **Tutorial content** — all common and per-module tutorial copy (`locales/<locale>/tutorials/`).
+  The chrome around tutorials (window title, Start/Next/Skip/Done, etc.) is already localized.
+- **Glossary content** — all term labels, titles, and definitions for every module
+  (`locales/<locale>/glossaries/`). The glossary page chrome (search, empty states, navigation) is
+  already localized.
+
+The following is **intentionally never translated** — technical, canonical, or third-party:
+
+- The brand name **AgonProject**.
+- Example names/descriptions and the document names derived from them (canonical).
+- Export **format names** (ICCMA, TGF, LaTeX) and LaTeX export **style values**
+  (`standard`/`bold`/…); file extensions and exported syntax.
+- Keyboard key names (`Ctrl`, `Shift`) and recognized acronyms (AF, ADF, TGF, SVG, …).
+- Third-party library names, licenses, and attribution text on the third-party page.
 
 ## Checks
 
