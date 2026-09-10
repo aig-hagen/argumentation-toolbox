@@ -19,6 +19,7 @@
 import common from '@/localization/locales/de/messages/common'
 import editor from '@/localization/locales/de/messages/editor'
 import exportMessages from '@/localization/locales/de/messages/export'
+import generate from '@/localization/locales/de/messages/generate'
 import help from '@/localization/locales/de/messages/help'
 import home from '@/localization/locales/de/messages/home'
 import menu from '@/localization/locales/de/messages/menu'
@@ -33,6 +34,7 @@ const messages: LocaleMessageSchema = {
   common,
   editor,
   export: exportMessages,
+  generate,
   help,
   home,
   menu,

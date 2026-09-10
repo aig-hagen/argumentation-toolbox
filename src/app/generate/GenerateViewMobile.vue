@@ -18,9 +18,12 @@
 -->
 <script setup lang="ts">
 import { BoltIcon, ChevronLeftIcon } from '@heroicons/vue/24/outline'
+import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 
 import type { GenerateController } from '@/app/generate/useGenerate'
+
+const { t } = useI18n({ useScope: 'global' })
 
 const { controller } = defineProps<{ controller: GenerateController }>()
 
@@ -68,12 +71,14 @@ function numberFromEvent(e: Event, type: 'int' | 'float' | 'bool' | 'string'): n
     >
       <button
         class="btn btn-square btn-ghost btn-sm"
-        aria-label="Back to editor"
+        :aria-label="t('generate.backToEditor')"
         @click="router.push('/')"
       >
         <ChevronLeftIcon class="size-6 opacity-70" />
       </button>
-      <span class="flex-1 text-lg font-bold py-2.5">Generate random {{ shortName }}</span>
+      <span class="flex-1 text-lg font-bold py-2.5">{{
+        t('generate.title', { name: shortName })
+      }}</span>
     </header>
 
     <!-- Scrollable form -->
@@ -83,7 +88,7 @@ function numberFromEvent(e: Event, type: 'int' | 'float' | 'bool' | 'string'): n
       </p>
 
       <div v-if="loadError !== null" role="alert" class="alert alert-error">
-        <span>Could not load algorithms: {{ loadError }}</span>
+        <span>{{ t('generate.loadError', { error: loadError }) }}</span>
       </div>
 
       <template v-else-if="algorithms.length === 0">
@@ -96,7 +101,7 @@ function numberFromEvent(e: Event, type: 'int' | 'float' | 'bool' | 'string'): n
       <template v-else>
         <!-- Algorithm selector -->
         <div class="flex flex-col gap-1.5">
-          <label class="text-[13px] font-semibold">Algorithm</label>
+          <label class="text-[13px] font-semibold">{{ t('generate.algorithm') }}</label>
           <select
             v-model="selectedAlgorithmId"
             class="select w-full h-12 rounded-xl bg-base-200 border-base-300"
@@ -174,7 +179,9 @@ function numberFromEvent(e: Event, type: 'int' | 'float' | 'bool' | 'string'): n
 
         <!-- Type-specific parameters -->
         <template v-if="selectedFrameworkType && selectedFrameworkType.params.length > 0">
-          <div class="text-xs font-bold text-base-content/40 tracking-wide">TYPE OPTIONS</div>
+          <div class="text-xs font-bold text-base-content/40 tracking-wide uppercase">
+            {{ t('generate.typeOptions') }}
+          </div>
           <template v-for="p in selectedFrameworkType.params" :key="p.name">
             <div v-if="p.min !== null && p.max !== null" class="flex flex-col gap-2">
               <div class="flex items-center justify-between gap-3">
@@ -218,7 +225,7 @@ function numberFromEvent(e: Event, type: 'int' | 'float' | 'bool' | 'string'): n
 
         <!-- Seed -->
         <div v-if="hasSeed" class="flex items-center justify-between gap-3 py-1">
-          <span class="text-[13px] font-semibold">Fixed seed</span>
+          <span class="text-[13px] font-semibold">{{ t('generate.fixedSeed') }}</span>
           <span class="flex items-center gap-3">
             <input
               v-if="seedEnabled"
@@ -239,31 +246,70 @@ function numberFromEvent(e: Event, type: 'int' | 'float' | 'bool' | 'string'): n
 
       <!-- Result -->
       <div v-if="stats !== null" class="rounded-2xl border border-primary/25 bg-primary/5 p-4">
-        <div class="text-xs font-semibold text-primary/80 tracking-wide mb-2">LAST GENERATED</div>
-        <p v-if="frameworkTypeId === 'bipolar'" class="text-sm text-base-content/70">
-          <strong>{{ stats.nArgs }}</strong> arguments,
-          <strong>{{ stats.nAttacks }}</strong> attacks,
-          <strong>{{ stats.nSupports }}</strong> supports.
-        </p>
-        <p v-else-if="frameworkTypeId === 'incomplete'" class="text-sm text-base-content/70">
-          <strong>{{ stats.nArgs }}</strong> arguments ({{ stats.nUncertainArgs }} uncertain),
-          <strong>{{ stats.nAttacks }}</strong> definite + {{ stats.nUncertainAttacks }} uncertain
-          attacks.
-        </p>
-        <p v-else-if="frameworkTypeId === 'adf'" class="text-sm text-base-content/70">
-          <strong>{{ stats.nArgs }}</strong> arguments, <strong>{{ stats.nAttacks }}</strong>
-          links.
-        </p>
-        <p v-else-if="frameworkTypeId === 'setaf'" class="text-sm text-base-content/70">
-          <strong>{{ stats.nArgs }}</strong> arguments, <strong>{{ stats.nAttacks }}</strong>
-          collective attacks.
-        </p>
-        <p v-else class="text-sm text-base-content/70">
-          <strong>{{ stats.nArgs }}</strong> arguments, <strong>{{ stats.nAttacks }}</strong>
-          attacks.
-        </p>
+        <div class="text-xs font-semibold text-primary/80 tracking-wide mb-2 uppercase">
+          {{ t('generate.lastGenerated') }}
+        </div>
+        <i18n-t
+          v-if="frameworkTypeId === 'bipolar'"
+          keypath="generate.resultShort.generatedBipolar"
+          tag="p"
+          class="text-sm text-base-content/70"
+        >
+          <template #args
+            ><strong>{{ stats.nArgs }}</strong>
+            {{ t('generate.counts.arguments', stats.nArgs) }}</template
+          >
+          <template #attacks
+            ><strong>{{ stats.nAttacks }}</strong>
+            {{ t('generate.counts.attacks', stats.nAttacks) }}</template
+          >
+          <template #supports
+            ><strong>{{ stats.nSupports }}</strong>
+            {{ t('generate.counts.supports', stats.nSupports ?? 0) }}</template
+          >
+        </i18n-t>
+        <i18n-t
+          v-else-if="frameworkTypeId === 'incomplete'"
+          keypath="generate.resultShort.generatedIncomplete"
+          tag="p"
+          class="text-sm text-base-content/70"
+        >
+          <template #args
+            ><strong>{{ stats.nArgs }}</strong>
+            {{ t('generate.counts.arguments', stats.nArgs) }}</template
+          >
+          <template #uncertainArgs>{{ stats.nUncertainArgs }}</template>
+          <template #definite
+            ><strong>{{ stats.nAttacks }}</strong></template
+          >
+          <template #uncertain>{{ stats.nUncertainAttacks }}</template>
+          <template #attacks>{{
+            t('generate.counts.attacks', stats.nAttacks + (stats.nUncertainAttacks ?? 0))
+          }}</template>
+        </i18n-t>
+        <i18n-t
+          v-else
+          keypath="generate.resultShort.generated"
+          tag="p"
+          class="text-sm text-base-content/70"
+        >
+          <template #args
+            ><strong>{{ stats.nArgs }}</strong>
+            {{ t('generate.counts.arguments', stats.nArgs) }}</template
+          >
+          <template #attacks
+            ><strong>{{ stats.nAttacks }}</strong>
+            {{
+              frameworkTypeId === 'adf'
+                ? t('generate.counts.links', stats.nAttacks)
+                : frameworkTypeId === 'setaf'
+                  ? t('generate.counts.collectiveAttacks', stats.nAttacks)
+                  : t('generate.counts.attacks', stats.nAttacks)
+            }}</template
+          >
+        </i18n-t>
         <p v-if="tooManyEdgesForEditor" class="text-xs text-error mt-2">
-          Too many edges to open in editor (maximum is {{ MAX_EDGES_FOR_EDITOR }}).
+          {{ t('generate.tooManyEdges', { max: MAX_EDGES_FOR_EDITOR }) }}
         </p>
         <div class="flex flex-wrap gap-2 mt-3">
           <button
@@ -271,21 +317,21 @@ function numberFromEvent(e: Event, type: 'int' | 'float' | 'bool' | 'string'): n
             :disabled="tooManyEdgesForEditor"
             @click="openInEditor"
           >
-            Open in editor
+            {{ t('generate.openInEditor') }}
           </button>
           <button
             v-if="frameworkTypeId === 'abstract'"
             class="btn btn-sm btn-soft"
             @click="downloadICCMA"
           >
-            Download ICCMA
+            {{ t('generate.downloadIccma') }}
           </button>
           <button
             v-if="frameworkTypeId !== 'adf' && frameworkTypeId !== 'setaf'"
             class="btn btn-sm btn-soft"
             @click="downloadTGF"
           >
-            Download TGF
+            {{ t('generate.downloadTgf') }}
           </button>
         </div>
       </div>
@@ -303,7 +349,7 @@ function numberFromEvent(e: Event, type: 'int' | 'float' | 'bool' | 'string'): n
       >
         <span v-if="isLoading" class="loading loading-spinner loading-sm"></span>
         <BoltIcon v-else class="size-5" />
-        {{ isLoading ? 'Generating…' : 'Generate' }}
+        {{ isLoading ? t('generate.generating') : t('generate.generate') }}
       </button>
     </div>
   </div>

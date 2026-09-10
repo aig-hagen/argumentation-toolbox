@@ -19,6 +19,7 @@
 import common from '@/localization/locales/en/messages/common'
 import editor from '@/localization/locales/en/messages/editor'
 import exportMessages from '@/localization/locales/en/messages/export'
+import generate from '@/localization/locales/en/messages/generate'
 import help from '@/localization/locales/en/messages/help'
 import home from '@/localization/locales/en/messages/home'
 import menu from '@/localization/locales/en/messages/menu'
@@ -32,6 +33,7 @@ export default {
   common,
   editor,
   export: exportMessages,
+  generate,
   help,
   home,
   menu,

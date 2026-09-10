@@ -495,7 +495,11 @@ these are technical/canonical and never localized.
 ### Phase 4 — Route pages and module-specific UI
 
 - [ ] Home desktop and mobile surfaces.
-- [ ] Generate desktop and mobile views, including results, warnings, limits, and action labels.
+- [x] Generate desktop and mobile views, including results, warnings, limits, and action labels.
+  (`generate` namespace: page chrome, result stats via `<i18n-t>` + pluralized count nouns,
+  edge limit, and action buttons localized. Algorithm/parameter **metadata** —
+  `formatAlgorithmName`/`formatParamLabel` and backend `description`s — stays for Phase 6; the
+  raw server `error`/`loadError` values stay for Phase 5.)
 - [ ] Glossary desktop and mobile page chrome, search placeholders, empty states, and navigation.
 - [ ] Share-loading view and expired/error states.
 - [ ] Third-party desktop and mobile views.
