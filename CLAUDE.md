@@ -45,9 +45,10 @@ lint-enforced by `eslint-plugin-no-relative-import-paths`.
 
 ## Opening a PR
 
-- **Before pushing, run `npm run lint` and `npm run format`** (CI checks eslint/oxlint,
-  prettier `--check`, and type-check — a stray formatting issue fails the `Lint & type-check`
-  job). Commit any resulting changes.
+- **Before pushing, run `npm run lint`, `npm run format`, and `npm run format:check`** (CI
+  checks eslint/oxlint, prettier `--check` over all of `src/`, and type-check — a stray
+  formatting issue anywhere in `src/`, not just your diff, fails the `Lint & type-check` job).
+  `format:check` mirrors CI exactly; commit any changes from `format`.
 - Base PRs on `dev`. Keep the description **short**: a one-line summary plus a terse bullet
   list of the notable changes.
 

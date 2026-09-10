@@ -115,5 +115,5 @@ parity, interpolation safety) and `locale.test.ts` (normalization, selection pre
 persistence, fallback, load success/failure, `lang` sync). Run the full batch before a PR:
 
 ```sh
-npm run format && npm run lint && npm run type-check && npm run test:unit -- --run && npm run build
+npm run format && npm run format:check && npm run lint && npm run type-check && npm run test:unit -- --run && npm run build
 ```
