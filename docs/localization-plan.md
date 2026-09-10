@@ -494,7 +494,8 @@ these are technical/canonical and never localized.
 
 ### Phase 4 — Route pages and module-specific UI
 
-- [ ] Home desktop and mobile surfaces.
+- [x] Home desktop and mobile surfaces. (Covered by Phase 2's `home` namespace; the only
+  remaining literal is the brand name "AgonProject", which stays untranslated.)
 - [x] Generate desktop and mobile views, including results, warnings, limits, and action labels.
   (`generate` namespace: page chrome, result stats via `<i18n-t>` + pluralized count nouns,
   edge limit, and action buttons localized. Algorithm/parameter **metadata** —
@@ -506,7 +507,8 @@ these are technical/canonical and never localized.
 - [x] Share-loading view and expired/error states. (`ShareView.vue`; `share.load` keys for the
   go-to-editor action and locally-authored error states. Raw `fetchShare` server messages stay
   for Phase 5.)
-- [ ] Third-party desktop and mobile views.
+- [x] Third-party desktop and mobile views. (Done in Phase 2 via the `thirdParty` namespace;
+  library names, licenses, and third-party attribution text stay untranslated.)
 - [ ] Abstract argumentation editor and extension/ranking/serialisation windows.
 - [ ] Bipolar argumentation editor and evaluation windows.
 - [ ] Incomplete argumentation editor, certainty controls, and evaluation windows.
