@@ -18,6 +18,7 @@
 -->
 <script setup lang="ts">
 import { computed, inject, onUnmounted, provide, type Ref, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import type { EvaluationWindowQuery } from '@/modules/common/evaluation/BaseEvaluationWindow.vue'
 import {
@@ -34,6 +35,8 @@ import { TWEETY_TIMEOUT_IN_MS } from '@/modules/common/evaluation/tweety-project
 const { query } = defineProps<{ query: EvaluationWindowQuery }>()
 
 const emit = defineEmits<{ evaluate: [] }>()
+
+const { t } = useI18n({ useScope: 'global' })
 
 const detent = inject<Ref<EvaluationDetentLayout>>(
   EVALUATION_DETENT_KEY,
@@ -54,13 +57,13 @@ const statusStrip = computed(() => {
   if (!isError.value) return undefined
   switch (error.value?.name) {
     case 'ServiceUnavailableError':
-      return { kind: 'warning', message: 'Server temporarily unavailable — retrying may help' }
+      return { kind: 'warning', message: t('evaluation.status.serviceUnavailable') }
     case 'RateLimitError':
-      return { kind: 'warning', message: 'Too many requests — please wait a moment' }
+      return { kind: 'warning', message: t('evaluation.status.rateLimited') }
     case 'EvaluationTimeoutError':
-      return { kind: 'warning', message: `Timed out after ${TIMEOUT_S}s` }
+      return { kind: 'warning', message: t('evaluation.status.timedOut', { seconds: TIMEOUT_S }) }
     default:
-      return { kind: 'error', message: 'Evaluation failed' }
+      return { kind: 'error', message: t('evaluation.status.failed') }
   }
 })
 
@@ -111,7 +114,9 @@ onUnmounted(() => {
       :class="statusStrip.kind === 'error' ? 'alert-error' : 'alert-warning'"
     >
       <span>{{ statusStrip.message }}</span>
-      <button class="btn btn-xs btn-ghost ml-auto" @click="() => refetch()">Retry</button>
+      <button class="btn btn-xs btn-ghost ml-auto" @click="() => refetch()">
+        {{ t('evaluation.status.retry') }}
+      </button>
     </div>
 
     <div v-if="isInitialLoad" aria-hidden="true" class="flex flex-wrap gap-2">
@@ -121,6 +126,8 @@ onUnmounted(() => {
 
     <slot v-if="!isPending || isLoading" name="results" />
 
-    <p v-if="isLoading" class="text-base-content/50">Evaluating… {{ remainingSeconds }}s</p>
+    <p v-if="isLoading" class="text-base-content/50">
+      {{ t('evaluation.status.evaluatingCountdown', { seconds: remainingSeconds }) }}
+    </p>
   </div>
 </template>

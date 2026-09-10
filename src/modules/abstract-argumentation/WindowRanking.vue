@@ -18,6 +18,7 @@
 -->
 <script setup lang="ts">
 import { computed, provide, ref, shallowRef, toRef, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import type { RankingWindowInstanceState } from '@/modules/abstract-argumentation/evaluation/rankingWindowState'
 import {
@@ -75,6 +76,8 @@ const emit = defineEmits<{
   focus: []
 }>()
 
+const { t } = useI18n({ useScope: 'global' })
+
 function resolveSemanticFromKey(key: string): RankingSemantic {
   return KNOWN_RANKING_SEMANTICS.find((s) => s.key === key) ?? KNOWN_RANKING_SEMANTICS[0]!
 }
@@ -104,7 +107,9 @@ watch(
   { deep: true },
 )
 
-const windowTitle = computed(() => `${selectedSemantic.value.displayName} · Ranking`)
+const windowTitle = computed(
+  () => `${selectedSemantic.value.displayName} · ${t('evaluation.ranking.modeLabel')}`,
+)
 
 // The compact host labels its switcher pill with this title (not the raw key).
 watch(windowTitle, (t) => emit('title', t), { immediate: true })
@@ -185,8 +190,8 @@ const statusLine = computed(() => {
   if (data.value === undefined) return undefined
   const hint =
     data.value.rankingType === 'lattice'
-      ? 'Node labels show the ranking level'
-      : 'Node labels show ranking scores'
+      ? t('evaluation.ranking.levelHint')
+      : t('evaluation.ranking.scoreHint')
   return `${data.value.evaluationDurationInMs}ms · ${hint}`
 })
 
@@ -227,7 +232,7 @@ const isActive = computed(() => !suppressed && data.value !== undefined)
     @focus="onWindowFocus"
   >
     <template #parameters>
-      <ParameterField label="Semantics" min-width="10rem">
+      <ParameterField :label="t('evaluation.fields.semantics')" min-width="10rem">
         <GroupedSelect
           v-model="selectedSemantic"
           :groups="[{ key: 'ranking', displayName: '', options: KNOWN_RANKING_SEMANTICS }]"
@@ -303,7 +308,7 @@ const isActive = computed(() => !suppressed && data.value !== undefined)
           :status-line="statusLine"
           :copy-text="copyText"
           :copy-text-tex="copyTextTex"
-          result-noun="ranking"
+          :result-noun="t('evaluation.nouns.ranking')"
         />
       </template>
     </template>

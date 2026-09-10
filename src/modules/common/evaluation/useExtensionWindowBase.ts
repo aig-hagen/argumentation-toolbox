@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import { computed, type Ref, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import { NODE_GREEN, NODE_RED } from '@/modules/common/colors'
 import { escapeTexText } from '@/modules/common/export/texEscape'
@@ -38,16 +39,20 @@ export function useExtensionWindowBase(
   selectedMode: { readonly value: string },
   query: { data: Readonly<Ref<ExtensionWindowQueryData | undefined>> },
 ) {
+  const { t } = useI18n({ useScope: 'global' })
+
   const selectedExtension = ref<string | undefined>(undefined)
 
   const selectionHint = computed(() =>
     selectedMode.value === 'enumerate'
-      ? 'Select extension to highlight'
-      : 'Select acceptable argument to highlight',
+      ? t('evaluation.extensionWindow.selectExtensionHint')
+      : t('evaluation.extensionWindow.selectArgumentHint'),
   )
 
   const emptyMessage = computed(() =>
-    selectedMode.value === 'enumerate' ? 'No extensions exist.' : 'No acceptable arguments exist.',
+    selectedMode.value === 'enumerate'
+      ? t('evaluation.extensionWindow.noExtensions')
+      : t('evaluation.extensionWindow.noAcceptableArguments'),
   )
 
   function formatExtension(extension: EvaluationArgument[]) {

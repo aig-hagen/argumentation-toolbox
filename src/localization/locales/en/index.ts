@@ -18,6 +18,7 @@
  */
 import common from '@/localization/locales/en/messages/common'
 import editor from '@/localization/locales/en/messages/editor'
+import evaluation from '@/localization/locales/en/messages/evaluation'
 import exportMessages from '@/localization/locales/en/messages/export'
 import generate from '@/localization/locales/en/messages/generate'
 import glossary from '@/localization/locales/en/messages/glossary'
@@ -33,6 +34,7 @@ import windowMessages from '@/localization/locales/en/messages/window'
 export default {
   common,
   editor,
+  evaluation,
   export: exportMessages,
   generate,
   glossary,

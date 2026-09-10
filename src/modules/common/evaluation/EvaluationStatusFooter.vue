@@ -18,24 +18,24 @@
 -->
 <script setup lang="ts">
 import { computed, inject } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import { EVALUATION_STICKY_FOOTER_KEY } from '@/modules/common/evaluation/hostContext'
 import ButtonCopy from '@/modules/common/export/ButtonCopy.vue'
 import { useNotifications } from '@/modules/common/notifications/useNotifications'
 
+const { t } = useI18n({ useScope: 'global' })
+
 // Shared status/copy line for every evaluation result kind. The mobile host pins it to
 // the sheet bottom (injected key); desktop leaves it in flow. Copy buttons appear only
 // when both plain and TeX text are supplied.
-const props = withDefaults(
-  defineProps<{
-    statusLine?: string
-    copyText?: string
-    copyTextTex?: string
-    /** Plural noun for the copy notification, e.g. "extensions". */
-    resultNoun?: string
-  }>(),
-  { resultNoun: 'results' },
-)
+const props = defineProps<{
+  statusLine?: string
+  copyText?: string
+  copyTextTex?: string
+  /** Localized plural noun for the copy notification, e.g. "extensions". */
+  resultNoun?: string
+}>()
 
 const stickyFooter = inject(EVALUATION_STICKY_FOOTER_KEY, false)
 
@@ -44,8 +44,12 @@ const showCopy = computed(() => props.copyText !== undefined && props.copyTextTe
 const { addSuccessNotification } = useNotifications()
 
 function notifyCopied(format: 'plain' | 'tex') {
-  const suffix = format === 'tex' ? ' (LaTeX)' : ''
-  addSuccessNotification(`Copied ${props.resultNoun} to clipboard${suffix}`)
+  const noun = props.resultNoun ?? t('evaluation.nouns.results')
+  addSuccessNotification(
+    format === 'tex'
+      ? t('evaluation.status.copiedTex', { noun })
+      : t('evaluation.status.copied', { noun }),
+  )
 }
 </script>
 
@@ -65,7 +69,7 @@ function notifyCopied(format: 'plain' | 'tex') {
         class="btn join-item btn-square btn-xs btn-ghost"
         :text="copyText!"
         icon-only
-        title="Copy as plain text"
+        :title="t('evaluation.status.copyPlain')"
         @copied="notifyCopied('plain')"
       />
       <ButtonCopy
@@ -73,7 +77,7 @@ function notifyCopied(format: 'plain' | 'tex') {
         :text="copyTextTex!"
         icon-only
         tex
-        title="Copy as TeX"
+        :title="t('evaluation.status.copyTex')"
         @copied="notifyCopied('tex')"
       />
     </div>

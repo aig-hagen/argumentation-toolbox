@@ -29,6 +29,7 @@ import {
   watch,
   watchEffect,
 } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import type { ExtensionWindowInstanceState } from '@/modules/abstract-argumentation/evaluation/extensionWindowState'
 import {
@@ -110,16 +111,18 @@ onUnmounted(() => {
 
 provide(TOOLTIP_REGISTRY_KEY, abstractArgumentationGlossary)
 
+const { t } = useI18n({ useScope: 'global' })
+
 const semanticGroups = KNOWN_SEMANTIC_GROUPS
 const allSemantics: ExtensionSemanticsOption[] = [
   ...semanticGroups.flatMap((g) => g.semantics),
   ...KNOWN_META_REASONERS,
 ]
 
-const semanticsSelectGroups: GroupedSelectGroup<ExtensionSemanticsOption>[] = [
+const semanticsSelectGroups = computed<GroupedSelectGroup<ExtensionSemanticsOption>[]>(() => [
   ...semanticGroups.map((g) => ({ key: g.key, displayName: g.displayName, options: g.semantics })),
-  { key: 'meta', displayName: 'Meta Semantics', options: KNOWN_META_REASONERS },
-]
+  { key: 'meta', displayName: t('evaluation.metaSemantics'), options: KNOWN_META_REASONERS },
+])
 
 function resolveSemanticFromKey(key: string): ExtensionSemanticsOption {
   return allSemantics.find((s) => s.key === key) ?? allSemantics[0]!
@@ -241,10 +244,10 @@ function onWindowFocus() {
 const windowTitle = computed(() => {
   const modeLabel =
     selectedMode.value === 'enumerate'
-      ? 'Enumerate'
+      ? t('evaluation.modes.enumerate')
       : selectedMode.value === 'credulous'
-        ? 'Credulous'
-        : 'Skeptical'
+        ? t('evaluation.modes.credulous')
+        : t('evaluation.modes.skeptical')
   return `${titleSemanticName.value} · ${modeLabel}`
 })
 
@@ -269,7 +272,7 @@ watch(windowTitle, (t) => emit('title', t), { immediate: true })
     <template #parameters>
       <div class="@container basis-full">
         <div class="grid gap-3" :class="hasFourParamFields ? GRID_COLS_UP_TO_4 : GRID_COLS_UP_TO_2">
-          <ParameterField label="Semantics" min-width="10rem">
+          <ParameterField :label="t('evaluation.fields.semantics')" min-width="10rem">
             <GroupedSelect
               ref="semanticsSelect"
               v-model="selectedSemantic"
@@ -278,14 +281,14 @@ watch(windowTitle, (t) => emit('title', t), { immediate: true })
               @update:model-value="emit('semanticsInteract')"
             />
           </ParameterField>
-          <ParameterField label="Mode" max-width="8rem">
+          <ParameterField :label="t('evaluation.fields.mode')" max-width="8rem">
             <PickerSelect
               ref="modeSelect"
               v-model="selectedMode"
               :options="[
-                { value: 'enumerate', label: 'Enumerate' },
-                { value: 'credulous', label: 'Credulous' },
-                { value: 'skeptical', label: 'Skeptical' },
+                { value: 'enumerate', label: t('evaluation.modes.enumerate') },
+                { value: 'credulous', label: t('evaluation.modes.credulous') },
+                { value: 'skeptical', label: t('evaluation.modes.skeptical') },
               ]"
               @update:model-value="emit('modeInteract')"
             />
@@ -313,7 +316,7 @@ watch(windowTitle, (t) => emit('title', t), { immediate: true })
       <div v-if="dataExtensionsFormatedAndSorted !== undefined" ref="resultsArea" class="contents">
         <EvaluationResultGrid
           v-model:selected="selectedExtension"
-          result-noun="extensions"
+          :result-noun="t('evaluation.nouns.extensions')"
           :items="resultItems"
           :empty-message="emptyMessage"
           :selection-hint="selectionHint"

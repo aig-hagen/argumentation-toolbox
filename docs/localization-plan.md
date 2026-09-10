@@ -509,7 +509,18 @@ these are technical/canonical and never localized.
   for Phase 5.)
 - [x] Third-party desktop and mobile views. (Done in Phase 2 via the `thirdParty` namespace;
   library names, licenses, and third-party attribution text stay untranslated.)
-- [ ] Abstract argumentation editor and extension/ranking/serialisation windows.
+- [x] Abstract argumentation editor and extension/ranking/serialisation windows.
+  (New `evaluation` namespace covering the shared `common/evaluation/*` components —
+  EvaluationHost, EvaluationCard, MobileEvaluationBody, EvaluationResultGrid,
+  EvaluationStatusFooter, `useExtensionWindowBase` — plus the abstract WindowExtensions/
+  WindowRanking/WindowSerialisation. GraphEditor was already localized. Result nouns
+  (`extensions`/`ranking`) are now localized and passed into the shared copy footer.
+  **Two carry-overs:** meta-reasoner param labels/descriptions and semantics `displayName`
+  stay English — they are the same semantics-metadata split deferred in Phase 3. The
+  evaluation *failure* status strings (service-unavailable / rate-limit / timeout / generic,
+  under `evaluation.status.*`) were localized here rather than leaving English mid-window,
+  which covers Phase 5's "Map evaluation timeout, rate-limit, unavailable-service, and
+  generic failures" bullet ahead of time.)
 - [ ] Bipolar argumentation editor and evaluation windows.
 - [ ] Incomplete argumentation editor, certainty controls, and evaluation windows.
 - [ ] Probabilistic argumentation editor, probability controls, and evaluation windows.

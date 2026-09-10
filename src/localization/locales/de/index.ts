@@ -18,6 +18,7 @@
  */
 import common from '@/localization/locales/de/messages/common'
 import editor from '@/localization/locales/de/messages/editor'
+import evaluation from '@/localization/locales/de/messages/evaluation'
 import exportMessages from '@/localization/locales/de/messages/export'
 import generate from '@/localization/locales/de/messages/generate'
 import glossary from '@/localization/locales/de/messages/glossary'
@@ -34,6 +35,7 @@ import type { LocaleMessageSchema } from '@/localization/types'
 const messages: LocaleMessageSchema = {
   common,
   editor,
+  evaluation,
   export: exportMessages,
   generate,
   glossary,
