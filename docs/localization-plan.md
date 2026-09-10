@@ -521,7 +521,11 @@ these are technical/canonical and never localized.
   under `evaluation.status.*`) were localized here rather than leaving English mid-window,
   which covers Phase 5's "Map evaluation timeout, rate-limit, unavailable-service, and
   generic failures" bullet ahead of time.)
-- [ ] Bipolar argumentation editor and evaluation windows.
+- [x] Bipolar argumentation editor and evaluation windows.
+  (GraphEditor was already localized. `WindowExtensions` reuses the shared eval components +
+  `evaluation` namespace; added `evaluation.support.*` for the bipolar support-interpretation
+  selector — Deductive/Necessary/Coalition. Semantics `displayName` stays English, same
+  deferral as elsewhere.)
 - [ ] Incomplete argumentation editor, certainty controls, and evaluation windows.
 - [ ] Probabilistic argumentation editor, probability controls, and evaluation windows.
 - [ ] Dialectical argumentation condition editor, formula keypad labels, and interpretation window.

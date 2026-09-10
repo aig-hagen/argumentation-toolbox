@@ -40,6 +40,13 @@ export default {
     termination: 'Termination',
   },
   metaSemantics: 'Meta Semantics',
+  // Bipolar support-interpretation selector.
+  support: {
+    label: 'Support',
+    coalition: 'Coalition',
+    deductive: 'Deductive',
+    necessary: 'Necessary',
+  },
   // Plural nouns used by the copy footer and result grid.
   nouns: {
     results: 'results',
