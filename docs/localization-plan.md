@@ -529,7 +529,10 @@ these are technical/canonical and never localized.
 - [ ] Incomplete argumentation editor, certainty controls, and evaluation windows.
 - [ ] Probabilistic argumentation editor, probability controls, and evaluation windows.
 - [ ] Dialectical argumentation condition editor, formula keypad labels, and interpretation window.
-- [ ] Collective-attacks editor and evaluation windows.
+- [x] Collective-attacks editor and evaluation windows.
+  (GraphEditor already localized. `WindowExtensions` is pure reuse of the shared eval
+  components + existing `evaluation.modes/fields/nouns` keys — no new terms. Semantics
+  `displayName` stays English, same deferral.)
 - [ ] Localize titles, tooltips, placeholders, option labels, status messages, screen-reader labels,
   and contextual menus in every module.
 - [ ] Review German text expansion in narrow mobile headers, buttons, chips, and bottom sheets.
