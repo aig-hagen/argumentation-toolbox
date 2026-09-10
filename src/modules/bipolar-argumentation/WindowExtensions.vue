@@ -44,6 +44,7 @@ import type { ArgumentData } from '@/modules/common/argumentation/model'
 import type { DocumentId } from '@/modules/common/documents/db'
 import BaseEvaluationWindow from '@/modules/common/evaluation/BaseEvaluationWindow.vue'
 import EvaluationResultGrid from '@/modules/common/evaluation/EvaluationResultGrid.vue'
+import ModeHint from '@/modules/common/evaluation/ModeHint.vue'
 import type { Input } from '@/modules/common/evaluation/types'
 import { useExtensionWindowBase } from '@/modules/common/evaluation/useExtensionWindowBase'
 import GroupedSelect, { type GroupedSelectGroup } from '@/modules/common/forms/GroupedSelect.vue'
@@ -226,6 +227,9 @@ watch(windowTitle, (t) => emit('title', t), { immediate: true })
         />
       </ParameterField>
       <ParameterField :label="t('evaluation.fields.mode')" max-width="8rem">
+        <template #label-suffix>
+          <ModeHint :mode="selectedMode" />
+        </template>
         <PickerSelect
           v-model="selectedMode"
           :options="[

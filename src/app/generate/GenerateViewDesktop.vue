@@ -288,6 +288,7 @@ const {
             v-if="frameworkTypeId === 'bipolar'"
             keypath="generate.result.generatedBipolar"
             tag="p"
+            scope="global"
             class="text-sm text-base-content/70"
           >
             <template #args
@@ -307,6 +308,7 @@ const {
             v-else-if="frameworkTypeId === 'incomplete'"
             keypath="generate.result.generatedIncomplete"
             tag="p"
+            scope="global"
             class="text-sm text-base-content/70"
           >
             <template #args
@@ -330,6 +332,7 @@ const {
             v-else
             keypath="generate.result.generated"
             tag="p"
+            scope="global"
             class="text-sm text-base-content/70"
           >
             <template #args

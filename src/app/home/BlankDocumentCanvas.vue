@@ -67,24 +67,24 @@ function openContent(content: DocumentT, modulePrefix: string) {
         <div class="divider"></div>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <div
-            class="card bg-base-100 border border-base-300 shadow-md h-80"
+            class="card grid grid-rows-subgrid row-span-3 gap-y-2 bg-base-100 border border-base-300 p-6 shadow-md"
             :class="{ 'opacity-50': moduleCard.underConstruction }"
             v-for="(moduleCard, index) in moduleCards"
             :key="index"
           >
-            <div class="card-body flex flex-col h-full">
-              <div class="flex items-start justify-between gap-2">
-                <h3 class="card-title">{{ moduleCard.displayNameSingular }}</h3>
-                <PublicationsTooltip
-                  v-if="moduleCard.publications?.length"
-                  :publications="moduleCard.publications"
-                />
-              </div>
-              <div class="h-15 overflow-hidden">
-                <p v-if="moduleCard.description" class="text-sm text-base-content/60 line-clamp-3">
-                  {{ moduleCard.description }}
-                </p>
-              </div>
+            <!-- 3-row subgrid: the title & description bands auto-size to the tallest card in
+                 each grid row, so a 2nd title line is reserved only when a title actually wraps. -->
+            <div class="flex items-start justify-between gap-2">
+              <h3 class="card-title line-clamp-2">{{ moduleCard.displayNameSingular }}</h3>
+              <PublicationsTooltip
+                v-if="moduleCard.publications?.length"
+                :publications="moduleCard.publications"
+              />
+            </div>
+            <p class="text-sm text-base-content/60">
+              {{ moduleCard.description }}
+            </p>
+            <div class="flex flex-col min-h-32">
               <template v-if="moduleCard.underConstruction">
                 <div class="flex-1"></div>
                 <p class="text-sm text-base-content/50 italic">
@@ -130,7 +130,7 @@ function openContent(content: DocumentT, modulePrefix: string) {
                 <h4 class="text-xs font-semibold text-base-content/50 uppercase tracking-wide mt-2">
                   {{ t('home.picker.newHeading') }}
                 </h4>
-                <div class="flex flex-row gap-4 pl-2">
+                <div class="flex flex-row gap-4 pl-2 mt-1">
                   <button
                     class="btn btn-sm btn-soft w-fit"
                     @click="openContent(moduleCard.initialCotent, moduleCard.newNamePrefix)"

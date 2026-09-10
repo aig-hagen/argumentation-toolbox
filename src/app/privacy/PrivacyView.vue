@@ -79,7 +79,7 @@ const sections = computed(() => [
       <!-- Single source of truth for the notice text -->
       <main class="max-w-3xl">
         <h1 v-if="!isCompact" class="m-1 font-bold text-xl">{{ t('privacy.pageTitle') }}</h1>
-        <i18n-t keypath="privacy.intro.text" tag="p" class="m-1 mb-4">
+        <i18n-t keypath="privacy.intro.text" tag="p" scope="global" class="m-1 mb-4">
           <template #emphasis
             ><strong>{{ t('privacy.intro.emphasis') }}</strong></template
           >
@@ -97,7 +97,7 @@ const sections = computed(() => [
         </ul>
 
         <h2 id="opting-out" class="m-1 font-bold text-lg mt-4">{{ t('privacy.optOut.title') }}</h2>
-        <i18n-t keypath="privacy.optOut.text" tag="p" class="m-1 mb-4">
+        <i18n-t keypath="privacy.optOut.text" tag="p" scope="global" class="m-1 mb-4">
           <template #gpc
             ><a
               class="link link-primary"
@@ -113,7 +113,7 @@ const sections = computed(() => [
         </i18n-t>
 
         <h2 id="imprint" class="m-1 font-bold text-lg mt-4">{{ t('privacy.imprint.title') }}</h2>
-        <i18n-t keypath="privacy.imprint.responsible" tag="p" class="m-1 mb-4">
+        <i18n-t keypath="privacy.imprint.responsible" tag="p" scope="global" class="m-1 mb-4">
           <template #email
             ><a class="link link-primary" href="mailto:lars.bengel@fernuni-hagen.de"
               >lars.bengel@fernuni-hagen.de</a

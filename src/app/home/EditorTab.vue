@@ -116,7 +116,7 @@ const deleteButtonRef = useTemplateRef('deleteButton')
         </button>
       </form>
       <h3 class="text-lg font-bold">
-        <i18n-t v-if="value" keypath="home.deleteDialog.deleteNamed" tag="span">
+        <i18n-t v-if="value" keypath="home.deleteDialog.deleteNamed" tag="span" scope="global">
           <template #name
             ><span class="underline">{{ value }}</span></template
           >
@@ -124,7 +124,7 @@ const deleteButtonRef = useTemplateRef('deleteButton')
         <template v-else>{{ t('home.deleteDialog.deleteUnnamed') }}</template>
       </h3>
       <p class="py-4">
-        <i18n-t keypath="home.deleteDialog.warning" tag="span">
+        <i18n-t keypath="home.deleteDialog.warning" tag="span" scope="global">
           <template #highlight>
             <span class="font-bold">{{ t('home.deleteDialog.warningHighlight') }}</span>
           </template>

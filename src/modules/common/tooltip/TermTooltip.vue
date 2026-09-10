@@ -24,7 +24,7 @@ import HoverTooltip from '@/modules/common/tooltip/HoverTooltip.vue'
 import KatexInlineElement from '@/modules/common/tooltip/KatexInlineElement.vue'
 import { TOOLTIP_REGISTRY_KEY } from '@/modules/common/tooltip/tooltipRegistry'
 
-const { id } = defineProps<{ id: string }>()
+const { id, triggerClass } = defineProps<{ id: string; triggerClass?: string }>()
 
 const registry = inject(TOOLTIP_REGISTRY_KEY, {})
 const definition = computed(() => registry[id])
@@ -35,7 +35,7 @@ const definition = computed(() => registry[id])
     When id is not in the registry, render the slot text without any tooltip so the
     page still reads correctly even if a definition is missing.
   -->
-  <HoverTooltip v-if="definition">
+  <HoverTooltip v-if="definition" :trigger-class="triggerClass">
     <slot><KatexInlineElement :text="definition.label" /></slot>
     <template #content="{ chargeState, graceMs }">
       <div

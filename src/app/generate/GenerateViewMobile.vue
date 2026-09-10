@@ -253,6 +253,7 @@ function numberFromEvent(e: Event, type: 'int' | 'float' | 'bool' | 'string'): n
           v-if="frameworkTypeId === 'bipolar'"
           keypath="generate.resultShort.generatedBipolar"
           tag="p"
+          scope="global"
           class="text-sm text-base-content/70"
         >
           <template #args
@@ -272,6 +273,7 @@ function numberFromEvent(e: Event, type: 'int' | 'float' | 'bool' | 'string'): n
           v-else-if="frameworkTypeId === 'incomplete'"
           keypath="generate.resultShort.generatedIncomplete"
           tag="p"
+          scope="global"
           class="text-sm text-base-content/70"
         >
           <template #args
@@ -291,6 +293,7 @@ function numberFromEvent(e: Event, type: 'int' | 'float' | 'bool' | 'string'): n
           v-else
           keypath="generate.resultShort.generated"
           tag="p"
+          scope="global"
           class="text-sm text-base-content/70"
         >
           <template #args

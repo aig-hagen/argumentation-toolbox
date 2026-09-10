@@ -59,7 +59,7 @@ const linkNamesEnumeration = computed(
       <tr>
         <td>{{ t('help.controls.createArgument') }}</td>
         <td>
-          <i18n-t keypath="help.controls.createArgumentControl" tag="span">
+          <i18n-t keypath="help.controls.createArgumentControl" tag="span" scope="global">
             <template #key
               ><kbd class="kbd">{{ t('help.keys.leftDoubleClick') }}</kbd></template
             >
@@ -70,7 +70,7 @@ const linkNamesEnumeration = computed(
       <tr>
         <td>{{ t('help.controls.moveArgument') }}</td>
         <td>
-          <i18n-t keypath="help.controls.moveArgumentControl" tag="span">
+          <i18n-t keypath="help.controls.moveArgumentControl" tag="span" scope="global">
             <template #key
               ><kbd class="kbd">{{ t('help.keys.leftClick') }}</kbd></template
             >
@@ -80,7 +80,7 @@ const linkNamesEnumeration = computed(
       <tr>
         <td>{{ t('help.controls.deleteArgument') }}</td>
         <td>
-          <i18n-t keypath="help.controls.deleteArgumentControl" tag="span">
+          <i18n-t keypath="help.controls.deleteArgumentControl" tag="span" scope="global">
             <template #key
               ><kbd class="kbd">{{ t('help.keys.rightClick') }}</kbd></template
             >
@@ -90,7 +90,7 @@ const linkNamesEnumeration = computed(
       <tr>
         <td>{{ t('help.controls.createLink', { links: linkNamesSlashSeperated }) }}</td>
         <td>
-          <i18n-t keypath="help.controls.createLinkControl" tag="span">
+          <i18n-t keypath="help.controls.createLinkControl" tag="span" scope="global">
             <template #key
               ><kbd class="kbd">{{ t('help.keys.rightClick') }}</kbd></template
             >
@@ -100,7 +100,7 @@ const linkNamesEnumeration = computed(
       <tr v-if="props.allowHyperLinkCreation">
         <td>{{ t('help.controls.createCollectiveAttack') }}</td>
         <td>
-          <i18n-t keypath="help.controls.createCollectiveAttackControl" tag="span">
+          <i18n-t keypath="help.controls.createCollectiveAttackControl" tag="span" scope="global">
             <template #shift><kbd class="kbd">Shift</kbd></template>
             <template #leftClick
               ><kbd class="kbd">{{ t('help.keys.leftClick') }}</kbd></template
@@ -114,7 +114,7 @@ const linkNamesEnumeration = computed(
       <tr v-if="props.linkNames.length > 1">
         <td>{{ t('help.controls.switchLink', { links: linkNamesEnumeration }) }}</td>
         <td>
-          <i18n-t keypath="help.controls.switchLinkControl" tag="span">
+          <i18n-t keypath="help.controls.switchLinkControl" tag="span" scope="global">
             <template #key
               ><kbd class="kbd">{{ t('help.keys.leftClick') }}</kbd></template
             >
@@ -125,7 +125,7 @@ const linkNamesEnumeration = computed(
       <tr>
         <td>{{ t('help.controls.deleteLink', { links: linkNamesSlashSeperated }) }}</td>
         <td>
-          <i18n-t keypath="help.controls.deleteLinkControl" tag="span">
+          <i18n-t keypath="help.controls.deleteLinkControl" tag="span" scope="global">
             <template #key
               ><kbd class="kbd">{{ t('help.keys.rightClick') }}</kbd></template
             >
@@ -142,7 +142,7 @@ const linkNamesEnumeration = computed(
       <tr>
         <td>{{ t('help.controls.pan') }}</td>
         <td>
-          <i18n-t keypath="help.controls.panControl" tag="span">
+          <i18n-t keypath="help.controls.panControl" tag="span" scope="global">
             <template #key
               ><kbd class="kbd">{{ t('help.keys.leftClick') }}</kbd></template
             >
@@ -152,7 +152,7 @@ const linkNamesEnumeration = computed(
       <tr>
         <td>{{ t('help.controls.zoom') }}</td>
         <td>
-          <i18n-t keypath="help.controls.zoomControl" tag="span">
+          <i18n-t keypath="help.controls.zoomControl" tag="span" scope="global">
             <template #key
               ><kbd class="kbd">{{ t('help.keys.scrollWheel') }}</kbd></template
             >
@@ -162,7 +162,7 @@ const linkNamesEnumeration = computed(
       <tr>
         <td>{{ t('help.controls.centerView') }}</td>
         <td>
-          <i18n-t keypath="help.controls.centerViewControl" tag="span">
+          <i18n-t keypath="help.controls.centerViewControl" tag="span" scope="global">
             <template #key
               ><kbd class="kbd">{{ t('help.keys.middleClick') }}</kbd></template
             >

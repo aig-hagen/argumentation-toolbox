@@ -80,6 +80,7 @@ const router = useRouter()
               v-if="attribution.publisher"
               keypath="thirdParty.publishedWithPublisher"
               tag="span"
+              scope="global"
             >
               <template #publisher
                 ><em>{{ attribution.publisher }}</em></template
@@ -93,7 +94,7 @@ const router = useRouter()
                 }}</a></template
               >
             </i18n-t>
-            <i18n-t v-else keypath="thirdParty.publishedNoPublisher" tag="span">
+            <i18n-t v-else keypath="thirdParty.publishedNoPublisher" tag="span" scope="global">
               <template #license
                 ><em>{{ attribution.license }}</em></template
               >
@@ -139,6 +140,7 @@ const router = useRouter()
               v-if="attribution.publisher"
               keypath="thirdParty.publishedWithPublisher"
               tag="span"
+              scope="global"
             >
               <template #publisher
                 ><em>{{ attribution.publisher }}</em></template
@@ -152,7 +154,7 @@ const router = useRouter()
                 }}</a></template
               >
             </i18n-t>
-            <i18n-t v-else keypath="thirdParty.publishedNoPublisher" tag="span">
+            <i18n-t v-else keypath="thirdParty.publishedNoPublisher" tag="span" scope="global">
               <template #license
                 ><em>{{ attribution.license }}</em></template
               >

@@ -122,7 +122,7 @@ function openClearAllModal() {
       </form>
       <h3 class="text-lg font-bold">{{ t('home.documents.deleteAllFrameworks') }}</h3>
       <p class="py-4">
-        <i18n-t keypath="home.deleteDialog.warning" tag="span">
+        <i18n-t keypath="home.deleteDialog.warning" tag="span" scope="global">
           <template #highlight>
             <span class="font-bold">{{ t('home.deleteDialog.warningHighlight') }}</span>
           </template>

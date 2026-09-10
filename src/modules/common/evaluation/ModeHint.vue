@@ -17,29 +17,27 @@
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 -->
 <script setup lang="ts">
-const { minWidth = '7rem', maxWidth = '14rem' } = defineProps<{
-  label?: string
-  title?: string
-  minWidth?: string
-  maxWidth?: string
-}>()
+import { InformationCircleIcon } from '@heroicons/vue/24/outline'
+import { computed } from 'vue'
+
+import TermTooltip from '@/modules/common/tooltip/TermTooltip.vue'
+
+const { mode } = defineProps<{ mode: string }>()
+
+// enumerate is self-explanatory; credulous/skeptical point at their glossary term.
+const termId = computed(() =>
+  mode === 'credulous'
+    ? 'credulousAcceptance'
+    : mode === 'skeptical'
+      ? 'skepticalAcceptance'
+      : undefined,
+)
 </script>
 
 <template>
-  <div
-    class="flex flex-col gap-0.5 grow shrink"
-    :style="{ flexBasis: minWidth, minWidth, maxWidth }"
-  >
-    <div v-if="label || $slots['label-suffix']" class="flex items-center gap-1">
-      <span
-        v-if="label"
-        class="text-[0.65rem] font-medium uppercase tracking-wide text-base-content/50 truncate"
-        :title="title"
-      >
-        {{ label }}
-      </span>
-      <slot name="label-suffix" />
-    </div>
-    <slot />
-  </div>
+  <TermTooltip v-if="termId" :id="termId" trigger-class="cursor-help inline-flex">
+    <InformationCircleIcon
+      class="size-3.5 text-base-content/40 hover:text-base-content/70 transition-colors"
+    />
+  </TermTooltip>
 </template>
