@@ -38,7 +38,8 @@ export default {
   },
   dialectical: {
     name: 'Dialectical Argumentation',
-    description: 'Relations between arguments are modelled via propositional acceptance conditions.',
+    description:
+      'Relations between arguments are modelled via propositional acceptance conditions.',
   },
   collectiveAttacks: {
     name: 'Argumentation with Collective Attacks',
@@ -73,7 +74,8 @@ export default {
     },
     constraints: {
       name: 'Constraints',
-      description: 'The framework allows for additional constraints on the acceptance of arguments.',
+      description:
+        'The framework allows for additional constraints on the acceptance of arguments.',
     },
     weights: {
       name: 'Weights',

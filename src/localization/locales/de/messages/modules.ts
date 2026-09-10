@@ -26,7 +26,8 @@ const modules: LocaleMessageSchema['modules'] = {
   },
   bipolar: {
     name: 'Bipolare Argumentation',
-    description: 'Relationen zwischen Argumenten können entweder angreifend oder unterstützend sein.',
+    description:
+      'Relationen zwischen Argumenten können entweder angreifend oder unterstützend sein.',
   },
   incomplete: {
     name: 'Unvollständige Argumentation',
@@ -69,7 +70,8 @@ const modules: LocaleMessageSchema['modules'] = {
     },
     support: {
       name: 'Unterstützung',
-      description: 'Der Argumentationsgraph modelliert Unterstützungsrelationen zwischen Argumenten.',
+      description:
+        'Der Argumentationsgraph modelliert Unterstützungsrelationen zwischen Argumenten.',
     },
     collectiveRelations: {
       name: 'Kollektive Relationen',
