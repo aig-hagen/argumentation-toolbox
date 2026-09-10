@@ -27,9 +27,11 @@ import help from '@/localization/locales/de/messages/help'
 import home from '@/localization/locales/de/messages/home'
 import menu from '@/localization/locales/de/messages/menu'
 import modules from '@/localization/locales/de/messages/modules'
+import privacy from '@/localization/locales/de/messages/privacy'
 import settings from '@/localization/locales/de/messages/settings'
 import share from '@/localization/locales/de/messages/share'
 import thirdParty from '@/localization/locales/de/messages/thirdParty'
+import tutorial from '@/localization/locales/de/messages/tutorial'
 import windowMessages from '@/localization/locales/de/messages/window'
 import type { LocaleMessageSchema } from '@/localization/types'
 
@@ -45,9 +47,11 @@ const messages: LocaleMessageSchema = {
   home,
   menu,
   modules,
+  privacy,
   settings,
   share,
   thirdParty,
+  tutorial,
   window: windowMessages,
 }
 

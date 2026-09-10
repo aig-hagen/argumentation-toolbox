@@ -27,9 +27,11 @@ import help from '@/localization/locales/en/messages/help'
 import home from '@/localization/locales/en/messages/home'
 import menu from '@/localization/locales/en/messages/menu'
 import modules from '@/localization/locales/en/messages/modules'
+import privacy from '@/localization/locales/en/messages/privacy'
 import settings from '@/localization/locales/en/messages/settings'
 import share from '@/localization/locales/en/messages/share'
 import thirdParty from '@/localization/locales/en/messages/thirdParty'
+import tutorial from '@/localization/locales/en/messages/tutorial'
 import windowMessages from '@/localization/locales/en/messages/window'
 
 export default {
@@ -44,8 +46,10 @@ export default {
   home,
   menu,
   modules,
+  privacy,
   settings,
   share,
   thirdParty,
+  tutorial,
   window: windowMessages,
 }

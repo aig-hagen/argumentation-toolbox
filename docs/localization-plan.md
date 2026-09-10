@@ -610,6 +610,12 @@ diagnostic information remains useful. **Done.**
 
 ### Phase 6 — Generator metadata
 
+> **Deferred (2026-09-10, user).** Generator UI text is backend-owned (`graph-gen`
+> framework-type/algorithm/param `description`s) plus frontend ID-formatting
+> (`formatAlgorithmName`/`formatParamLabel`). Grouped with the other domain-content work
+> (Phases 7, 8, and the Phase 3 semantics-label split) to be done in a later pass; finishing
+> the non-domain remainder (Phase 9) first.
+
 - [ ] Add English and German catalog entries for every framework type.
 - [ ] Add entries for every registered generation algorithm.
 - [ ] Add contextual labels/descriptions for every algorithm and framework-type parameter.
@@ -623,6 +629,9 @@ diagnostic information remains useful. **Done.**
 Deliverable: the complete random-generation workflow is German without changing its API contract.
 
 ### Phase 7 — Tutorials
+
+> **Deferred (2026-09-10, user).** Large domain-content lift needing German domain-expert
+> review; grouped with Phases 6, 8, and the semantics-label split for a later pass.
 
 - [ ] Define stable tutorial mechanics and locale-copy types.
 - [ ] Change active tutorial state to store stable IDs rather than locale-specific objects.
@@ -643,6 +652,9 @@ Deliverable: every tutorial can be completed in either language with identical b
 
 ### Phase 8 — Glossaries
 
+> **Deferred (2026-09-10, user).** Large domain-content lift needing German domain-expert
+> review; grouped with Phases 6, 7, and the semantics-label split for a later pass.
+
 - [ ] Make tooltip-registry provision reactive to locale changes.
 - [ ] Move every existing English glossary into the English locale bundle without changing term
   IDs or reference structure.
@@ -660,13 +672,26 @@ Deliverable: complete, structurally valid English and German glossary experience
 
 ### Phase 9 — Static surfaces, formatting, and cleanup
 
-- [ ] Localize `public/maintenance.html` separately from Vue I18n, using a small self-contained
-  English/German mechanism that works while the application is unavailable.
+> Domain-content work (Phases 6/7/8 + semantics-label split) is deferred by the user; this phase
+> is being done first as "the rest" (the non-domain remainder).
+
+- [x] Localize `public/maintenance.html` separately from Vue I18n, using a small self-contained
+  English/German mechanism that works while the application is unavailable. (Inline `<script>`
+  with an embedded en/de message map; resolves locale from persisted `settings:locale` → browser
+  languages → English, sets `<html lang>` + `<title>` + `[data-i18n]` text. No Vue/network needed.)
 - [ ] Review page/document titles and any visible static metadata.
 - [ ] Apply locale-aware formatting to human-readable probabilities, counts, and durations where
   appropriate; verify exports remain canonical.
-- [ ] Search the frontend for remaining visible English literals and classify each intentional
-  exception.
+- [~] Search the frontend for remaining visible English literals and classify each intentional
+  exception. (**Audit done 2026-09-10.** Two non-domain gaps found and fixed: **PrivacyView**
+  — was fully English (0 `t()`), now localized via new `privacy` namespace + `<i18n-t>` for
+  markup paragraphs (intro/opt-out/imprint); **German privacy/imprint copy is first-pass and
+  flagged for user legal/wording review**. **Tutorial chrome** — `WindowTutorials` +
+  `TutorialOverlay`/`TutorialOverlayMobile` window title, intro, Start/Restart, Back/Next/Skip/
+  Done/Completed/Waiting + skip aria-labels, via new `tutorial` namespace (mobile "Waiting for
+  you…" normalized to the shared `waiting` key). Remaining English is all documented intentional
+  exceptions: deferred domain content (semantics `displayName`, generator metadata, tutorial/
+  glossary *content*), technical labels (LaTeX styles, format names), and key names (Ctrl/Shift).)
 - [ ] Remove temporary compatibility fields, fallbacks, and migration comments.
 - [ ] Document how contributors add a key, update structured content, and add a new locale.
 - [ ] Consider `@intlify/unplugin-vue-i18n` for message precompilation and

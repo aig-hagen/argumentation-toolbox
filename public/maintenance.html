@@ -99,10 +99,61 @@
   </head>
   <body>
     <main class="card">
-      <h1>Temporarily unavailable</h1>
-      <p>AgonProject is currently down for maintenance.</p>
-      <p>We&rsquo;ll be back shortly &mdash; please check again in a little while.</p>
+      <h1 data-i18n="heading">Temporarily unavailable</h1>
+      <p data-i18n="body1">AgonProject is currently down for maintenance.</p>
+      <p data-i18n="body2">
+        We&rsquo;ll be back shortly &mdash; please check again in a little while.
+      </p>
       <p class="brand"><strong>AgonProject</strong> &middot; AIG Hagen</p>
     </main>
+    <!--
+      Self-contained localization: this page ships as a static fallback served while the
+      Vue app (and its locale bundles) is unavailable, so it cannot use vue-i18n. It mirrors
+      the app's locale selection: the persisted `settings:locale` preference first, then the
+      browser languages, then English.
+    -->
+    <script>
+      ;(function () {
+        var messages = {
+          en: {
+            title: 'Under maintenance · AgonProject',
+            heading: 'Temporarily unavailable',
+            body1: 'AgonProject is currently down for maintenance.',
+            body2: 'We’ll be back shortly — please check again in a little while.',
+          },
+          de: {
+            title: 'Wartungsarbeiten · AgonProject',
+            heading: 'Vorübergehend nicht verfügbar',
+            body1: 'AgonProject ist derzeit wegen Wartungsarbeiten offline.',
+            body2: 'Wir sind bald wieder da — bitte schau in Kürze noch einmal vorbei.',
+          },
+        }
+
+        function resolveLocale() {
+          try {
+            var stored = localStorage.getItem('settings:locale')
+            if (stored === 'de' || stored === 'en') return stored
+          } catch (e) {
+            /* storage blocked (private mode etc.) — fall through to browser detection */
+          }
+          var langs = navigator.languages || [navigator.language || 'en']
+          for (var i = 0; i < langs.length; i++) {
+            var base = String(langs[i]).toLowerCase().split('-')[0]
+            if (base === 'de') return 'de'
+            if (base === 'en') return 'en'
+          }
+          return 'en'
+        }
+
+        var locale = resolveLocale()
+        var t = messages[locale]
+        document.documentElement.lang = locale
+        document.title = t.title
+        var nodes = document.querySelectorAll('[data-i18n]')
+        for (var j = 0; j < nodes.length; j++) {
+          nodes[j].textContent = t[nodes[j].getAttribute('data-i18n')]
+        }
+      })()
+    </script>
   </body>
 </html>
