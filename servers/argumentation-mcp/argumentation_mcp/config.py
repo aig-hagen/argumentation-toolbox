@@ -30,6 +30,8 @@ class Config:
     max_request_bytes: int = _DEFAULT_MAX_REQUEST_BYTES
     # Identifier sent to the backend as its required caller field.
     caller_id: str = _DEFAULT_CALLER_ID
+    # Graphviz executable used for rendering (Phase 2).
+    graphviz_dot: str = "dot"
     # Streamable HTTP transport.
     http_host: str = _DEFAULT_HTTP_HOST
     http_port: int = _DEFAULT_HTTP_PORT
@@ -92,6 +94,7 @@ def load_config() -> Config:
         timeout_seconds=_env_int("TIMEOUT_SECONDS", _DEFAULT_TIMEOUT_SECONDS),
         max_request_bytes=_env_int("MAX_REQUEST_BYTES", _DEFAULT_MAX_REQUEST_BYTES),
         caller_id=_env("CALLER_ID", _DEFAULT_CALLER_ID),
+        graphviz_dot=_env("GRAPHVIZ_DOT", "dot"),
         http_host=_env("HTTP_HOST", _DEFAULT_HTTP_HOST),
         http_port=_env_int("HTTP_PORT", _DEFAULT_HTTP_PORT),
         stateless_http=_env_bool("STATELESS", True),

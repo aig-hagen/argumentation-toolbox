@@ -7,6 +7,7 @@ read-only and returns validated structured content plus a compact text fallback.
 
 from __future__ import annotations
 
+import base64
 import json
 import logging
 import os
@@ -14,7 +15,7 @@ import sys
 from typing import Annotated
 
 from mcp.server.mcpserver import MCPServer
-from mcp.types import CallToolResult, TextContent, ToolAnnotations
+from mcp.types import CallToolResult, ImageContent, TextContent, ToolAnnotations
 from pydantic import BaseModel, Field
 
 from argumentation_mcp import SERVER_NAME, SERVICE_VERSION
@@ -23,7 +24,14 @@ from argumentation_mcp.config import Config, load_config
 from argumentation_mcp.contract import FrameworkInput
 from argumentation_mcp.dung import DungBackend
 from argumentation_mcp.errors import ErrorCode, ServiceError
-from argumentation_mcp.results import AcceptanceResult, CapabilitiesResult, ExtensionsResult
+from argumentation_mcp.generation import GraphGenBackend
+from argumentation_mcp.results import (
+    AcceptanceResult,
+    CapabilitiesResult,
+    ExtensionsResult,
+    GenerationResult,
+    RenderResult,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -35,6 +43,8 @@ _INSTRUCTIONS = (
 )
 
 _READ_ONLY = ToolAnnotations(read_only_hint=True, idempotent_hint=True, open_world_hint=False)
+# Generation is random unless the algorithm is seeded, so it is not idempotent.
+_READ_ONLY_NONIDEMPOTENT = ToolAnnotations(read_only_hint=True, idempotent_hint=False, open_world_hint=False)
 
 _FrameworkArg = Annotated[
     FrameworkInput | None,
@@ -91,14 +101,34 @@ def _format_acceptance(result: AcceptanceResult) -> str:
 
 
 def _format_capabilities(result: CapabilitiesResult) -> str:
-    reasoning = "up" if result.backends.reasoning else "down"
+    def state(up: bool) -> str:
+        return "up" if up else "down"
+
+    b = result.backends
     return (
         f"{SERVER_NAME} v{SERVICE_VERSION}: {len(result.semantics)} semantics, "
-        f"{len(result.meta_reasoners)} meta-reasoners; reasoning backend {reasoning}."
+        f"{len(result.meta_reasoners)} meta-reasoners, "
+        f"{len(result.generation_algorithms)} generation algorithms; "
+        f"backends — reasoning {state(b.reasoning)}, rendering {state(b.rendering)}, "
+        f"generation {state(b.generation)}."
     )
 
 
-def build_server(config: Config, backend: DungBackend) -> MCPServer:
+def _format_render(result: RenderResult) -> str:
+    line = f"Rendered {result.nr_of_arguments} arguments, {result.nr_of_attacks} attacks ({result.byte_size} bytes PNG)"
+    if result.highlighted_arguments:
+        line += f"; highlighted {_format_set(result.highlighted_arguments)}"
+    return line + "."
+
+
+def _format_generation(result: GenerationResult) -> str:
+    return (
+        f"Generated {result.nr_of_arguments} arguments, {result.nr_of_attacks} attacks "
+        f"via {result.algorithm}" + (f" (seed {result.seed})" if result.seed is not None else "") + "."
+    )
+
+
+def build_server(config: Config, backend: DungBackend, graphgen: GraphGenBackend) -> MCPServer:
     from argumentation_mcp.auth import build_auth
 
     token_verifier, auth_settings = build_auth(config)
@@ -112,10 +142,10 @@ def build_server(config: Config, backend: DungBackend) -> MCPServer:
 
     @server.tool(annotations=_READ_ONLY, structured_output=True,
                  description="List supported semantics, meta-reasoner parameters, operations, "
-                             "backend availability, and configured limits.")
+                             "generation algorithms, backend availability, and configured limits.")
     async def get_capabilities() -> CapabilitiesResult:  # type: ignore[return-value]
         try:
-            result = await service.get_capabilities(config, backend)
+            result = await service.get_capabilities(config, backend, graphgen)
             return _ok(result, _format_capabilities(result))  # type: ignore[return-value]
         except ServiceError as exc:
             return _error(exc)  # type: ignore[return-value]
@@ -169,17 +199,68 @@ def build_server(config: Config, backend: DungBackend) -> MCPServer:
             logger.exception("check_acceptance failed")
             return _internal_error()  # type: ignore[return-value]
 
+    @server.tool(annotations=_READ_ONLY, structured_output=True,
+                 description="Render a framework to PNG, optionally highlighting arguments. "
+                             "Returns an image plus structured metadata and a text summary.")
+    async def render_framework(
+        framework: _FrameworkArg = None,
+        framework_text: _FrameworkTextArg = None,
+        highlight_arguments: Annotated[
+            list[str] | None, Field(default=None, description="Argument names to highlight.")
+        ] = None,
+    ) -> RenderResult:  # type: ignore[return-value]
+        try:
+            png, result = await service.render_framework(
+                config, framework=framework, framework_text=framework_text,
+                highlight_arguments=highlight_arguments,
+            )
+            image = ImageContent(type="image", data=base64.b64encode(png).decode("ascii"), mimeType="image/png")
+            text = TextContent(type="text", text=_format_render(result))
+            return CallToolResult(  # type: ignore[return-value]
+                content=[image, text],
+                structured_content=result.model_dump(mode="json"),
+            )
+        except ServiceError as exc:
+            return _error(exc)  # type: ignore[return-value]
+        except Exception:
+            logger.exception("render_framework failed")
+            return _internal_error()  # type: ignore[return-value]
+
+    @server.tool(annotations=_READ_ONLY_NONIDEMPOTENT, structured_output=True,
+                 description="Generate an abstract framework via graph-gen; returns it in the "
+                             "canonical format accepted by the other tools. See get_capabilities "
+                             "for algorithms and parameters. Pass a seed for reproducible output.")
+    async def generate_framework(
+        algorithm: Annotated[str, Field(description="Algorithm id from get_capabilities.")],
+        params: Annotated[
+            dict[str, object] | None, Field(default=None, description="Algorithm parameters.")
+        ] = None,
+        seed: Annotated[int | None, Field(default=None, description="Seed for reproducible output.")] = None,
+    ) -> GenerationResult:  # type: ignore[return-value]
+        try:
+            result = await service.generate_framework(
+                config, graphgen, algorithm=algorithm, params=params, seed=seed,
+            )
+            return _ok(result, _format_generation(result))  # type: ignore[return-value]
+        except ServiceError as exc:
+            return _error(exc)  # type: ignore[return-value]
+        except Exception:
+            logger.exception("generate_framework failed")
+            return _internal_error()  # type: ignore[return-value]
+
     return server
 
 
 async def _run_stdio() -> None:
     config = load_config()
     backend = DungBackend(config)
-    server = build_server(config, backend)
+    graphgen = GraphGenBackend(config)
+    server = build_server(config, backend, graphgen)
     try:
         await server.run_stdio_async()
     finally:
         await backend.aclose()
+        await graphgen.aclose()
 
 
 async def _run_http() -> None:
@@ -187,12 +268,14 @@ async def _run_http() -> None:
 
     config = load_config()
     backend = DungBackend(config)
-    server = build_server(config, backend)
+    graphgen = GraphGenBackend(config)
+    server = build_server(config, backend, graphgen)
     register_health_routes(server, backend)
     try:
         await run_streamable_http(config, server)
     finally:
         await backend.aclose()
+        await graphgen.aclose()
 
 
 def _selected_transport() -> str:

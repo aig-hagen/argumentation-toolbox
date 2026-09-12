@@ -9,20 +9,27 @@ from __future__ import annotations
 import json
 
 from argumentation_mcp import SCHEMA_VERSION, SERVICE_VERSION
+from argumentation_mcp import render
 from argumentation_mcp import semantics as sem
 from argumentation_mcp.config import Config
 from argumentation_mcp.contract import Framework, FrameworkInput, framework_from_input
 from argumentation_mcp.dung import DungBackend
 from argumentation_mcp.errors import ErrorCode, ServiceError
+from argumentation_mcp.generation import GraphGenBackend
 from argumentation_mcp.results import (
     AcceptanceQuery,
     AcceptanceResult,
+    AttackOut,
     BackendStatus,
     CapabilitiesResult,
     ExtensionsResult,
+    FrameworkOut,
+    GenerationAlgorithmInfo,
+    GenerationResult,
     Limits,
     MetaReasonerInfo,
     ReasonerParamInfo,
+    RenderResult,
     SemanticsInfo,
 )
 from argumentation_mcp.text_parser import parse_framework_text
@@ -120,8 +127,83 @@ async def check_acceptance(
     )
 
 
-async def get_capabilities(config: Config, backend: DungBackend) -> CapabilitiesResult:
+def _framework_out(framework: Framework) -> FrameworkOut:
+    return FrameworkOut(
+        arguments=list(framework.names),
+        attacks=[AttackOut(source=s, target=t) for s, t in framework.attacks],
+    )
+
+
+async def render_framework(
+    config: Config,
+    *,
+    framework: FrameworkInput | None,
+    framework_text: str | None,
+    highlight_arguments: list[str] | None,
+) -> tuple[bytes, RenderResult]:
+    resolved = resolve_framework(config, framework, framework_text)
+    highlight = set(highlight_arguments or [])
+    unknown = sorted(highlight - set(resolved.names))
+    if unknown:
+        raise ServiceError(
+            ErrorCode.INVALID_FRAMEWORK,
+            f"highlight_arguments not in the framework: {unknown}.",
+        )
+    png = render.render_png(config, resolved, highlight)
+    result = RenderResult(
+        schema_version=SCHEMA_VERSION,
+        service_version=SERVICE_VERSION,
+        format="png",
+        nr_of_arguments=resolved.nr_of_arguments,
+        nr_of_attacks=len(resolved.attacks),
+        highlighted_arguments=sorted(highlight),
+        byte_size=len(png),
+    )
+    return png, result
+
+
+async def generate_framework(
+    config: Config,
+    graphgen: GraphGenBackend,
+    *,
+    algorithm: str,
+    params: dict | None,
+    seed: int | None,
+) -> GenerationResult:
+    framework = await graphgen.generate(algorithm, dict(params or {}), seed)
+    return GenerationResult(
+        schema_version=SCHEMA_VERSION,
+        service_version=SERVICE_VERSION,
+        algorithm=algorithm,
+        seed=seed,
+        framework=_framework_out(framework),
+        nr_of_arguments=framework.nr_of_arguments,
+        nr_of_attacks=len(framework.attacks),
+    )
+
+
+async def get_capabilities(
+    config: Config, backend: DungBackend, graphgen: GraphGenBackend
+) -> CapabilitiesResult:
     reasoning_available = await backend.is_available()
+
+    generation_algorithms: list[GenerationAlgorithmInfo] = []
+    generation_available = False
+    try:
+        algorithms = await graphgen.list_algorithms()
+        generation_available = True
+        generation_algorithms = [
+            GenerationAlgorithmInfo(
+                id=str(algo.get("id", "")),
+                description=str(algo.get("description", "")),
+                params=list(algo.get("params", [])),
+                available=bool(algo.get("available", False)),
+            )
+            for algo in algorithms
+        ]
+    except ServiceError:
+        pass  # generation backend down: report unavailable rather than failing
+
     return CapabilitiesResult(
         schema_version=SCHEMA_VERSION,
         service_version=SERVICE_VERSION,
@@ -143,12 +225,12 @@ async def get_capabilities(config: Config, backend: DungBackend) -> Capabilities
             )
             for m in sem.META_REASONERS
         ],
-        operations=["enumerate_extensions", "check_acceptance"],
+        operations=["enumerate_extensions", "check_acceptance", "render_framework", "generate_framework"],
+        generation_algorithms=generation_algorithms,
         backends=BackendStatus(
             reasoning=reasoning_available,
-            # Rendering and generation land in a later phase.
-            rendering=False,
-            generation=False,
+            rendering=render.is_available(config),
+            generation=generation_available,
         ),
         limits=Limits(
             timeout_seconds=config.timeout_seconds,

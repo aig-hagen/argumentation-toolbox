@@ -8,19 +8,24 @@ web service — this server is a stateless, transport-independent adapter around
 For the full design, contracts, and delivery phases, see
 [`docs/mcp-argumentation-service.md`](../../docs/mcp-argumentation-service.md).
 
-## Tools (Phase 1)
+## Tools
 
 | Tool | Purpose |
 |---|---|
-| `get_capabilities` | Supported semantics, meta-reasoner parameters, operations, backend availability, and configured limits. |
+| `get_capabilities` | Supported semantics, meta-reasoner parameters, operations, generation algorithms, backend availability, and configured limits. |
 | `enumerate_extensions` | Every extension under a chosen semantics. |
 | `check_acceptance` | Credulous or skeptical acceptance, optionally for a queried argument. |
+| `render_framework` | Render a framework to PNG (via Graphviz), optionally highlighting arguments. |
+| `generate_framework` | Generate an abstract framework (via graph-gen) in the canonical format. |
 
-All tools are read-only. Each returns validated `structuredContent` (see the
-tool's `outputSchema`) plus a compact text fallback, and reports failures as
+All tools are read-only. Reasoning/generation tools return validated
+`structuredContent` (see each tool's `outputSchema`) plus a compact text fallback;
+`render_framework` additionally returns an `image` content block. Failures are
 `isError` results carrying a stable `{ code, message, retryable }` payload.
 
-`render_framework` and `generate_framework` (Phase 2) are not implemented yet.
+Rendering needs the `dot` executable (Graphviz); generation needs the graph-gen
+service. Both are reported through `get_capabilities` and degrade to a clear
+error rather than failing server startup.
 
 ## Framework input
 
@@ -54,6 +59,7 @@ Environment variables (all optional; defaults suit a local backend):
 | `ARGUMENTATION_MCP_TIMEOUT_SECONDS` | `30` | Reasoning/generation timeout |
 | `ARGUMENTATION_MCP_MAX_REQUEST_BYTES` | `1048576` | Max framework input size / HTTP body |
 | `ARGUMENTATION_MCP_CALLER_ID` | `argumentation-mcp` | Identifier sent to the backend |
+| `ARGUMENTATION_MCP_GRAPHVIZ_DOT` | `dot` | Graphviz executable used for rendering |
 | `ARGUMENTATION_MCP_TRANSPORT` | `stdio` | `stdio` or `http` (overridden by a CLI arg) |
 | `ARGUMENTATION_MCP_HTTP_HOST` | `127.0.0.1` | HTTP bind host |
 | `ARGUMENTATION_MCP_HTTP_PORT` | `8083` | HTTP bind port |

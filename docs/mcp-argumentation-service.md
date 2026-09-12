@@ -4,7 +4,8 @@
 > implemented under [`servers/argumentation-mcp/`](../servers/argumentation-mcp/),
 > over both stdio and Streamable HTTP, with a provider-agnostic OAuth 2.1
 > resource server on the HTTP transport (the concrete issuer is set at deploy).
-> MCP conformance/client smoke tests, rendering, generation, and deployment are
+> Rendering (`render_framework`) and generation (`generate_framework`) are
+> implemented. MCP conformance/client smoke tests and deployment (Phase 3) are
 > still open. Track progress by checking off tasks in the phase sections below.
 
 ## 1. Goal
@@ -370,11 +371,11 @@ The intended public MCP endpoint is
 
 ### Phase 2 — Rendering and generation
 
-- [ ] Implement `render_framework` with PNG `ImageContent`, metadata, and text fallback.
+- [x] Implement `render_framework` with PNG `ImageContent`, metadata, and text fallback.
 - [ ] Verify image behavior in each target client.
-- [ ] Integrate graph-gen discovery into `get_capabilities`.
-- [ ] Implement abstract-only `generate_framework`.
-- [ ] Verify generated frameworks can be passed directly to reasoning and rendering tools.
+- [x] Integrate graph-gen discovery into `get_capabilities`.
+- [x] Implement abstract-only `generate_framework`.
+- [x] Verify generated frameworks can be passed directly to reasoning and rendering tools. (Canonical names round-trip; covered by tests.)
 
 ### Phase 3 — Deployment and release
 

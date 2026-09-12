@@ -31,10 +31,47 @@ class AcceptanceResult(BaseModel):
     solver_time_ms: int
 
 
+class AttackOut(BaseModel):
+    source: str
+    target: str
+
+
+class FrameworkOut(BaseModel):
+    arguments: list[str]
+    attacks: list[AttackOut]
+
+
+class RenderResult(BaseModel):
+    schema_version: str
+    service_version: str
+    format: str = "png"
+    nr_of_arguments: int
+    nr_of_attacks: int
+    highlighted_arguments: list[str]
+    byte_size: int
+
+
+class GenerationResult(BaseModel):
+    schema_version: str
+    service_version: str
+    algorithm: str
+    seed: int | None = None
+    framework: FrameworkOut
+    nr_of_arguments: int
+    nr_of_attacks: int
+
+
 class SemanticsInfo(BaseModel):
     key: str
     display_name: str
     group: str
+
+
+class GenerationAlgorithmInfo(BaseModel):
+    id: str
+    description: str
+    params: list[dict]
+    available: bool
 
 
 class ReasonerParamInfo(BaseModel):
@@ -68,5 +105,6 @@ class CapabilitiesResult(BaseModel):
     semantics: list[SemanticsInfo]
     meta_reasoners: list[MetaReasonerInfo]
     operations: list[str]
+    generation_algorithms: list[GenerationAlgorithmInfo] = Field(default_factory=list)
     backends: BackendStatus
     limits: Limits

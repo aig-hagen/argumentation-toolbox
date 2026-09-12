@@ -6,7 +6,7 @@ from argumentation_mcp import service
 from argumentation_mcp.config import Config
 from argumentation_mcp.contract import AttackInput, FrameworkInput
 from argumentation_mcp.errors import ErrorCode, ServiceError
-from tests.conftest import answer, make_backend
+from tests.conftest import answer, make_backend, make_graphgen
 
 
 def _config() -> Config:
@@ -85,8 +85,17 @@ async def test_invalid_mode():
 
 async def test_get_capabilities_reports_backend_up():
     backend = make_backend(_config(), lambda body: answer("[{1}]"))
-    caps = await service.get_capabilities(_config(), backend)
+    algos = [{"id": "erdos-renyi", "description": "ER", "params": [{"name": "n"}], "available": True}]
+
+    def gg(request):
+        import httpx
+
+        return httpx.Response(200, json=algos)
+
+    caps = await service.get_capabilities(_config(), backend, make_graphgen(_config(), gg))
     assert caps.backends.reasoning is True
+    assert caps.backends.generation is True
     assert any(s.key == "PR" for s in caps.semantics)
+    assert caps.generation_algorithms[0].id == "erdos-renyi"
     assert caps.limits.timeout_seconds == 5
-    assert "enumerate_extensions" in caps.operations
+    assert "render_framework" in caps.operations

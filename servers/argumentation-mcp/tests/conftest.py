@@ -8,6 +8,7 @@ import pytest
 
 from argumentation_mcp.config import Config
 from argumentation_mcp.dung import DungBackend
+from argumentation_mcp.generation import GraphGenBackend
 
 Handler = Callable[[dict], httpx.Response]
 
@@ -33,3 +34,16 @@ def make_backend(config: Config, handler: Handler) -> DungBackend:
 
 def answer(text: str, *, status: str = "SUCCESS", time: float = 12.0) -> httpx.Response:
     return httpx.Response(200, json={"time": time, "answer": text, "status": status})
+
+
+def make_graphgen(config: Config, handler=None) -> GraphGenBackend:
+    """Build a GraphGenBackend served by ``handler`` (a raw httpx request handler).
+
+    Defaults to reporting no algorithms and an unavailable backend.
+    """
+
+    def default(_request: httpx.Request) -> httpx.Response:
+        return httpx.Response(200, json=[])
+
+    client = httpx.AsyncClient(transport=httpx.MockTransport(handler or default))
+    return GraphGenBackend(config, client=client)

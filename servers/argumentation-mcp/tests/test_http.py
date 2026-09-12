@@ -6,7 +6,7 @@ from starlette.testclient import TestClient
 from argumentation_mcp.config import Config
 from argumentation_mcp.http import build_transport_security, register_health_routes
 from argumentation_mcp.server import build_server
-from tests.conftest import answer, make_backend
+from tests.conftest import answer, make_backend, make_graphgen
 
 
 def _config(**kw) -> Config:
@@ -37,7 +37,7 @@ def test_transport_security_explicit_hosts():
 def _app_with_health(handler):
     cfg = _config()
     backend = make_backend(cfg, handler)
-    server = build_server(cfg, backend)
+    server = build_server(cfg, backend, make_graphgen(cfg))
     register_health_routes(server, backend)
     app = server.streamable_http_app(streamable_http_path="/mcp", stateless_http=True)
     return app
