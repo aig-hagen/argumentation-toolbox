@@ -98,9 +98,11 @@ HTTPS terminates at a reverse proxy.
 
 ## Authorization
 
-Auth is **off** until `RESOURCE_SERVER_URL` is set together with at least one
-credential source. Two tiers are supported (stdio needs no auth — the transport
-is local):
+Auth is **off by default** — the HTTP endpoint is public read-only compute, and
+the deployment runs it unauthenticated behind a per-IP rate limit. It engages
+only when `RESOURCE_SERVER_URL` is set together with at least one credential
+source, so the machinery below is dormant unless you opt in. Two tiers are
+supported (stdio needs no auth — the transport is local):
 
 **Tier 1 — shared static token (default choice).** Set `STATIC_TOKEN` to a secret
 and clients send it as `Authorization: Bearer <token>`. Simple, no identity
@@ -152,7 +154,7 @@ The server ships inside the main AgonProject image as an extra process (see the
 and [`Caddyfile`](../../deployment/Caddyfile)):
 
 - runs `python -m argumentation_mcp http` on `127.0.0.1:8083`;
-- Caddy proxies `/mcp` and `/.well-known/oauth-protected-resource*` to it;
+- Caddy proxies `/mcp` to it, adding a per-IP rate limit;
 - reasoning goes to `localhost:8081/dung`, generation to `localhost:8082`,
   rendering to the bundled Graphviz.
 
@@ -161,10 +163,13 @@ Deploy-time configuration is passed via `MCP_*` container env (mapped to
 `MCP_OAUTH_AUDIENCE`, `MCP_REQUIRED_SCOPES`, `MCP_RESOURCE_SERVER_URL`,
 `MCP_ALLOWED_HOSTS`.
 
-> **The `/mcp` endpoint stays disabled until a credential is set** — an
-> unauthenticated public endpoint is never started. The default path is Tier 1:
-> set `MCP_STATIC_TOKEN` to a secret and hand it to trusted clients. Switch to
-> Tier 2 later by setting `MCP_OAUTH_ISSUER` instead — no code change.
+> **The `/mcp` endpoint is public and unauthenticated by default** — it is
+> read-only compute over the already-public `/dung` backend, so the deployment
+> runs it open and relies on Caddy's per-IP rate limit. To re-enable auth
+> without a code change, set a credential: `MCP_STATIC_TOKEN` (Tier 1, hand the
+> secret to trusted clients) or `MCP_OAUTH_ISSUER` (Tier 2). When set, Caddy must
+> also proxy `/.well-known/oauth-protected-resource*` to `:8083` for the metadata
+> the resource-server flow advertises.
 
 ## Tests
 

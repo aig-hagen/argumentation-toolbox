@@ -85,24 +85,20 @@ http://:8080 {
 		reverse_proxy http://localhost:8001
 	}
 
-	# Argumentation MCP server (Streamable HTTP). The MCP server enforces OAuth
-	# and its own request-size/timeout limits; Caddy adds a per-IP rate limit.
-	# Returns 502 while the MCP process is disabled (no static token/issuer set).
+	# Argumentation MCP server (Streamable HTTP). The endpoint is public and
+	# unauthenticated — read-only compute over the already-public /dung backend.
+	# The MCP process calls the solver from localhost, bypassing the /dung per-IP
+	# limit, so this rate limit is the only throttle on MCP-driven solver load;
+	# kept below /dung's 60/min to bound the combined exposure from one IP.
 	@mcp path /mcp /mcp/*
 	handle @mcp {
 		rate_limit {
 			zone mcp {
 				key {remote_host}
-				events 60
+				events 30
 				window 1m
 			}
 		}
-		reverse_proxy http://localhost:8083
-	}
-
-	# OAuth 2.0 protected-resource metadata (RFC 9728), served by the MCP process.
-	@oauth_metadata path /.well-known/oauth-protected-resource /.well-known/oauth-protected-resource/*
-	handle @oauth_metadata {
 		reverse_proxy http://localhost:8083
 	}
 
