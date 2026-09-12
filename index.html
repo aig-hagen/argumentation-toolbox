@@ -53,8 +53,8 @@
   <body>
     <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
-    <link rel="stylesheet" href="/node_modules/@drgrice1/tikzjax/dist/fonts.css" />
-    <script data-no-bundle src="/node_modules/@drgrice1/tikzjax/dist/tikzjax.js"></script>
+    <!-- tikzjax is loaded on demand (only for SVG export) in
+         @/modules/common/export/renderSvg.ts, not eagerly here. -->
     <div id="render-svg-container"></div>
   </body>
 </html>
