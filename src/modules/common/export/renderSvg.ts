@@ -167,10 +167,27 @@ async function processSvg(unprocessedSvg: SVGSVGElement): Promise<string> {
   return serializer.serializeToString(unprocessedSvg)
 }
 
+const TIKZJAX_SRC = '/node_modules/@drgrice1/tikzjax/dist/tikzjax.js'
+
+// tikzjax boots a web worker that pulls a few MB of wasm/dump, so we load it
+// only on the first export instead of on every page load.
+let tikzjaxPromise: Promise<void> | undefined
+function ensureTikzjaxLoaded(): Promise<void> {
+  tikzjaxPromise ??= new Promise<void>((resolve, reject) => {
+    const script = document.createElement('script')
+    script.src = TIKZJAX_SRC
+    script.addEventListener('load', () => resolve())
+    script.addEventListener('error', () => reject(new Error('Failed to load tikzjax.')))
+    document.body.append(script)
+  })
+  return tikzjaxPromise
+}
+
 export async function renderSvg(latex: string): Promise<string> {
   if (RENDER_SVG_CONTAINER === null) {
     throw new Error('Could not find rendering container.')
   }
+  await ensureTikzjaxLoaded()
   const scriptWrapper = document.createElement('div')
   const script = document.createElement('script')
   script.type = 'text/tikz'
