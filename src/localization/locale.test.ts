@@ -61,19 +61,15 @@ test('resolveInitialLocale prefers a valid persisted preference', () => {
   expect(resolveInitialLocale('de')).toBe('de')
 })
 
-test('resolveInitialLocale falls back to the first supported browser language', () => {
+test('resolveInitialLocale defaults to English regardless of browser language', () => {
   stubBrowserLanguages(['fr-FR', 'de-DE', 'en'])
-  expect(resolveInitialLocale('')).toBe('de')
-})
-
-test('resolveInitialLocale falls back to English when nothing matches', () => {
-  stubBrowserLanguages(['fr-FR', 'es-ES'])
+  expect(resolveInitialLocale('')).toBe('en')
   expect(resolveInitialLocale(null)).toBe('en')
 })
 
 test('resolveInitialLocale ignores an invalid persisted value', () => {
   stubBrowserLanguages(['de'])
-  expect(resolveInitialLocale('fr')).toBe('de')
+  expect(resolveInitialLocale('fr')).toBe('en')
 })
 
 test('applyLocale loads the bundle, switches Vue I18n, and syncs html lang', async () => {

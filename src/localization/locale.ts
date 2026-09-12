@@ -43,18 +43,12 @@ export function normalizeLocale(value: string | null | undefined): SupportedLoca
 }
 
 /**
- * Initial selection order: a valid persisted preference, then the first supported
- * `navigator.languages` match, then English.
+ * Initial selection order: a valid persisted preference, then English. German is
+ * opt-in via settings only, so the browser language is deliberately ignored.
  */
 export function resolveInitialLocale(persisted: string | null | undefined): SupportedLocale {
   const fromStorage = normalizeLocale(persisted)
   if (fromStorage) return fromStorage
-  const browserLanguages =
-    typeof navigator !== 'undefined' ? (navigator.languages ?? [navigator.language]) : []
-  for (const language of browserLanguages) {
-    const match = normalizeLocale(language)
-    if (match) return match
-  }
   return DEFAULT_LOCALE
 }
 
