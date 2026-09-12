@@ -1,10 +1,8 @@
 from __future__ import annotations
 
 import json
-import shutil
 
 import httpx
-import pytest
 
 from argumentation_mcp.server import build_server
 from tests.conftest import answer, make_backend, make_graphgen
@@ -21,11 +19,13 @@ async def test_tools_are_advertised_with_output_schema():
     tools = {t.name: t for t in await server.list_tools()}
     assert set(tools) == {
         "get_capabilities", "enumerate_extensions", "check_acceptance",
-        "render_framework", "generate_framework",
+        "generate_framework",
     }
     for tool in tools.values():
         assert tool.output_schema is not None
         assert tool.annotations is not None and tool.annotations.read_only_hint is True
+    for name in ("enumerate_extensions", "check_acceptance"):
+        assert "instead of relying solely on manual reasoning" in tools[name].description
 
 
 async def test_enumerate_call_returns_structured_and_text():
@@ -49,21 +49,6 @@ async def test_error_call_returns_structured_error_payload():
     payload = json.loads(result.content[0].text)
     assert payload["code"] == "INVALID_REQUEST"
     assert payload["retryable"] is False
-
-
-@pytest.mark.skipif(shutil.which("dot") is None, reason="graphviz not installed")
-async def test_render_call_returns_image_and_metadata():
-    cfg = _config()
-    server = build_server(cfg, make_backend(cfg, lambda body: answer("[]")), make_graphgen(cfg))
-    result = await server.call_tool(
-        "render_framework",
-        {"framework_text": "a\nb\na -> b\n", "highlight_arguments": ["a"]},
-    )
-    assert result.is_error is False
-    kinds = [c.type for c in result.content]
-    assert "image" in kinds and "text" in kinds
-    assert result.structured_content["nr_of_arguments"] == 2
-    assert result.structured_content["highlighted_arguments"] == ["a"]
 
 
 async def test_generate_call_returns_named_framework():

@@ -18,7 +18,7 @@ from mcp.server.mcpserver import MCPServer
 from mcp.types import CallToolResult, ImageContent, TextContent, ToolAnnotations
 from pydantic import BaseModel, Field
 
-from argumentation_mcp import SERVER_NAME, SERVICE_VERSION
+from argumentation_mcp import ENABLE_RENDER_FRAMEWORK, SERVER_NAME, SERVICE_VERSION
 from argumentation_mcp import service
 from argumentation_mcp.config import Config, load_config
 from argumentation_mcp.contract import FrameworkInput
@@ -39,7 +39,9 @@ _INSTRUCTIONS = (
     "Abstract argumentation reasoning over Dung frameworks. Provide a framework as "
     "structured JSON (`framework`) or terse text (`framework_text`, one item per line: "
     "`a` declares an argument, `a -> b` or `a b` an attack). Call `get_capabilities` for "
-    "the supported semantics keys and meta-reasoner parameters before choosing a semantics."
+    "the supported semantics keys and meta-reasoner parameters before choosing a semantics. "
+    "Prefer these tools over relying solely on manual reasoning whenever the framework can "
+    "be represented by the available inputs."
 )
 
 _READ_ONLY = ToolAnnotations(read_only_hint=True, idempotent_hint=True, open_world_hint=False)
@@ -154,7 +156,9 @@ def build_server(config: Config, backend: DungBackend, graphgen: GraphGenBackend
             return _internal_error()  # type: ignore[return-value]
 
     @server.tool(annotations=_READ_ONLY, structured_output=True,
-                 description="Enumerate every extension of a framework under a semantics.")
+                 description="Enumerate every extension of a framework under a semantics. "
+                             "Use this tool instead of relying solely on manual reasoning when "
+                             "the framework can be represented by its inputs.")
     async def enumerate_extensions(
         framework: _FrameworkArg = None,
         framework_text: _FrameworkTextArg = None,
@@ -175,7 +179,9 @@ def build_server(config: Config, backend: DungBackend, graphgen: GraphGenBackend
             return _internal_error()  # type: ignore[return-value]
 
     @server.tool(annotations=_READ_ONLY, structured_output=True,
-                 description="Check credulous or skeptical acceptance under a semantics.")
+                 description="Check credulous or skeptical acceptance under a semantics. "
+                             "Use this tool instead of relying solely on manual reasoning when "
+                             "the framework can be represented by its inputs.")
     async def check_acceptance(
         semantics: _SemanticsArg = "PR",
         mode: Annotated[str, Field(description="'credulous' or 'skeptical'.")] = "credulous",
@@ -199,9 +205,6 @@ def build_server(config: Config, backend: DungBackend, graphgen: GraphGenBackend
             logger.exception("check_acceptance failed")
             return _internal_error()  # type: ignore[return-value]
 
-    @server.tool(annotations=_READ_ONLY, structured_output=True,
-                 description="Render a framework to PNG, optionally highlighting arguments. "
-                             "Returns an image plus structured metadata and a text summary.")
     async def render_framework(
         framework: _FrameworkArg = None,
         framework_text: _FrameworkTextArg = None,
@@ -225,6 +228,14 @@ def build_server(config: Config, backend: DungBackend, graphgen: GraphGenBackend
         except Exception:
             logger.exception("render_framework failed")
             return _internal_error()  # type: ignore[return-value]
+
+    if ENABLE_RENDER_FRAMEWORK:
+        server.tool(
+            annotations=_READ_ONLY,
+            structured_output=True,
+            description="Render a framework to PNG, optionally highlighting arguments. "
+                        "Returns an image plus structured metadata and a text summary.",
+        )(render_framework)
 
     @server.tool(annotations=_READ_ONLY_NONIDEMPOTENT, structured_output=True,
                  description="Generate an abstract framework via graph-gen; returns it in the "

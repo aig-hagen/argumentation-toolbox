@@ -15,4 +15,8 @@ SERVICE_VERSION = "0.1.0"
 
 SERVER_NAME = "argumentation-mcp"
 
-__all__ = ["SCHEMA_VERSION", "SERVICE_VERSION", "SERVER_NAME"]
+# Temporary feature switch: retain the rendering implementation without exposing
+# it through MCP or the advertised operations list.
+ENABLE_RENDER_FRAMEWORK = False
+
+__all__ = ["SCHEMA_VERSION", "SERVICE_VERSION", "SERVER_NAME", "ENABLE_RENDER_FRAMEWORK"]

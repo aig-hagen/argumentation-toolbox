@@ -12,12 +12,12 @@ web service — this server is a stateless, transport-independent adapter around
 | `get_capabilities` | Supported semantics, meta-reasoner parameters, operations, generation algorithms, backend availability, and configured limits. |
 | `enumerate_extensions` | Every extension under a chosen semantics. |
 | `check_acceptance` | Credulous or skeptical acceptance, optionally for a queried argument. |
-| `render_framework` | Render a framework to PNG (via Graphviz), optionally highlighting arguments. |
+| `render_framework` | Temporarily disabled. Render a framework to PNG (via Graphviz), optionally highlighting arguments. |
 | `generate_framework` | Generate an abstract framework (via graph-gen) in the canonical format. |
 
 All tools are read-only. Reasoning/generation tools return validated
-`structuredContent` (see each tool's `outputSchema`) plus a compact text fallback;
-`render_framework` additionally returns an `image` content block. Failures are
+`structuredContent` (see each tool's `outputSchema`) plus a compact text fallback.
+When enabled, `render_framework` additionally returns an `image` content block. Failures are
 `isError` results carrying a stable `{ code, message, retryable }` payload.
 
 Rendering needs the `dot` executable (Graphviz); generation needs the graph-gen

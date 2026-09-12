@@ -98,4 +98,4 @@ async def test_get_capabilities_reports_backend_up():
     assert any(s.key == "PR" for s in caps.semantics)
     assert caps.generation_algorithms[0].id == "erdos-renyi"
     assert caps.limits.timeout_seconds == 5
-    assert "render_framework" in caps.operations
+    assert "render_framework" not in caps.operations

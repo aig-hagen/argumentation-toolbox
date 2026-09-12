@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import json
 
-from argumentation_mcp import SCHEMA_VERSION, SERVICE_VERSION
+from argumentation_mcp import ENABLE_RENDER_FRAMEWORK, SCHEMA_VERSION, SERVICE_VERSION
 from argumentation_mcp import render
 from argumentation_mcp import semantics as sem
 from argumentation_mcp.config import Config
@@ -225,7 +225,12 @@ async def get_capabilities(
             )
             for m in sem.META_REASONERS
         ],
-        operations=["enumerate_extensions", "check_acceptance", "render_framework", "generate_framework"],
+        operations=[
+            "enumerate_extensions",
+            "check_acceptance",
+            *(["render_framework"] if ENABLE_RENDER_FRAMEWORK else []),
+            "generate_framework",
+        ],
         generation_algorithms=generation_algorithms,
         backends=BackendStatus(
             reasoning=reasoning_available,
