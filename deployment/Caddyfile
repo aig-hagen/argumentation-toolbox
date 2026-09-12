@@ -87,7 +87,7 @@ http://:8080 {
 
 	# Argumentation MCP server (Streamable HTTP). The MCP server enforces OAuth
 	# and its own request-size/timeout limits; Caddy adds a per-IP rate limit.
-	# Returns 502 while the MCP process is disabled (no issuer/dev token set).
+	# Returns 502 while the MCP process is disabled (no static token/issuer set).
 	@mcp path /mcp /mcp/*
 	handle @mcp {
 		rate_limit {

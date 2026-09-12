@@ -67,12 +67,12 @@ Environment variables (all optional; defaults suit a local backend):
 | `ARGUMENTATION_MCP_ALLOWED_HOSTS` | *(SDK localhost)* | Comma list for Host checks; `*` disables (trust proxy) |
 | `ARGUMENTATION_MCP_ALLOWED_ORIGINS` | *(SDK localhost)* | Comma list for Origin checks |
 | `ARGUMENTATION_MCP_RESOURCE_SERVER_URL` | *(unset)* | Public MCP URL; **required to enable auth** |
-| `ARGUMENTATION_MCP_OAUTH_ISSUER` | *(unset)* | OIDC issuer (authorization server) URL |
-| `ARGUMENTATION_MCP_OAUTH_AUDIENCE` | *(= resource URL)* | Expected token audience |
-| `ARGUMENTATION_MCP_OAUTH_JWKS_URL` | *(discovered)* | JWKS endpoint; else found via issuer discovery |
-| `ARGUMENTATION_MCP_OAUTH_ALGORITHMS` | `RS256,ES256` | Accepted JWT signing algorithms |
+| `ARGUMENTATION_MCP_STATIC_TOKEN` | *(unset)* | Shared bearer token (Tier 1 auth) |
+| `ARGUMENTATION_MCP_OAUTH_ISSUER` | *(unset)* | OIDC issuer URL (Tier 2 auth) |
+| `ARGUMENTATION_MCP_OAUTH_AUDIENCE` | *(= resource URL)* | Expected token audience (Tier 2) |
+| `ARGUMENTATION_MCP_OAUTH_JWKS_URL` | *(discovered)* | JWKS endpoint; else found via issuer discovery (Tier 2) |
+| `ARGUMENTATION_MCP_OAUTH_ALGORITHMS` | `RS256,ES256` | Accepted JWT signing algorithms (Tier 2) |
 | `ARGUMENTATION_MCP_REQUIRED_SCOPES` | *(none)* | Comma list of scopes a token must carry |
-| `ARGUMENTATION_MCP_DEV_TOKEN` | *(unset)* | Static bearer token for development |
 
 ## Running (stdio)
 
@@ -99,24 +99,28 @@ Serves the MCP endpoint at `/mcp` plus `/healthz` (liveness) and `/readyz`
 are built from the same core, so tool names, schemas, and results are identical.
 HTTPS terminates at a reverse proxy.
 
-## Authorization (OAuth 2.1 resource server)
+## Authorization
 
 Auth is **off** until `RESOURCE_SERVER_URL` is set together with at least one
-credential source (`OAUTH_ISSUER` or `DEV_TOKEN`). When enabled, the HTTP server
-is a provider-agnostic OAuth 2.1 resource server:
+credential source. Two tiers are supported (stdio needs no auth — the transport
+is local):
 
-- **Protected-resource metadata** (RFC 9728) is served at
-  `/.well-known/oauth-protected-resource/mcp`, pointing at the configured issuer.
-- Unauthenticated `/mcp` requests get a `401` with a `WWW-Authenticate` challenge.
-- Bearer tokens are validated as **OIDC JWTs**: signature via the issuer's JWKS
-  (discovered from `OAUTH_ISSUER`, or set `OAUTH_JWKS_URL`), plus issuer, audience,
-  and expiry. A valid, audience-matched token is accepted; `REQUIRED_SCOPES` can
-  tighten this. Set the concrete issuer at deploy time — no provider is hardcoded.
-- `DEV_TOKEN` enables a static bearer token for local testing / manual clients
-  (e.g. MCP Inspector). It is **not** the production contract; leave it unset in
-  production.
+**Tier 1 — shared static token (default choice).** Set `STATIC_TOKEN` to a secret
+and clients send it as `Authorization: Bearer <token>`. Simple, no identity
+provider; rotate by changing the value. Good for a known set of technical clients
+(Claude Code, Cursor, Codex, MCP Inspector).
 
-stdio needs no auth (the transport is local).
+**Tier 2 — OAuth 2.1 / OIDC.** Set `OAUTH_ISSUER` (provider-agnostic). Bearer
+tokens are validated as OIDC JWTs: signature via the issuer's JWKS (discovered
+from the issuer, or set `OAUTH_JWKS_URL`), plus issuer, audience, and expiry.
+Use this when you need per-user login, revocation, or the one-click connector UX.
+
+Either way the HTTP server behaves as a proper resource server: it serves
+protected-resource metadata (RFC 9728) at
+`/.well-known/oauth-protected-resource/mcp` and answers unauthenticated `/mcp`
+requests with a `401` + `WWW-Authenticate` challenge. Both tiers can be enabled
+at once (a valid static token *or* a valid JWT is accepted); `REQUIRED_SCOPES`
+tightens Tier 2.
 
 ## Deployment
 
@@ -130,12 +134,14 @@ and [`Caddyfile`](../../deployment/Caddyfile)):
   rendering to the bundled Graphviz.
 
 Deploy-time configuration is passed via `MCP_*` container env (mapped to
-`ARGUMENTATION_MCP_*` in the wrapper): `MCP_OAUTH_ISSUER`, `MCP_OAUTH_AUDIENCE`,
-`MCP_REQUIRED_SCOPES`, `MCP_RESOURCE_SERVER_URL`, `MCP_DEV_TOKEN`, `MCP_ALLOWED_HOSTS`.
+`ARGUMENTATION_MCP_*` in the wrapper): `MCP_STATIC_TOKEN`, `MCP_OAUTH_ISSUER`,
+`MCP_OAUTH_AUDIENCE`, `MCP_REQUIRED_SCOPES`, `MCP_RESOURCE_SERVER_URL`,
+`MCP_ALLOWED_HOSTS`.
 
-> **The `/mcp` endpoint stays disabled until `MCP_OAUTH_ISSUER` (or `MCP_DEV_TOKEN`)
-> is set** — an unauthenticated public endpoint is never started. Choosing the
-> production OIDC issuer is the one remaining decision before go-live.
+> **The `/mcp` endpoint stays disabled until a credential is set** — an
+> unauthenticated public endpoint is never started. The default path is Tier 1:
+> set `MCP_STATIC_TOKEN` to a secret and hand it to trusted clients. Switch to
+> Tier 2 later by setting `MCP_OAUTH_ISSUER` instead — no code change.
 
 ## Tests
 

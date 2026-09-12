@@ -2,9 +2,9 @@
 
 The MCP SDK, given a ``TokenVerifier`` and ``AuthSettings``, serves the
 protected-resource metadata (RFC 9728), emits correct ``401`` challenges, and
-enforces scopes/audience. This module supplies the verifier: a provider-agnostic
-OIDC JWT validator (signature via the issuer's JWKS, plus issuer/audience/expiry)
-and an optional static bearer token for development.
+enforces scopes/audience. This module supplies the verifier: a shared static
+bearer token (Tier 1) and/or a provider-agnostic OIDC JWT validator (Tier 2 —
+signature via the issuer's JWKS, plus issuer/audience/expiry).
 
 Nothing here logs token contents. Auth is configured entirely from the
 environment (see ``config``) and only engages on the HTTP transport.
@@ -39,7 +39,7 @@ def _scopes_from_claims(payload: dict) -> list[str]:
 
 
 class StaticTokenVerifier(TokenVerifier):
-    """Accepts a single configured bearer token. Development use only."""
+    """Accepts a single shared bearer token (Tier 1 auth)."""
 
     def __init__(self, token: str, resource: str, scopes: tuple[str, ...]):
         self._token = token
@@ -51,11 +51,11 @@ class StaticTokenVerifier(TokenVerifier):
             return None
         return AccessToken(
             token=token,
-            client_id="dev",
+            client_id="static-token",
             scopes=self._scopes,
-            subject="dev",
+            subject="static-token",
             resource=self._resource,
-            claims={"dev": True},
+            claims={"auth": "static-token"},
         )
 
 
@@ -153,8 +153,8 @@ def build_auth(config: Config) -> tuple[TokenVerifier | None, AuthSettings | Non
 
     resource = config.resource_server_url
     verifiers: list[TokenVerifier] = []
-    if config.dev_token:
-        verifiers.append(StaticTokenVerifier(config.dev_token, resource, config.required_scopes))
+    if config.static_token:
+        verifiers.append(StaticTokenVerifier(config.static_token, resource, config.required_scopes))
     if config.oauth_issuer:
         verifiers.append(
             JwksTokenVerifier(

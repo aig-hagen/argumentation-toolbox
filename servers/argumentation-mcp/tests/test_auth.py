@@ -66,7 +66,7 @@ def _verifier(jwks_url="https://issuer.test/jwks") -> JwksTokenVerifier:
 async def test_static_token_accepts_and_rejects():
     verifier = StaticTokenVerifier("s3cret", _RESOURCE, ())
     accepted = await verifier.verify_token("s3cret")
-    assert accepted is not None and accepted.subject == "dev"
+    assert accepted is not None and accepted.subject == "static-token"
     assert accepted.resource == _RESOURCE
     assert await verifier.verify_token("wrong") is None
 
@@ -99,8 +99,8 @@ async def test_jwt_expired(rsa_key):
 
 
 async def test_composite_prefers_first_match(rsa_key):
-    verifier = CompositeTokenVerifier([StaticTokenVerifier("dev", _RESOURCE, ()), _verifier()])
-    assert (await verifier.verify_token("dev")).client_id == "dev"
+    verifier = CompositeTokenVerifier([StaticTokenVerifier("shared", _RESOURCE, ()), _verifier()])
+    assert (await verifier.verify_token("shared")).client_id == "static-token"
     assert (await verifier.verify_token(_token(rsa_key))).client_id == "client-9"
 
 
@@ -118,8 +118,8 @@ def test_build_auth_enabled_with_issuer():
     assert str(settings.resource_server_url).rstrip("/") == _RESOURCE
 
 
-def test_build_auth_dev_only_uses_resource_as_issuer():
-    cfg = Config(resource_server_url=_RESOURCE, dev_token="t")
+def test_build_auth_static_only_uses_resource_as_issuer():
+    cfg = Config(resource_server_url=_RESOURCE, static_token="t")
     verifier, settings = build_auth(cfg)
     assert verifier is not None
     assert str(settings.issuer_url).rstrip("/") == _RESOURCE

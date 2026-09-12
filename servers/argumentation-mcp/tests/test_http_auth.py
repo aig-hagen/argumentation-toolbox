@@ -9,12 +9,12 @@ from tests.conftest import answer, make_backend, make_graphgen
 _RESOURCE = "https://agon.test/mcp"
 
 
-def _app(dev_token="devtoken"):
+def _app(static_token="sharedtoken"):
     # Disable DNS-rebinding checks so TestClient's Host header is accepted.
     cfg = Config(
         dung_url="http://backend.test/dung",
         resource_server_url=_RESOURCE,
-        dev_token=dev_token,
+        static_token=static_token,
         allowed_hosts=("*",),
     )
     backend = make_backend(cfg, lambda body: answer("[]"))
@@ -48,7 +48,7 @@ def test_unauthenticated_mcp_is_challenged():
         assert "WWW-Authenticate" in resp.headers
 
 
-def test_dev_token_passes_auth():
+def test_static_token_passes_auth():
     with TestClient(_app()) as client:
         resp = client.post(
             "/mcp",
@@ -56,7 +56,7 @@ def test_dev_token_passes_auth():
             headers={
                 "Accept": "application/json, text/event-stream",
                 "Content-Type": "application/json",
-                "Authorization": "Bearer devtoken",
+                "Authorization": "Bearer sharedtoken",
             },
         )
         # Past the auth gate: anything but a 401 challenge.

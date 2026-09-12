@@ -3,10 +3,11 @@
 > Status: **IN PROGRESS**. The reasoning slice (Phase 0 + most of Phase 1) is
 > implemented under [`servers/argumentation-mcp/`](../servers/argumentation-mcp/),
 > over both stdio and Streamable HTTP, with a provider-agnostic OAuth 2.1
-> resource server on the HTTP transport (the concrete issuer is set at deploy).
-> Rendering (`render_framework`) and generation (`generate_framework`) are
-> implemented. MCP conformance/client smoke tests and deployment (Phase 3) are
-> still open. Track progress by checking off tasks in the phase sections below.
+> resource server on the HTTP transport (Tier 1 shared static token by default;
+> Tier 2 OIDC available). Rendering (`render_framework`) and generation
+> (`generate_framework`) are implemented, and the server is wired into the app
+> image/Caddy. MCP conformance and client smoke tests are the main items left.
+> Track progress by checking off tasks in the phase sections below.
 
 ## 1. Goal
 
@@ -365,7 +366,7 @@ The intended public MCP endpoint is
 - [x] Implement structured and terse framework input.
 - [x] Implement `enumerate_extensions` and `check_acceptance`.
 - [x] Return validated structured results plus text fallbacks.
-- [x] Implement production-shaped OAuth resource-server behavior for HTTP. (Provider-agnostic OIDC JWT/JWKS resource server + protected-resource metadata + 401 challenges; optional dev token. Concrete issuer set at deploy.)
+- [x] Implement production-shaped OAuth resource-server behavior for HTTP. (Two tiers: a shared static token [Tier 1, the chosen default] and a provider-agnostic OIDC JWT/JWKS resource server [Tier 2]; both with protected-resource metadata + 401 challenges.)
 - [ ] Pass MCP conformance tests for `2026-07-28` and `2025-11-25`.
 - [ ] Smoke-test with Claude Code, a Claude remote connector, Codex, and Cursor.
 
@@ -379,7 +380,7 @@ The intended public MCP endpoint is
 
 ### Phase 3 — Deployment and release
 
-- [ ] Select and configure the production OAuth/OIDC provider. (Wired as `MCP_OAUTH_ISSUER`; value still to be chosen. Until set, the `/mcp` process stays disabled.)
+- [x] Select the production authorization approach. (Chose Tier 1: a shared static token via `MCP_STATIC_TOKEN`. Tier 2 OIDC remains available by setting `MCP_OAUTH_ISSUER` instead; the `/mcp` process stays disabled until one is set.)
 - [x] Add the MCP process and Graphviz to the existing image/startup supervision.
 - [x] Add Caddy MCP and OAuth metadata routes.
 - [x] Enforce the configured timeout and request-size limit. (Service-level limits + Caddy `request_body`.)
@@ -404,4 +405,6 @@ Before release:
 No decision below blocks implementation of the local reasoning MVP:
 
 - Final public display/package name, before the first release.
-- Production OAuth/OIDC provider, before deployment.
+- ~~Production OAuth/OIDC provider~~ — **resolved**: use Tier 1, a shared static
+  token (`MCP_STATIC_TOKEN`). Tier 2 OIDC stays available if a per-user login need
+  arises later; choosing a concrete issuer is deferred until then.
