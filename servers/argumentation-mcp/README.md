@@ -122,6 +122,32 @@ requests with a `401` + `WWW-Authenticate` challenge. Both tiers can be enabled
 at once (a valid static token *or* a valid JWT is accepted); `REQUIRED_SCOPES`
 tightens Tier 2.
 
+## Connecting a client
+
+**Claude Code (stdio, local):**
+
+```sh
+pip install -e .   # exposes the `argumentation-mcp` entry point
+claude mcp add argumentation \
+  --env ARGUMENTATION_MCP_DUNG_URL=https://agonproject.aig.fernuni-hagen.de/dung \
+  -- "$(pwd)/.venv/bin/argumentation-mcp"
+```
+
+**Any stdio client** (Cursor, Codex, MCP Inspector): run the command
+`python -m argumentation_mcp` with `ARGUMENTATION_MCP_DUNG_URL` set. stdio needs
+no token.
+
+**Remote HTTP:** point the client at `https://<host>/mcp` and send the shared
+token as `Authorization: Bearer <token>` (Tier 1), or complete the OAuth flow the
+protected-resource metadata advertises (Tier 2).
+
+**Quick check without any client** — talk to the server over stdio and print
+results (uses the SDK in the venv, no Node):
+
+```sh
+python smoke.py
+```
+
 ## Deployment
 
 The server ships inside the main AgonProject image as an extra process (see the

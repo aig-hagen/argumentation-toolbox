@@ -386,8 +386,9 @@ The intended public MCP endpoint is
 - [x] Enforce the configured timeout and request-size limit. (Service-level limits + Caddy `request_body`.)
 - [x] Add health checks and redacted logs. (`/healthz`, `/readyz`; logs never include frameworks or tokens.)
 - [ ] Verify the public endpoint from Claude, Codex, and Cursor.
-- [ ] Publish setup examples, tool examples, schemas, errors, and the tested compatibility
-      matrix.
+- [x] Publish setup examples, tool examples, schemas, and errors. (Package README:
+      running, auth tiers, connecting a client, `smoke.py`.) Compatibility matrix
+      pending live client verification.
 
 ## 15. Release acceptance
 
