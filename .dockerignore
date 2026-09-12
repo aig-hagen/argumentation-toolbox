@@ -8,6 +8,8 @@
 !/dist
 !/servers/graph-gen/requirements.txt
 !/servers/graph-gen/server.py
+!/servers/argumentation-mcp/requirements.txt
+!/servers/argumentation-mcp/argumentation_mcp/**
 !/servers/share/package.json
 !/servers/share/package-lock.json
 !/servers/share/tsconfig.json

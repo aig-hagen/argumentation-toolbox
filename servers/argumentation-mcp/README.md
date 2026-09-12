@@ -118,6 +118,25 @@ is a provider-agnostic OAuth 2.1 resource server:
 
 stdio needs no auth (the transport is local).
 
+## Deployment
+
+The server ships inside the main AgonProject image as an extra process (see the
+[`Dockerfile`](../../Dockerfile), [`wrapper_script.sh`](../../deployment/wrapper_script.sh),
+and [`Caddyfile`](../../deployment/Caddyfile)):
+
+- runs `python -m argumentation_mcp http` on `127.0.0.1:8083`;
+- Caddy proxies `/mcp` and `/.well-known/oauth-protected-resource*` to it;
+- reasoning goes to `localhost:8081/dung`, generation to `localhost:8082`,
+  rendering to the bundled Graphviz.
+
+Deploy-time configuration is passed via `MCP_*` container env (mapped to
+`ARGUMENTATION_MCP_*` in the wrapper): `MCP_OAUTH_ISSUER`, `MCP_OAUTH_AUDIENCE`,
+`MCP_REQUIRED_SCOPES`, `MCP_RESOURCE_SERVER_URL`, `MCP_DEV_TOKEN`, `MCP_ALLOWED_HOSTS`.
+
+> **The `/mcp` endpoint stays disabled until `MCP_OAUTH_ISSUER` (or `MCP_DEV_TOKEN`)
+> is set** — an unauthenticated public endpoint is never started. Choosing the
+> production OIDC issuer is the one remaining decision before go-live.
+
 ## Tests
 
 ```sh

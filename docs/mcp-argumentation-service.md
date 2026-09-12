@@ -379,11 +379,11 @@ The intended public MCP endpoint is
 
 ### Phase 3 — Deployment and release
 
-- [ ] Select and configure the production OAuth/OIDC provider.
-- [ ] Add the MCP process and Graphviz to the existing image/startup supervision.
-- [ ] Add Caddy MCP and OAuth metadata routes.
-- [ ] Enforce the configured timeout and request-size limit.
-- [ ] Add health checks and redacted logs.
+- [ ] Select and configure the production OAuth/OIDC provider. (Wired as `MCP_OAUTH_ISSUER`; value still to be chosen. Until set, the `/mcp` process stays disabled.)
+- [x] Add the MCP process and Graphviz to the existing image/startup supervision.
+- [x] Add Caddy MCP and OAuth metadata routes.
+- [x] Enforce the configured timeout and request-size limit. (Service-level limits + Caddy `request_body`.)
+- [x] Add health checks and redacted logs. (`/healthz`, `/readyz`; logs never include frameworks or tokens.)
 - [ ] Verify the public endpoint from Claude, Codex, and Cursor.
 - [ ] Publish setup examples, tool examples, schemas, errors, and the tested compatibility
       matrix.

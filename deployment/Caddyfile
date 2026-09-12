@@ -85,6 +85,27 @@ http://:8080 {
 		reverse_proxy http://localhost:8001
 	}
 
+	# Argumentation MCP server (Streamable HTTP). The MCP server enforces OAuth
+	# and its own request-size/timeout limits; Caddy adds a per-IP rate limit.
+	# Returns 502 while the MCP process is disabled (no issuer/dev token set).
+	@mcp path /mcp /mcp/*
+	handle @mcp {
+		rate_limit {
+			zone mcp {
+				key {remote_host}
+				events 60
+				window 1m
+			}
+		}
+		reverse_proxy http://localhost:8083
+	}
+
+	# OAuth 2.0 protected-resource metadata (RFC 9728), served by the MCP process.
+	@oauth_metadata path /.well-known/oauth-protected-resource /.well-known/oauth-protected-resource/*
+	handle @oauth_metadata {
+		reverse_proxy http://localhost:8083
+	}
+
 	# Content-hashed build assets (Vite emits a hash in every filename) never
 	# change once deployed, so they can be cached indefinitely.
 	@assets path /assets/*

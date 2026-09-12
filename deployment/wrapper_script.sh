@@ -15,7 +15,28 @@ PORT=8001 DB_PATH=/opt/share-server/data/shares.db \
   STATS_TOKEN="${STATS_TOKEN:-}" \
   node /opt/share-server/node_modules/.bin/tsx /opt/share-server/src/index.ts &
 
-# Start the fourth process
+# Start the argumentation MCP server, but only when it can authenticate requests:
+# without an OIDC issuer or a dev token the /mcp endpoint would be unauthenticated,
+# so it stays disabled (Caddy then returns 502 for /mcp) until one is configured.
+if [ -n "${MCP_OAUTH_ISSUER:-}" ] || [ -n "${MCP_DEV_TOKEN:-}" ]; then
+  PYTHONPATH=/opt/argumentation-mcp-server \
+    ARGUMENTATION_MCP_TRANSPORT=http \
+    ARGUMENTATION_MCP_HTTP_HOST=127.0.0.1 \
+    ARGUMENTATION_MCP_HTTP_PORT=8083 \
+    ARGUMENTATION_MCP_DUNG_URL=http://localhost:8081/dung \
+    ARGUMENTATION_MCP_GRAPH_GEN_URL=http://localhost:8082 \
+    ARGUMENTATION_MCP_RESOURCE_SERVER_URL="${MCP_RESOURCE_SERVER_URL:-https://agonproject.aig.fernuni-hagen.de/mcp}" \
+    ARGUMENTATION_MCP_OAUTH_ISSUER="${MCP_OAUTH_ISSUER:-}" \
+    ARGUMENTATION_MCP_OAUTH_AUDIENCE="${MCP_OAUTH_AUDIENCE:-}" \
+    ARGUMENTATION_MCP_REQUIRED_SCOPES="${MCP_REQUIRED_SCOPES:-}" \
+    ARGUMENTATION_MCP_DEV_TOKEN="${MCP_DEV_TOKEN:-}" \
+    ARGUMENTATION_MCP_ALLOWED_HOSTS="${MCP_ALLOWED_HOSTS:-*}" \
+    /opt/argumentation-mcp-venv/bin/python -m argumentation_mcp &
+else
+  echo "argumentation-mcp: no MCP_OAUTH_ISSUER or MCP_DEV_TOKEN set; /mcp endpoint disabled" >&2
+fi
+
+# Start the last process
 ./caddy run --config ./Caddyfile &
 
 # Wait for any process to exit

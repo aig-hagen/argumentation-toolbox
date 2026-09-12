@@ -8,6 +8,14 @@ services:
       ALLOWED_ORIGIN: https://agonproject.aig.fernuni-hagen.de
       # Token guarding GET /stats. Leave unset to keep the stats readout disabled.
       STATS_TOKEN: ${STATS_TOKEN:-}
+      # Argumentation MCP server. The /mcp endpoint stays disabled until either an
+      # OIDC issuer (production) or a dev token is set — see servers/argumentation-mcp.
+      MCP_OAUTH_ISSUER: ${MCP_OAUTH_ISSUER:-}
+      MCP_OAUTH_AUDIENCE: ${MCP_OAUTH_AUDIENCE:-}
+      MCP_REQUIRED_SCOPES: ${MCP_REQUIRED_SCOPES:-}
+      MCP_RESOURCE_SERVER_URL: ${MCP_RESOURCE_SERVER_URL:-https://agonproject.aig.fernuni-hagen.de/mcp}
+      MCP_DEV_TOKEN: ${MCP_DEV_TOKEN:-}
+      MCP_ALLOWED_HOSTS: ${MCP_ALLOWED_HOSTS:-*}
     volumes:
       - shares_data:/opt/share-server/data
     restart: unless-stopped
