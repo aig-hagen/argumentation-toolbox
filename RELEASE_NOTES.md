@@ -1,6 +1,8 @@
 ## Changes
 
-- **Clearer argumentation MCP tool descriptions:** the server instructions and the
-  `enumerate_extensions` / `check_acceptance` descriptions now spell out that the solver's
-  output is sound and complete, so results do not need to be sanity-checked by hand, and
-  reword the guidance toward using the tools over manual reasoning.
+- **Better search-engine presence:** enriched the page metadata (title, description,
+  Open Graph / Twitter tags with absolute image URLs, a canonical link, and JSON-LD
+  structured data) so search results describe AgonProject accurately instead of scraping
+  stray UI text.
+- **Crawling support:** added `robots.txt` and a `sitemap.xml`, plus a Google Search
+  Console verification file so the site's search listing can be managed and refreshed.
