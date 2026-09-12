@@ -1,0 +1,6 @@
+# Runtime dependencies. Pinned for reproducible builds (see the Dockerfile).
+mcp==2.2.0
+httpx==0.28.1
+pydantic==2.13.5
+PyJWT[crypto]==2.14.0
+cryptography==50.0.1

@@ -1,0 +1,26 @@
+[project]
+name = "argumentation-mcp"
+version = "0.1.0"
+description = "Abstract argumentation reasoning as MCP tools, backed by TweetyProject /dung."
+requires-python = ">=3.11"
+dependencies = [
+    "mcp==2.2.0",
+    "httpx==0.28.1",
+    "pydantic==2.13.5",
+    "PyJWT[crypto]==2.14.0",
+    "cryptography==50.0.1",
+]
+
+[project.scripts]
+argumentation-mcp = "argumentation_mcp.server:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["argumentation_mcp*"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]

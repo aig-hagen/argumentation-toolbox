@@ -21,7 +21,7 @@ RUN xcaddy build \
 # runtime
 FROM --platform=linux/amd64 eclipse-temurin:25-jre
 WORKDIR /opt/app
-RUN apt-get update && apt-get install -y --no-install-recommends libstdc++6 python3 python3-pip python3-venv curl && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends libstdc++6 python3 python3-pip python3-venv curl graphviz && rm -rf /var/lib/apt/lists/*
 # Install Node.js 24 (node:sqlite is stable in v24, no experimental flag needed)
 RUN curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \
     && apt-get install -y --no-install-recommends nodejs \
@@ -42,6 +42,11 @@ RUN python3 -m venv /opt/graph-gen-venv
 COPY /servers/graph-gen/requirements.txt /opt/graph-gen-server/requirements.txt
 RUN /opt/graph-gen-venv/bin/pip install --no-cache-dir -r /opt/graph-gen-server/requirements.txt
 COPY /servers/graph-gen/server.py /opt/graph-gen-server/server.py
+# Prepare argumentation-mcp server
+RUN python3 -m venv /opt/argumentation-mcp-venv
+COPY /servers/argumentation-mcp/requirements.txt /opt/argumentation-mcp-server/requirements.txt
+RUN /opt/argumentation-mcp-venv/bin/pip install --no-cache-dir -r /opt/argumentation-mcp-server/requirements.txt
+COPY /servers/argumentation-mcp/argumentation_mcp /opt/argumentation-mcp-server/argumentation_mcp
 # Prepare share-server
 COPY /servers/share/package.json /opt/share-server/package.json
 COPY /servers/share/package-lock.json /opt/share-server/package-lock.json
