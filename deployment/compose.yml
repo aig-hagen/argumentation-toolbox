@@ -8,9 +8,11 @@ services:
       ALLOWED_ORIGIN: https://agonproject.aig.fernuni-hagen.de
       # Token guarding GET /stats. Leave unset to keep the stats readout disabled.
       STATS_TOKEN: ${STATS_TOKEN:-}
-      # Argumentation MCP server. The /mcp endpoint stays disabled until a
-      # credential is set: a shared static token (Tier 1) or an OIDC issuer
-      # (Tier 2). See servers/argumentation-mcp.
+      # Argumentation MCP server. The /mcp endpoint is public and unauthenticated
+      # by default (read-only compute over the public /dung backend, rate-limited
+      # by Caddy). To re-enable auth without a code change, set a credential: a
+      # shared static token (Tier 1) or an OIDC issuer (Tier 2). See
+      # servers/argumentation-mcp.
       MCP_STATIC_TOKEN: ${MCP_STATIC_TOKEN:-}
       MCP_OAUTH_ISSUER: ${MCP_OAUTH_ISSUER:-}
       MCP_OAUTH_AUDIENCE: ${MCP_OAUTH_AUDIENCE:-}
