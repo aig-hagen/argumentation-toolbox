@@ -13,21 +13,6 @@
       "Read(package-lock.json)",
       "Read(.env)",
       "Read(.env.*)"
-    ],
-    "allow": [
-      "Bash(grep -v \"\\\\.map$\")",
-      "Read(//home/lars/GitHub/aig_graph_component/**)",
-      "Bash(npm link *)",
-      "Read(//home/lars/GitHub/aig_graph_component/src/model/**)",
-      "Read(//home/lars/GitHub/aig_graph_component/src/**)",
-      "Bash(grep -n \"function setColor\\\\|function createNode\\\\|function createNodePublic\\\\|defineExpose\\(\\\\|defineEmits<\\\\|function _appendNodeShapeAndLabel\\\\|function _parseToGraph\\\\|function setNodeShape\\\\b\\\\|nodeIdCounter\\\\|import.*graph-node\\\\|import.*from '@/model\" /home/lars/GitHub/aig_graph_component/src/components/GraphComponent.vue)",
-      "Read(//home/lars/GitHub/aig_graph_component/src/components/**)",
-      "Bash(npx vitest *)",
-      "Read(//home/lars/GitHub/aig_graph_component/src/d3/**)",
-      "Bash(grep -n \"function initData\\\\|nodeSelection = \\\\|linkSelection = \\\\|hyperLinkSelection = \\\\|function restart\\\\|function onZoom\\\\|canvas!.attr\" /home/lars/GitHub/aig_graph_component/src/components/GraphComponent.vue)",
-      "Bash(xargs ls -la)",
-      "Bash(xargs ls)",
-      "Bash(npx vue-tsc *)"
     ]
   }
 }
