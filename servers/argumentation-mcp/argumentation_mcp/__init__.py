@@ -7,7 +7,7 @@ argumentation reasoning (via the TweetyProject ``/dung`` backend) as MCP tools.
 from __future__ import annotations
 
 # Domain contract version. Bump the major only on a breaking change to the
-# framework/result/error shapes (see docs/mcp-argumentation-service.md).
+# framework/result/error shapes.
 SCHEMA_VERSION = "1"
 
 # Server implementation version, independent of the schema version.

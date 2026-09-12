@@ -3,8 +3,8 @@
 The MCP endpoint lives at ``/mcp``; ``/healthz`` (liveness) and ``/readyz``
 (readiness, including a backend probe) support container orchestration. Requests
 are stateless by default while the SDK retains compatibility with legacy
-initialized clients. HTTPS and authorization terminate at the reverse proxy
-(see docs §11/§13); this process binds to localhost.
+initialized clients. HTTPS and authorization terminate at the reverse proxy;
+this process binds to localhost.
 """
 
 from __future__ import annotations

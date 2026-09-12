@@ -5,9 +5,6 @@ abstract argumentation reasoning as typed, agent-friendly tools. Reasoning is
 delegated to the existing TweetyProject [`/dung`](../../deployment/Caddyfile)
 web service — this server is a stateless, transport-independent adapter around it.
 
-For the full design, contracts, and delivery phases, see
-[`docs/mcp-argumentation-service.md`](../../docs/mcp-argumentation-service.md).
-
 ## Tools
 
 | Tool | Purpose |
@@ -179,5 +176,5 @@ pytest
 The suite covers the text grammar, the framework contract, the semantics catalog,
 the Dung adapter (payload construction, response parsing, timeout/malformed/
 unavailable handling — via a mocked backend), the service layer, and the MCP tool
-wiring. Live integration against the deployed TweetyProject image is tracked in
-the plan doc and not part of this suite.
+wiring, and an end-to-end MCP session over in-memory streams. Live integration
+against the deployed TweetyProject image is not part of this suite.

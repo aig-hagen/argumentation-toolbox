@@ -12,14 +12,14 @@ from dataclasses import dataclass
 
 _ENV_PREFIX = "ARGUMENTATION_MCP_"
 
-# Kept deliberately small (see docs/mcp-argumentation-service.md §12).
+# Kept deliberately small: one timeout and one request-size limit.
 _DEFAULT_DUNG_URL = "http://localhost:8081/dung"
 _DEFAULT_GRAPH_GEN_URL = "http://localhost:8082"
 _DEFAULT_TIMEOUT_SECONDS = 30
 _DEFAULT_MAX_REQUEST_BYTES = 1_048_576  # 1 MB, mirroring the Caddy limit
 _DEFAULT_CALLER_ID = "argumentation-mcp"
 _DEFAULT_HTTP_HOST = "127.0.0.1"
-_DEFAULT_HTTP_PORT = 8083  # behind Caddy, which proxies /mcp (see docs §13)
+_DEFAULT_HTTP_PORT = 8083  # behind Caddy, which proxies /mcp
 
 
 @dataclass(frozen=True)
