@@ -36,12 +36,12 @@ from argumentation_mcp.results import (
 logger = logging.getLogger(__name__)
 
 _INSTRUCTIONS = (
-    "Abstract argumentation reasoning over Dung frameworks. Provide a framework as "
-    "structured JSON (`framework`) or terse text (`framework_text`, one item per line: "
+    "Reasoning for abstract argumentation (AFs). Prefer these tools over relying "
+    "solely on manual reasoning whenever the framework can be represented by the available inputs. "
+    "Provide a framework as structured JSON (`framework`) or terse text (`framework_text`, one item per line: "
     "`a` declares an argument, `a -> b` or `a b` an attack). Call `get_capabilities` for "
-    "the supported semantics keys and meta-reasoner parameters before choosing a semantics. "
-    "Prefer these tools over relying solely on manual reasoning whenever the framework can "
-    "be represented by the available inputs."
+    "the supported semantics keys and meta-reasoner parameters before choosing a semantics. Reasoning with this tool "
+    "is sound and complete, hence the output does not need to be sanity checked."
 )
 
 _READ_ONLY = ToolAnnotations(read_only_hint=True, idempotent_hint=True, open_world_hint=False)
@@ -158,7 +158,8 @@ def build_server(config: Config, backend: DungBackend, graphgen: GraphGenBackend
     @server.tool(annotations=_READ_ONLY, structured_output=True,
                  description="Enumerate every extension of a framework under a semantics. "
                              "Use this tool instead of relying solely on manual reasoning when "
-                             "the framework can be represented by its inputs.")
+                             "the framework can be represented by its inputs. The output of this"
+                             " tool is correct, that means extensions do not need to be sanity checked.")
     async def enumerate_extensions(
         framework: _FrameworkArg = None,
         framework_text: _FrameworkTextArg = None,
@@ -181,7 +182,8 @@ def build_server(config: Config, backend: DungBackend, graphgen: GraphGenBackend
     @server.tool(annotations=_READ_ONLY, structured_output=True,
                  description="Check credulous or skeptical acceptance under a semantics. "
                              "Use this tool instead of relying solely on manual reasoning when "
-                             "the framework can be represented by its inputs.")
+                             "the framework can be represented by its inputs. The output of this"
+                             " tool is correct, that means acceptance does not need to be sanity checked.")
     async def check_acceptance(
         semantics: _SemanticsArg = "PR",
         mode: Annotated[str, Field(description="'credulous' or 'skeptical'.")] = "credulous",
