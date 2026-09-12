@@ -9,6 +9,8 @@ from __future__ import annotations
 
 import json
 import logging
+import os
+import sys
 from typing import Annotated
 
 from mcp.server.mcpserver import MCPServer
@@ -171,12 +173,35 @@ async def _run_stdio() -> None:
         await backend.aclose()
 
 
+async def _run_http() -> None:
+    from argumentation_mcp.http import register_health_routes, run_streamable_http
+
+    config = load_config()
+    backend = DungBackend(config)
+    server = build_server(config, backend)
+    register_health_routes(server, backend)
+    try:
+        await run_streamable_http(config, server)
+    finally:
+        await backend.aclose()
+
+
+def _selected_transport() -> str:
+    if len(sys.argv) > 1:
+        return sys.argv[1].lower()
+    return os.environ.get("ARGUMENTATION_MCP_TRANSPORT", "stdio").lower()
+
+
 def main() -> None:
     # Logs go to stderr so stdout carries only MCP frames.
     logging.basicConfig(level=logging.INFO)
     import anyio
 
-    anyio.run(_run_stdio)
+    transport = _selected_transport()
+    if transport in ("http", "streamable-http"):
+        anyio.run(_run_http)
+    else:
+        anyio.run(_run_stdio)
 
 
 if __name__ == "__main__":

@@ -18,6 +18,8 @@ _DEFAULT_GRAPH_GEN_URL = "http://localhost:8082"
 _DEFAULT_TIMEOUT_SECONDS = 30
 _DEFAULT_MAX_REQUEST_BYTES = 1_048_576  # 1 MB, mirroring the Caddy limit
 _DEFAULT_CALLER_ID = "argumentation-mcp"
+_DEFAULT_HTTP_HOST = "127.0.0.1"
+_DEFAULT_HTTP_PORT = 8083  # behind Caddy, which proxies /mcp (see docs §13)
 
 
 @dataclass(frozen=True)
@@ -28,6 +30,14 @@ class Config:
     max_request_bytes: int = _DEFAULT_MAX_REQUEST_BYTES
     # Identifier sent to the backend as its required caller field.
     caller_id: str = _DEFAULT_CALLER_ID
+    # Streamable HTTP transport.
+    http_host: str = _DEFAULT_HTTP_HOST
+    http_port: int = _DEFAULT_HTTP_PORT
+    stateless_http: bool = True
+    # DNS-rebinding protection. Empty tuples fall back to the SDK's localhost
+    # defaults; "*" disables protection (rely on the reverse proxy instead).
+    allowed_hosts: tuple[str, ...] = ()
+    allowed_origins: tuple[str, ...] = ()
 
 
 def _env(name: str, default: str) -> str:
@@ -45,6 +55,20 @@ def _env_int(name: str, default: int) -> int:
     return value if value > 0 else default
 
 
+def _env_bool(name: str, default: bool) -> bool:
+    raw = os.environ.get(_ENV_PREFIX + name)
+    if raw is None or raw.strip() == "":
+        return default
+    return raw.strip().lower() in ("1", "true", "yes", "on")
+
+
+def _env_list(name: str) -> tuple[str, ...]:
+    raw = os.environ.get(_ENV_PREFIX + name)
+    if raw is None:
+        return ()
+    return tuple(item.strip() for item in raw.split(",") if item.strip())
+
+
 def load_config() -> Config:
     return Config(
         dung_url=_env("DUNG_URL", _DEFAULT_DUNG_URL),
@@ -52,4 +76,9 @@ def load_config() -> Config:
         timeout_seconds=_env_int("TIMEOUT_SECONDS", _DEFAULT_TIMEOUT_SECONDS),
         max_request_bytes=_env_int("MAX_REQUEST_BYTES", _DEFAULT_MAX_REQUEST_BYTES),
         caller_id=_env("CALLER_ID", _DEFAULT_CALLER_ID),
+        http_host=_env("HTTP_HOST", _DEFAULT_HTTP_HOST),
+        http_port=_env_int("HTTP_PORT", _DEFAULT_HTTP_PORT),
+        stateless_http=_env_bool("STATELESS", True),
+        allowed_hosts=_env_list("ALLOWED_HOSTS"),
+        allowed_origins=_env_list("ALLOWED_ORIGINS"),
     )

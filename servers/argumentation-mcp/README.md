@@ -52,8 +52,14 @@ Environment variables (all optional; defaults suit a local backend):
 | `ARGUMENTATION_MCP_DUNG_URL` | `http://localhost:8081/dung` | Reasoning backend URL |
 | `ARGUMENTATION_MCP_GRAPH_GEN_URL` | `http://localhost:8082` | Generation backend URL (Phase 2) |
 | `ARGUMENTATION_MCP_TIMEOUT_SECONDS` | `30` | Reasoning/generation timeout |
-| `ARGUMENTATION_MCP_MAX_REQUEST_BYTES` | `1048576` | Max framework input size |
+| `ARGUMENTATION_MCP_MAX_REQUEST_BYTES` | `1048576` | Max framework input size / HTTP body |
 | `ARGUMENTATION_MCP_CALLER_ID` | `argumentation-mcp` | Identifier sent to the backend |
+| `ARGUMENTATION_MCP_TRANSPORT` | `stdio` | `stdio` or `http` (overridden by a CLI arg) |
+| `ARGUMENTATION_MCP_HTTP_HOST` | `127.0.0.1` | HTTP bind host |
+| `ARGUMENTATION_MCP_HTTP_PORT` | `8083` | HTTP bind port |
+| `ARGUMENTATION_MCP_STATELESS` | `true` | Stateless Streamable HTTP |
+| `ARGUMENTATION_MCP_ALLOWED_HOSTS` | *(SDK localhost)* | Comma list for Host checks; `*` disables (trust proxy) |
+| `ARGUMENTATION_MCP_ALLOWED_ORIGINS` | *(SDK localhost)* | Comma list for Origin checks |
 
 ## Running (stdio)
 
@@ -67,6 +73,19 @@ python -m argumentation_mcp
 The server speaks MCP over stdio (stdout is MCP frames only; logs go to stderr).
 Point an MCP host (Claude Code, MCP Inspector, …) at `python -m argumentation_mcp`
 with a reachable `ARGUMENTATION_MCP_DUNG_URL`.
+
+## Running (Streamable HTTP)
+
+```sh
+python -m argumentation_mcp http
+```
+
+Serves the MCP endpoint at `/mcp` plus `/healthz` (liveness) and `/readyz`
+(readiness, including a backend probe), binding to
+`ARGUMENTATION_MCP_HTTP_HOST:PORT` (default `127.0.0.1:8083`). Both transports
+are built from the same core, so tool names, schemas, and results are identical.
+HTTPS and authorization are expected to terminate at a reverse proxy; OAuth is a
+later phase.
 
 ## Tests
 

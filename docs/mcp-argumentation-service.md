@@ -1,10 +1,10 @@
 # Implementation Plan — Abstract Argumentation MCP Service
 
-> Status: **IN PROGRESS**. The local reasoning slice (Phase 0 + most of Phase 1,
-> stdio transport only) is implemented under
-> [`servers/argumentation-mcp/`](../servers/argumentation-mcp/). Streamable HTTP,
-> OAuth, rendering, generation, and deployment are still open. Track progress by
-> checking off tasks in the phase sections below.
+> Status: **IN PROGRESS**. The reasoning slice (Phase 0 + most of Phase 1) is
+> implemented under [`servers/argumentation-mcp/`](../servers/argumentation-mcp/),
+> over both stdio and Streamable HTTP. OAuth, MCP conformance/client smoke tests,
+> rendering, generation, and deployment are still open. Track progress by checking
+> off tasks in the phase sections below.
 
 ## 1. Goal
 
@@ -358,7 +358,7 @@ The intended public MCP endpoint is
 ### Phase 1 — Cross-client reasoning slice
 
 - [x] Scaffold the transport-independent Python service.
-- [ ] Expose stdio and Streamable HTTP from the same core. (stdio done; HTTP pending.)
+- [x] Expose stdio and Streamable HTTP from the same core. (HTTP at `/mcp`, stateless, with `/healthz` + `/readyz`.)
 - [x] Implement `get_capabilities`.
 - [x] Implement structured and terse framework input.
 - [x] Implement `enumerate_extensions` and `check_acceptance`.
