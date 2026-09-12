@@ -1,8 +1,7 @@
 ## Changes
 
-- **Localization (i18n):** the whole UI is now available in English and German. English is
-  the default; German can be enabled from settings.
-- **Abstract argumentation MCP service:** a new service (under `servers/`) exposes AgonProject's
-  abstract argumentation solver over the Model Context Protocol (MCP), so external tools and AI
-  assistants can compute extensions and acceptance directly.
-- Bumped `js-yaml` and `qs` to patch denial-of-service (DoS) advisories.
+- **Faster page loads:** TikZJax (the in-browser LaTeX/TikZ renderer) now loads on demand
+  instead of on every page load, so visits that never render TikZ no longer pay for it.
+- **Public MCP endpoint:** the abstract argumentation MCP service now runs unauthenticated by
+  default — it is read-only computation over the already-public solver, throttled by a per-IP
+  rate limit. Authentication can be re-enabled via configuration without a code change.
