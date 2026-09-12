@@ -1,8 +1,6 @@
 ## Changes
 
-- **MCP `render_framework` temporarily disabled:** the PNG-rendering tool is now behind a
-  feature flag (off by default), so it no longer appears in the argumentation MCP tool list.
-  It can be re-enabled via configuration without a code change.
-- **Stronger nudge toward the solver:** the `enumerate_extensions` and `check_acceptance`
-  tool descriptions (and the server instructions) now explicitly steer clients to use the
-  tools instead of reasoning about a framework by hand whenever it can be expressed as input.
+- **Clearer argumentation MCP tool descriptions:** the server instructions and the
+  `enumerate_extensions` / `check_acceptance` descriptions now spell out that the solver's
+  output is sound and complete, so results do not need to be sanity-checked by hand, and
+  reword the guidance toward using the tools over manual reasoning.
