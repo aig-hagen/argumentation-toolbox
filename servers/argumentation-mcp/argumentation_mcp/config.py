@@ -38,6 +38,22 @@ class Config:
     # defaults; "*" disables protection (rely on the reverse proxy instead).
     allowed_hosts: tuple[str, ...] = ()
     allowed_origins: tuple[str, ...] = ()
+    # OAuth 2.1 resource-server settings. Auth turns on only when this server has
+    # a public URL (resource_server_url) and at least one credential source
+    # (an OIDC issuer or a dev token). See auth.py.
+    resource_server_url: str = ""
+    oauth_issuer: str = ""
+    oauth_audience: str = ""  # defaults to resource_server_url
+    oauth_jwks_url: str = ""  # optional; else discovered from the issuer
+    oauth_algorithms: tuple[str, ...] = ("RS256", "ES256")
+    required_scopes: tuple[str, ...] = ()
+    dev_token: str = ""  # static bearer for development / manual clients
+
+    def auth_enabled(self) -> bool:
+        return bool(self.resource_server_url) and bool(self.oauth_issuer or self.dev_token)
+
+    def audience(self) -> str:
+        return self.oauth_audience or self.resource_server_url
 
 
 def _env(name: str, default: str) -> str:
@@ -81,4 +97,11 @@ def load_config() -> Config:
         stateless_http=_env_bool("STATELESS", True),
         allowed_hosts=_env_list("ALLOWED_HOSTS"),
         allowed_origins=_env_list("ALLOWED_ORIGINS"),
+        resource_server_url=_env("RESOURCE_SERVER_URL", ""),
+        oauth_issuer=_env("OAUTH_ISSUER", ""),
+        oauth_audience=_env("OAUTH_AUDIENCE", ""),
+        oauth_jwks_url=_env("OAUTH_JWKS_URL", ""),
+        oauth_algorithms=_env_list("OAUTH_ALGORITHMS") or ("RS256", "ES256"),
+        required_scopes=_env_list("REQUIRED_SCOPES"),
+        dev_token=_env("DEV_TOKEN", ""),
     )

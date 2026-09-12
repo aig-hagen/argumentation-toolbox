@@ -60,6 +60,13 @@ Environment variables (all optional; defaults suit a local backend):
 | `ARGUMENTATION_MCP_STATELESS` | `true` | Stateless Streamable HTTP |
 | `ARGUMENTATION_MCP_ALLOWED_HOSTS` | *(SDK localhost)* | Comma list for Host checks; `*` disables (trust proxy) |
 | `ARGUMENTATION_MCP_ALLOWED_ORIGINS` | *(SDK localhost)* | Comma list for Origin checks |
+| `ARGUMENTATION_MCP_RESOURCE_SERVER_URL` | *(unset)* | Public MCP URL; **required to enable auth** |
+| `ARGUMENTATION_MCP_OAUTH_ISSUER` | *(unset)* | OIDC issuer (authorization server) URL |
+| `ARGUMENTATION_MCP_OAUTH_AUDIENCE` | *(= resource URL)* | Expected token audience |
+| `ARGUMENTATION_MCP_OAUTH_JWKS_URL` | *(discovered)* | JWKS endpoint; else found via issuer discovery |
+| `ARGUMENTATION_MCP_OAUTH_ALGORITHMS` | `RS256,ES256` | Accepted JWT signing algorithms |
+| `ARGUMENTATION_MCP_REQUIRED_SCOPES` | *(none)* | Comma list of scopes a token must carry |
+| `ARGUMENTATION_MCP_DEV_TOKEN` | *(unset)* | Static bearer token for development |
 
 ## Running (stdio)
 
@@ -84,8 +91,26 @@ Serves the MCP endpoint at `/mcp` plus `/healthz` (liveness) and `/readyz`
 (readiness, including a backend probe), binding to
 `ARGUMENTATION_MCP_HTTP_HOST:PORT` (default `127.0.0.1:8083`). Both transports
 are built from the same core, so tool names, schemas, and results are identical.
-HTTPS and authorization are expected to terminate at a reverse proxy; OAuth is a
-later phase.
+HTTPS terminates at a reverse proxy.
+
+## Authorization (OAuth 2.1 resource server)
+
+Auth is **off** until `RESOURCE_SERVER_URL` is set together with at least one
+credential source (`OAUTH_ISSUER` or `DEV_TOKEN`). When enabled, the HTTP server
+is a provider-agnostic OAuth 2.1 resource server:
+
+- **Protected-resource metadata** (RFC 9728) is served at
+  `/.well-known/oauth-protected-resource/mcp`, pointing at the configured issuer.
+- Unauthenticated `/mcp` requests get a `401` with a `WWW-Authenticate` challenge.
+- Bearer tokens are validated as **OIDC JWTs**: signature via the issuer's JWKS
+  (discovered from `OAUTH_ISSUER`, or set `OAUTH_JWKS_URL`), plus issuer, audience,
+  and expiry. A valid, audience-matched token is accepted; `REQUIRED_SCOPES` can
+  tighten this. Set the concrete issuer at deploy time — no provider is hardcoded.
+- `DEV_TOKEN` enables a static bearer token for local testing / manual clients
+  (e.g. MCP Inspector). It is **not** the production contract; leave it unset in
+  production.
+
+stdio needs no auth (the transport is local).
 
 ## Tests
 

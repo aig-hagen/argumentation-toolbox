@@ -99,7 +99,16 @@ def _format_capabilities(result: CapabilitiesResult) -> str:
 
 
 def build_server(config: Config, backend: DungBackend) -> MCPServer:
-    server = MCPServer(name=SERVER_NAME, version=SERVICE_VERSION, instructions=_INSTRUCTIONS)
+    from argumentation_mcp.auth import build_auth
+
+    token_verifier, auth_settings = build_auth(config)
+    server = MCPServer(
+        name=SERVER_NAME,
+        version=SERVICE_VERSION,
+        instructions=_INSTRUCTIONS,
+        token_verifier=token_verifier,
+        auth=auth_settings,
+    )
 
     @server.tool(annotations=_READ_ONLY, structured_output=True,
                  description="List supported semantics, meta-reasoner parameters, operations, "

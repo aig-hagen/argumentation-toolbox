@@ -2,9 +2,10 @@
 
 > Status: **IN PROGRESS**. The reasoning slice (Phase 0 + most of Phase 1) is
 > implemented under [`servers/argumentation-mcp/`](../servers/argumentation-mcp/),
-> over both stdio and Streamable HTTP. OAuth, MCP conformance/client smoke tests,
-> rendering, generation, and deployment are still open. Track progress by checking
-> off tasks in the phase sections below.
+> over both stdio and Streamable HTTP, with a provider-agnostic OAuth 2.1
+> resource server on the HTTP transport (the concrete issuer is set at deploy).
+> MCP conformance/client smoke tests, rendering, generation, and deployment are
+> still open. Track progress by checking off tasks in the phase sections below.
 
 ## 1. Goal
 
@@ -363,7 +364,7 @@ The intended public MCP endpoint is
 - [x] Implement structured and terse framework input.
 - [x] Implement `enumerate_extensions` and `check_acceptance`.
 - [x] Return validated structured results plus text fallbacks.
-- [ ] Implement production-shaped OAuth resource-server behavior for HTTP.
+- [x] Implement production-shaped OAuth resource-server behavior for HTTP. (Provider-agnostic OIDC JWT/JWKS resource server + protected-resource metadata + 401 challenges; optional dev token. Concrete issuer set at deploy.)
 - [ ] Pass MCP conformance tests for `2026-07-28` and `2025-11-25`.
 - [ ] Smoke-test with Claude Code, a Claude remote connector, Codex, and Cursor.
 
